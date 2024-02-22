@@ -4,6 +4,8 @@ const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const { rateLimit } = require("express-rate-limit");
 const mongoSanitize = require("express-mongo-sanitize");
+const { User } = require("./models/user.model");
+const userRoute = require("./routes/user.routes");
 
 const app = express();
 const httpServer = createServer(app);
@@ -30,5 +32,7 @@ app.use(cookieParser());
 app.get("/", (req, res) => {
   res.send("Working");
 });
+
+app.use("/user", userRoute);
 
 module.exports = { httpServer };
