@@ -15,6 +15,8 @@ const register = async (req, res) => {
       message: "email, password and username are required!",
     });
   }
+  console.log("email:", email);
+  console.log("username:", username);
   if (!email_validator(email) || !username_validator(username)) {
     return res.status(400).json({
       status: "error",
@@ -42,22 +44,12 @@ const register = async (req, res) => {
       password: hashedPassword,
       username,
     });
-
-    const otp = generateOTP();
-    console.log("otp:", otp);
-    const token = jwt.sign({ userId: user._id }, "SECRETKEY");
-    let expiryTime = new Date();
-    expiryTime.setMinutes(expiryTime.getMinutes() + 5);
-    const encryptedOtp = jwt.sign(otp, "SECRETKEY");
-
-    user.emailVerificationToken = encryptedOtp;
-    user.emailVerificationExpiry = expiryTime;
     await user.save();
+
     res.send({
       status: "success",
       message:
         "Users registered successfully and verification code has been sent on your email.",
-      token,
     });
   } catch (error) {
     res.send(error);
@@ -72,15 +64,15 @@ const login = async (req, res) => {
       message: "email, password and username are required!",
     });
   }
-  if (
-    !email_validator(emailOrUsername) &&
-    !username_validator(emailOrUsername)
-  ) {
-    return res.status(400).json({
-      status: "error",
-      message: "Email or Username format is not correct",
-    });
-  }
+  // if (
+  //   !email_validator(emailOrUsername) &&
+  //   !username_validator(emailOrUsername)
+  // ) {
+  //   return res.status(400).json({
+  //     status: "error",
+  //     message: "Email or Username format is not correct",
+  //   });
+  // }
   try {
     const user = await User.findOne({
       $or: [{ username: emailOrUsername }, { email: emailOrUsername }],
@@ -106,9 +98,46 @@ const login = async (req, res) => {
         message: "login success",
       });
     }
+    res.send("");
+    // const otp = generateOTP();
+    // console.log("otp:", otp);
+    // const token = jwt.sign({ userId: user._id }, "SECRETKEY");
+    // let expiryTime = new Date();
+    // expiryTime.setMinutes(expiryTime.getMinutes() + 5);
+    // const encryptedOtp = jwt.sign(otp, "SECRETKEY");
+
+    // user.emailVerificationToken = encryptedOtp;
+    // user.emailVerificationExpiry = expiryTime;
+    // await user.save();
+    // res.send({
+    //   status: "success",
+    //   message: "Verification code has been sent on your email.",
+    // });
+  } catch (error) {
+    res.send(error);
+  }
+};
+
+const sendOtp = async (req, res) => {
+  const { email } = req.body;
+
+  if (!email) {
+    res.send({
+      status: "error",
+      message: "Email is required!",
+    });
+  }
+
+  try {
+    const user = await User.findOne({ email: email });
+    if (!user) {
+      res.send({
+        status: "error",
+        message: "User doesn't exist",
+      });
+    }
     const otp = generateOTP();
     console.log("otp:", otp);
-    const token = jwt.sign({ userId: user._id }, "SECRETKEY");
     let expiryTime = new Date();
     expiryTime.setMinutes(expiryTime.getMinutes() + 5);
     const encryptedOtp = jwt.sign(otp, "SECRETKEY");
@@ -118,8 +147,7 @@ const login = async (req, res) => {
     await user.save();
     res.send({
       status: "success",
-      message: "Verification code has been sent on your email.",
-      token,
+      message: "OTP sent successfully on your Email",
     });
   } catch (error) {
     res.send(error);
@@ -177,4 +205,5 @@ const verifyOtp = async (req, res) => {
     res.send({ a: "a", error });
   }
 };
-module.exports = { login, register, verifyOtp };
+
+module.exports = { login, register, sendOtp, verifyOtp };
