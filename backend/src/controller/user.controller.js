@@ -15,8 +15,6 @@ const register = async (req, res) => {
       message: "email, password and username are required!",
     });
   }
-  console.log("email:", email);
-  console.log("username:", username);
   if (!email_validator(email) || !username_validator(username)) {
     return res.status(400).json({
       status: "error",
@@ -61,7 +59,7 @@ const login = async (req, res) => {
   if (!emailOrUsername || !password) {
     return res.status(400).json({
       status: "error",
-      message: "email, password and username are required!",
+      message: "email/username and password are required!",
     });
   }
   // if (
@@ -156,16 +154,15 @@ const sendOtp = async (req, res) => {
 
 const verifyOtp = async (req, res) => {
   try {
-    const { otpToken, otp } = req.body;
-    if (!otpToken || !otp) {
+    const { email, otp } = req.body;
+    if (!email || !otp) {
       return res.status(400).json({
         status: "error",
-        message: "Token is not provided!",
+        message: "Email and OTP are required",
       });
     }
-    const { userId } = jwt.verify(otpToken, "SECRETKEY");
 
-    const user = await User.findById(userId);
+    const user = await User.findOne({ email });
     if (!user) {
       return res.status(400).json({
         status: "error",

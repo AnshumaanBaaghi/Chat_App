@@ -5,6 +5,7 @@ const {
   verifyOtp,
   sendOtp,
 } = require("../controller/user.controller");
+const { User } = require("../models/user.model");
 const router = Router();
 
 router.route("/").get((req, res) => {
@@ -15,6 +16,7 @@ router.route("/register").post(register);
 router.route("/login").post(login);
 router.route("/send-otp").post(sendOtp);
 router.route("/verify-otp").post(verifyOtp);
+
 router.route("/delete").get(async (req, res) => {
   await User.deleteMany({});
   res.send("deleted");
