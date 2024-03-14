@@ -1,14 +1,17 @@
 import { OtpComponent } from "@/components/otpComponent";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 
 export const Otp = () => {
-  const handleOtpChange = (otp) => {
+  const { email } = useSelector((state) => state.userDetail);
+
+  const handleOtpSubmit = (otp) => {
     console.log("OTP:", otp);
-    // You can perform any actions with the OTP value here
   };
+  useEffect(() => {
+    console.log("render");
+  }, []);
   return (
-    <>
-      <OtpComponent length={6} onOtpChange={handleOtpChange} />
-    </>
+    <OtpComponent email={email} length={4} onOtpSubmit={handleOtpSubmit} />
   );
 };

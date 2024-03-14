@@ -42,12 +42,11 @@ const register = async (req, res) => {
       password: hashedPassword,
       username,
     });
-    await user.save();
+    console.log("user:", user);
 
     res.send({
       status: "success",
-      message:
-        "Users registered successfully and verification code has been sent on your email.",
+      message: "Users registered successfully",
     });
   } catch (error) {
     res.send(error);
@@ -62,15 +61,6 @@ const login = async (req, res) => {
       message: "email/username and password are required!",
     });
   }
-  // if (
-  //   !email_validator(emailOrUsername) &&
-  //   !username_validator(emailOrUsername)
-  // ) {
-  //   return res.status(400).json({
-  //     status: "error",
-  //     message: "Email or Username format is not correct",
-  //   });
-  // }
   try {
     const user = await User.findOne({
       $or: [{ username: emailOrUsername }, { email: emailOrUsername }],
@@ -89,28 +79,25 @@ const login = async (req, res) => {
         message: "Invalid Password",
       });
     }
+
+    const loggedInUser = await User.findById(user._id).select(
+      "-password -resetPasswordToken -emailVerificationToken -emailVerificationExpiry"
+    );
+
     if (user.isEmailVerified) {
       // add access token here
-      return res.status(200).json({
+      const token = user.generateAccessToken();
+      return res.status(200).cookie("AccessToken", token).json({
         status: "success",
+        user: loggedInUser,
         message: "login success",
       });
     }
-    res.send("");
-    // const otp = generateOTP();
-    // console.log("otp:", otp);
-    // const token = jwt.sign({ userId: user._id }, "SECRETKEY");
-    // let expiryTime = new Date();
-    // expiryTime.setMinutes(expiryTime.getMinutes() + 5);
-    // const encryptedOtp = jwt.sign(otp, "SECRETKEY");
 
-    // user.emailVerificationToken = encryptedOtp;
-    // user.emailVerificationExpiry = expiryTime;
-    // await user.save();
-    // res.send({
-    //   status: "success",
-    //   message: "Verification code has been sent on your email.",
-    // });
+    res.status(200).json({
+      status: "success",
+      message: "Email is not verified",
+    });
   } catch (error) {
     res.send(error);
   }

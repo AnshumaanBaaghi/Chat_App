@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const jwt = require("jsonwebtoken");
 const { username_validator, email_validator } = require("../utils/commonFunc");
 
 const userSchema = new mongoose.Schema(
@@ -51,6 +52,18 @@ const userSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+userSchema.methods.generateAccessToken = function () {
+  return jwt.sign(
+    {
+      _id: this._id,
+      email: this.email,
+      username: this.username,
+      avatar: this.avatar,
+    },
+    process.env.JWT_SECERETKEY
+  );
+};
 
 const User = new mongoose.model("User", userSchema);
 

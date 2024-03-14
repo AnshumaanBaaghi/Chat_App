@@ -16,11 +16,29 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { FormError } from "@/components/formError";
 import { registerUser } from "@/api";
+import { Otp } from "./Otp";
+import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { updateUserDetail } from "@/redux/actions/userActions";
+import { Loading } from "@/components/loading";
 
 const FormSchema = z.object({
-  username: z.string().min(2, {
-    message: "Username must be at least 2 characters.",
-  }),
+  username: z
+    .string()
+    .min(5, {
+      message: "Username contain at least 5 Alphabets.",
+    })
+    .max(20, {
+      message: "Username must be of 20 or less characters",
+    })
+    .refine(
+      (value) => {
+        return /^(?=(?:[^a-zA-Z]*[a-zA-Z]){5})[a-zA-Z0-9_]{1,20}$/.test(value);
+      },
+      {
+        message: "Only Alphabets, Numbers and Underscore are allowed",
+      }
+    ),
   email: z.string().email({
     message: "Invalid email format.",
   }),
@@ -30,6 +48,13 @@ const FormSchema = z.object({
 });
 
 export const Register = () => {
+  const [showOtpComponent, setShowOtpComponent] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const val = useSelector((state) => state);
+  const dispatch = useDispatch();
+  console.log("val:", val);
+
   const form = useForm({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -40,81 +65,103 @@ export const Register = () => {
   });
 
   async function onSubmit(data) {
-    console.log("data:", data);
+    setErrorMessage("");
+    setIsLoading(true);
     try {
       const res = await registerUser(data);
-      console.log("res:", res);
+      dispatch(
+        updateUserDetail({ email: data.email, username: data.username })
+      );
+      setShowOtpComponent(true);
     } catch (error) {
-      console.log("error:", error);
+      if (error?.response?.data?.status == "error") {
+        console.log("error:", error.response.data);
+        setErrorMessage(error.response.data.message);
+      }
+    } finally {
+      setIsLoading(false);
     }
-    // toast({
-    //   title: "You submitted the following values:",
-    //   description: (
-    //     <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-    //       <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-    //     </pre>
-    //   ),
-    // });
   }
 
   return (
-    <div className="border p-4 w-1/3 flex justify-center m-auto items-center h-screen border-orange-300 border-solid">
-      <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
-          className="w-2/3 space-y-6 border-red-500 border-solid"
+    <div className="flex h-screen items-center">
+      <div className="w-1/3 m-auto border border-red-500 rounded-xl overflow-visible">
+        <div
+          className={`grid grid-cols-2 border box-border border-green-600 transition-transform duration-500 ${
+            showOtpComponent && "-translate-x-1/2"
+          }`}
+          style={{ width: "200%" }}
         >
-          <FormField
-            control={form.control}
-            name="username"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Username</FormLabel>
-                <FormControl>
-                  <Input placeholder="Enter Your Username" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          <div
+            className="py-10 flex justify-center items-center"
+            style={{ width: "100%" }}
+          >
+            <Form {...form}>
+              <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="w-4/5 space-y-6"
+              >
+                <FormField
+                  control={form.control}
+                  name="username"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Username</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter Your Username" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-          <FormField
-            control={form.control}
-            name="email"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Email</FormLabel>
-                <FormControl>
-                  <Input placeholder="example@example.com" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Email</FormLabel>
+                      <FormControl>
+                        <Input placeholder="example@example.com" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-          <FormField
-            control={form.control}
-            name="password"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Password</FormLabel>
-                <FormControl>
-                  <Input
-                    type="password"
-                    placeholder="Enter Password"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormError message="Hello" />
-          <Button type="submit" className="w-full">
-            Submit
-          </Button>
-        </form>
-      </Form>
+                <FormField
+                  control={form.control}
+                  name="password"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Password</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="password"
+                          placeholder="Enter Password"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormError message={errorMessage} />
+                {!isLoading ? (
+                  <Button type="submit" className="w-full">
+                    Submit
+                  </Button>
+                ) : (
+                  <Button className="w-full">
+                    <Loading />
+                  </Button>
+                )}
+              </form>
+            </Form>
+          </div>
+          {showOtpComponent && <Otp />}
+        </div>
+      </div>
     </div>
   );
 };
