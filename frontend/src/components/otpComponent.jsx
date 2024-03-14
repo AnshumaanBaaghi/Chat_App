@@ -1,10 +1,14 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Input } from "@/components/ui/input";
 
-export const OtpComponent = ({ length, onOtpSubmit, email }) => {
+export const OtpComponent = ({
+  sendOrResendOtp,
+  length,
+  onOtpSubmit,
+  email,
+}) => {
   const [otp, setOtp] = useState(new Array(length).fill(""));
-  const [resendOtpTimer, setResendOtpTimer] = useState(5);
-  console.log("resendOtpTimer:", resendOtpTimer);
+  const [resendOtpTimer, setResendOtpTimer] = useState(30);
   const inputRefs = useRef([]);
 
   const handleChange = (e, index) => {
@@ -76,9 +80,19 @@ export const OtpComponent = ({ length, onOtpSubmit, email }) => {
       </div>
       <p className="px-4">
         Didn't receive the OTP?
-        <span className="ml-2">
-          {resendOtpTimer > 0 ? `resend in ${resendOtpTimer}` : "resend"}
-        </span>
+        {resendOtpTimer > 0 ? (
+          <span className="ml-2"> resend in {resendOtpTimer}</span>
+        ) : (
+          <span
+            onClick={() => {
+              sendOrResendOtp();
+              setResendOtpTimer(30);
+            }}
+            className="ml-2 cursor-pointer text-blue-500"
+          >
+            resend
+          </span>
+        )}
       </p>
     </div>
   );

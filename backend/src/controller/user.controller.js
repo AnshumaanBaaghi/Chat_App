@@ -116,7 +116,7 @@ const sendOtp = async (req, res) => {
   try {
     const user = await User.findOne({ email: email });
     if (!user) {
-      res.send({
+      return res.status(400).json({
         status: "error",
         message: "User doesn't exist",
       });

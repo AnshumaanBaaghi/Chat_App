@@ -9,8 +9,6 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { toast } from "@/components/ui/use-toast";
-
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -21,6 +19,7 @@ import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { updateUserDetail } from "@/redux/actions/userActions";
 import { Loading } from "@/components/loading";
+import { useToast } from "@/components/ui/use-toast";
 
 const FormSchema = z.object({
   username: z
@@ -53,6 +52,7 @@ export const Register = () => {
   const [errorMessage, setErrorMessage] = useState("");
   const val = useSelector((state) => state);
   const dispatch = useDispatch();
+  const { toast } = useToast();
   console.log("val:", val);
 
   const form = useForm({
@@ -75,8 +75,13 @@ export const Register = () => {
       setShowOtpComponent(true);
     } catch (error) {
       if (error?.response?.data?.status == "error") {
-        console.log("error:", error.response.data);
         setErrorMessage(error.response.data.message);
+      } else {
+        toast({
+          variant: "destructive",
+          title: "Uh oh! Something went wrong.",
+          description: "There was a problem with your request.",
+        });
       }
     } finally {
       setIsLoading(false);

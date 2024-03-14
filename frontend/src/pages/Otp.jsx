@@ -1,17 +1,51 @@
+import { sendOtp, verifyOtp } from "@/api";
 import { OtpComponent } from "@/components/otpComponent";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
+import { useToast } from "@/components/ui/use-toast";
 
 export const Otp = () => {
   const { email } = useSelector((state) => state.userDetail);
+  const { toast } = useToast();
 
-  const handleOtpSubmit = (otp) => {
-    console.log("OTP:", otp);
+  const sendOrResendOtp = async () => {
+    try {
+      await sendOtp(email);
+    } catch (error) {
+      console.error("error:", error);
+      toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong.",
+        description: "There was a problem with your request.",
+      });
+    }
+  };
+
+  const handleOtpSubmit = async (otp) => {
+    try {
+      await verifyOtp(otp, email);
+      console.log("success");
+    } catch (error) {
+      if (error?.response?.data?.status == "error") {
+        toast({
+          variant: "destructive",
+          title: error.response.data?.message,
+        });
+      } else {
+        console.error("error:", error);
+      }
+    }
   };
   useEffect(() => {
     console.log("render");
+    sendOrResendOtp();
   }, []);
   return (
-    <OtpComponent email={email} length={4} onOtpSubmit={handleOtpSubmit} />
+    <OtpComponent
+      sendOrResendOtp={sendOrResendOtp}
+      email={email}
+      length={4}
+      onOtpSubmit={handleOtpSubmit}
+    />
   );
 };
