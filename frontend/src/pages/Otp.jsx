@@ -3,11 +3,12 @@ import { OtpComponent } from "@/components/otpComponent";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useToast } from "@/components/ui/use-toast";
+import { useNavigate } from "react-router-dom";
 
 export const Otp = () => {
   const { email } = useSelector((state) => state.userDetail);
   const { toast } = useToast();
-
+  const navigate = useNavigate();
   const sendOrResendOtp = async () => {
     try {
       await sendOtp(email);
@@ -24,7 +25,7 @@ export const Otp = () => {
   const handleOtpSubmit = async (otp) => {
     try {
       await verifyOtp(otp, email);
-      console.log("success");
+      navigate("/");
     } catch (error) {
       if (error?.response?.data?.status == "error") {
         toast({

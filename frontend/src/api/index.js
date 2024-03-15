@@ -13,9 +13,14 @@ export const registerUser = (data) => {
   return api.post("/user/register", data);
 };
 
+export const loginUser = (data) => {
+  return api.post("/user/login", data);
+};
+
 export const sendOtp = (email) => {
   return api.post("/user/send-otp", { email });
 };
+
 export const verifyOtp = (otp, email) => {
   return api.post("/user/verify-otp", { email, otp });
 };

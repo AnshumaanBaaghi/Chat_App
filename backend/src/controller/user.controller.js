@@ -6,6 +6,7 @@ const {
   generateOTP,
 } = require("../utils/commonFunc");
 const bcrypt = require("bcrypt");
+const { TOKEN_NAME } = require("../constants");
 
 const register = async (req, res) => {
   const { email, password, username } = req.body;
@@ -68,7 +69,7 @@ const login = async (req, res) => {
     if (!user) {
       return res.status(400).json({
         status: "error",
-        message: "User is not exist with this email or username",
+        message: "User doesn't exist with this email or username",
       });
     }
     // check password
@@ -87,7 +88,7 @@ const login = async (req, res) => {
     if (user.isEmailVerified) {
       // add access token here
       const token = user.generateAccessToken();
-      return res.status(200).cookie("AccessToken", token).json({
+      return res.status(200).cookie(TOKEN_NAME, token).json({
         status: "success",
         user: loggedInUser,
         message: "login success",
@@ -96,6 +97,7 @@ const login = async (req, res) => {
 
     res.status(200).json({
       status: "success",
+      email: user.email,
       message: "Email is not verified",
     });
   } catch (error) {
@@ -125,7 +127,7 @@ const sendOtp = async (req, res) => {
     console.log("otp:", otp);
     let expiryTime = new Date();
     expiryTime.setMinutes(expiryTime.getMinutes() + 5);
-    const encryptedOtp = jwt.sign(otp, "SECRETKEY");
+    const encryptedOtp = jwt.sign(otp, process.env.JWT_SECERETKEY);
 
     user.emailVerificationToken = encryptedOtp;
     user.emailVerificationExpiry = expiryTime;
@@ -162,7 +164,10 @@ const verifyOtp = async (req, res) => {
         message: "Token Expired!",
       });
     }
-    const originalOtp = jwt.verify(user.emailVerificationToken, "SECRETKEY");
+    const originalOtp = jwt.verify(
+      user.emailVerificationToken,
+      process.env.JWT_SECERETKEY
+    );
 
     if (otp !== originalOtp) {
       return res.status(400).json({
@@ -180,14 +185,38 @@ const verifyOtp = async (req, res) => {
     user.emailVerificationExpiry = null;
     user.isEmailVerified = true;
     await user.save();
-    res.status(200).send({
-      status: "success",
-      message: "OTP verified successfully!",
-      user: { username: user.username, email: user.email, avatar: user.avatar },
-    });
+    const token = user.generateAccessToken();
+    console.log("token:", token);
+    res
+      .status(200)
+      .cookie(TOKEN_NAME, token)
+      .json({
+        status: "success",
+        message: "OTP verified successfully!",
+        user: {
+          username: user.username,
+          email: user.email,
+          avatar: user.avatar,
+        },
+      });
   } catch (error) {
     res.send({ a: "a", error });
   }
 };
 
-module.exports = { login, register, sendOtp, verifyOtp };
+const userDetails = async (req, res) => {
+  const token = req.cookies;
+  try {
+    if (!token[TOKEN_NAME]) {
+      return res
+        .status(200)
+        .json({ status: "error", message: "Token doesn't exist" });
+    }
+    jwt.verify(token[TOKEN_NAME]);
+    const user = await User.findById;
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
+module.exports = { login, register, sendOtp, verifyOtp, userDetails };

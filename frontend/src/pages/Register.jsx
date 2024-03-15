@@ -4,7 +4,6 @@ import {
   FormItem,
   FormLabel,
   FormControl,
-  FormDescription,
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -68,7 +67,7 @@ export const Register = () => {
     setErrorMessage("");
     setIsLoading(true);
     try {
-      const res = await registerUser(data);
+      await registerUser(data);
       dispatch(
         updateUserDetail({ email: data.email, username: data.username })
       );
