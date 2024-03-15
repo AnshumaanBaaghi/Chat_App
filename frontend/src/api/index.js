@@ -24,3 +24,7 @@ export const sendOtp = (email) => {
 export const verifyOtp = (otp, email) => {
   return api.post("/user/verify-otp", { email, otp });
 };
+
+export const userDetails = () => {
+  return api.get("/user/me");
+};

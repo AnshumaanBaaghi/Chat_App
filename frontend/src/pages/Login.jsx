@@ -12,14 +12,14 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { FormError } from "@/components/formError";
-import { loginUser, registerUser } from "@/api";
+import { loginUser, userDetails } from "@/api";
 import { Otp } from "./Otp";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { login, updateUserDetail } from "@/redux/actions/userActions";
 import { Loading } from "@/components/loading";
 import { useToast } from "@/components/ui/use-toast";
-import { useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 
 const FormSchema = z.object({
   emailOrUsername: z.string().min(5, {
@@ -83,6 +83,27 @@ export const Login = () => {
     } finally {
       setIsLoading(false);
     }
+  }
+  useEffect(() => {
+    (async () => {
+      if (!val.isAuth) {
+        try {
+          const user = await userDetails();
+          if (user?.data?.user) {
+            const { email, username, avatar } = user.data.user;
+            dispatch(updateUserDetail({ email, username, avatar }));
+            dispatch(login());
+            navigate("/");
+          }
+        } catch (error) {
+          console.log("error:", error);
+        }
+      }
+    })();
+  }, []);
+
+  if (val.isAuth) {
+    return <Navigate to={"/"} />;
   }
 
   return (

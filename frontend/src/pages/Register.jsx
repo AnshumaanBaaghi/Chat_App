@@ -12,13 +12,14 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { FormError } from "@/components/formError";
-import { registerUser } from "@/api";
+import { registerUser, userDetails } from "@/api";
 import { Otp } from "./Otp";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { updateUserDetail } from "@/redux/actions/userActions";
+import { login, updateUserDetail } from "@/redux/actions/userActions";
 import { Loading } from "@/components/loading";
 import { useToast } from "@/components/ui/use-toast";
+import { Navigate, useNavigate } from "react-router-dom";
 
 const FormSchema = z.object({
   username: z
@@ -52,6 +53,7 @@ export const Register = () => {
   const val = useSelector((state) => state);
   const dispatch = useDispatch();
   const { toast } = useToast();
+  const navigate = useNavigate();
   console.log("val:", val);
 
   const form = useForm({
@@ -85,6 +87,28 @@ export const Register = () => {
     } finally {
       setIsLoading(false);
     }
+  }
+
+  useEffect(() => {
+    (async () => {
+      if (!val.isAuth) {
+        try {
+          const user = await userDetails();
+          if (user?.data?.user) {
+            const { email, username, avatar } = user.data.user;
+            dispatch(updateUserDetail({ email, username, avatar }));
+            dispatch(login());
+            navigate("/");
+          }
+        } catch (error) {
+          console.log("error:", error);
+        }
+      }
+    })();
+  }, []);
+
+  if (val.isAuth) {
+    return <Navigate to={"/"} />;
   }
 
   return (
