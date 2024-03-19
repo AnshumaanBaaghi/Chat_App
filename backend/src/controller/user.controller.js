@@ -7,6 +7,7 @@ const {
 } = require("../utils/commonFunc");
 const bcrypt = require("bcrypt");
 const { TOKEN_NAME } = require("../constants");
+const { sendMail } = require("../utils/mail");
 
 const register = async (req, res) => {
   const { email, password, username } = req.body;
@@ -124,7 +125,7 @@ const sendOtp = async (req, res) => {
       });
     }
     const otp = generateOTP();
-    console.log("otp:", otp);
+    await sendMail(email, otp);
     let expiryTime = new Date();
     expiryTime.setMinutes(expiryTime.getMinutes() + 5);
     const encryptedOtp = jwt.sign(otp, process.env.JWT_SECERETKEY);
