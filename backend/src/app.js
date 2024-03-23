@@ -4,11 +4,18 @@ const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const { rateLimit } = require("express-rate-limit");
 const mongoSanitize = require("express-mongo-sanitize");
-const { User } = require("./models/user.model");
 const userRoute = require("./routes/user.routes");
+const { Server } = require("socket.io");
+const { initializeSocketIO } = require("./socket");
 
 const app = express();
 const httpServer = createServer(app);
+const io = new Server(httpServer, {
+  cors: {
+    origin: "http://localhost:5173", // Have to change it
+    methods: ["GET", "POST"],
+  },
+});
 const limiter = rateLimit({
   windowMs: 60 * 60 * 1000,
   limit: 1000,
@@ -34,5 +41,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/user", userRoute);
+
+initializeSocketIO(io);
 
 module.exports = { httpServer };
