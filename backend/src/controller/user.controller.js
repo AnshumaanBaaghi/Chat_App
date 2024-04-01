@@ -220,4 +220,51 @@ const userDetails = async (req, res) => {
   }
 };
 
-module.exports = { login, register, sendOtp, verifyOtp, userDetails };
+// have to move it to middleware
+const getUsers = async (req, res, next) => {
+  const all_users = await User.find({ isEmailVerified: true }).select(
+    "username email _id"
+  );
+};
+
+const searchNewFriends = async (req, res) => {
+  try {
+    // user should be verified
+    const new_friends = await User.aggregate([
+      {
+        $match: {
+          $and: [
+            {
+              _id: {
+                $ne: req.user._id,
+              },
+            },
+            { _id: { $nin: req.user.friends.map((id) => id) } },
+          ],
+        },
+      },
+      {
+        $project: {
+          username: 1,
+          email: 1,
+          avatar: 1,
+        },
+      },
+    ]);
+
+    res.status(200).json({ data: new_friends });
+  } catch (error) {
+    console.error("Error searching for new friends:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+module.exports = {
+  login,
+  register,
+  sendOtp,
+  verifyOtp,
+  userDetails,
+  getUsers,
+  searchNewFriends,
+};

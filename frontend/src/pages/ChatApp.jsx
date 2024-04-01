@@ -1,5 +1,10 @@
-import React from "react";
+import { searchNewFriends } from "@/api";
+import React, { useEffect } from "react";
 
 export const ChatApp = () => {
-  return <div>ChatApp</div>;
+  return (
+    <>
+      <div>ChatApp</div>
+    </>
+  );
 };

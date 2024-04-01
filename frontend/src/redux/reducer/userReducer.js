@@ -14,7 +14,7 @@ export const userReducer = (state = initialVal, { type, payload }) => {
       return { ...state, isAuth: true };
 
     case LOGOUT:
-      return { ...state, isAuth: false };
+      return initialVal;
 
     default:
       return state;

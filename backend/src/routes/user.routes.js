@@ -5,8 +5,10 @@ const {
   verifyOtp,
   sendOtp,
   userDetails,
+  searchNewFriends,
 } = require("../controller/user.controller");
 const { User } = require("../models/user.model");
+const { verifyJWT } = require("../middlewares/auth.middlewares");
 const router = Router();
 
 router.route("/").get((req, res) => {
@@ -18,6 +20,7 @@ router.route("/login").post(login);
 router.route("/send-otp").post(sendOtp);
 router.route("/verify-otp").post(verifyOtp);
 router.route("/me").get(userDetails);
+router.route("/search-new-friends").get(verifyJWT, searchNewFriends);
 
 router.route("/delete").get(async (req, res) => {
   await User.deleteMany({});
