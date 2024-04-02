@@ -1,8 +1,16 @@
-import { LOGIN, LOGOUT, UPDATEUSERDETAIL } from "../actions/userActions";
+import {
+  GETNEWFRIENDS,
+  LOGIN,
+  LOGOUT,
+  UPDATEUSERDETAIL,
+} from "../actions/userActions";
 
 const initialVal = {
   isAuth: false,
-  userDetail: { email: "", username: "", avatar: "" },
+  userDetail: { name: "", email: "", username: "", avatar: "" },
+  friends: [],
+  newUsers: [],
+  friendRequests: [],
 };
 
 export const userReducer = (state = initialVal, { type, payload }) => {
@@ -15,6 +23,9 @@ export const userReducer = (state = initialVal, { type, payload }) => {
 
     case LOGOUT:
       return initialVal;
+
+    case GETNEWFRIENDS:
+      return { ...state, newUsers: payload };
 
     default:
       return state;

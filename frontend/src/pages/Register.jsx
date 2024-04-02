@@ -22,6 +22,9 @@ import { useToast } from "@/components/ui/use-toast";
 import { Navigate, useNavigate } from "react-router-dom";
 
 const FormSchema = z.object({
+  name: z.string().min(5, {
+    message: "Name must be at least 5 characters.",
+  }),
   username: z
     .string()
     .min(5, {
@@ -59,6 +62,7 @@ export const Register = () => {
   const form = useForm({
     resolver: zodResolver(FormSchema),
     defaultValues: {
+      name: "",
       username: "",
       email: "",
       password: "",
@@ -95,8 +99,8 @@ export const Register = () => {
         try {
           const user = await userDetails();
           if (user?.data?.user) {
-            const { email, username, avatar } = user.data.user;
-            dispatch(updateUserDetail({ email, username, avatar }));
+            const { email, username, avatar, name } = user.data.user;
+            dispatch(updateUserDetail({ email, username, avatar, name }));
             dispatch(login());
             navigate("/");
           }
@@ -129,6 +133,19 @@ export const Register = () => {
                 onSubmit={form.handleSubmit(onSubmit)}
                 className="w-4/5 space-y-6"
               >
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Name</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter Your Name" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
                 <FormField
                   control={form.control}
                   name="username"

@@ -4,6 +4,10 @@ const { username_validator, email_validator } = require("../utils/commonFunc");
 
 const userSchema = new mongoose.Schema(
   {
+    name: {
+      type: String,
+      required: true,
+    },
     username: {
       type: String,
       required: true,

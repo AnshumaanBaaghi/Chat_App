@@ -29,6 +29,12 @@ export const userDetails = () => {
   return api.get("/user/me");
 };
 
-export const searchNewFriends = () => {
+export const newFriends = () => {
   return api.get("/user/search-new-friends");
+};
+export const friends = () => {
+  return api.get("/user/get-friends");
+};
+export const friendRequests = () => {
+  return api.get("/user/get-friend-requests");
 };

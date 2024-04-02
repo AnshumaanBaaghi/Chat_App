@@ -1,4 +1,3 @@
-import { searchNewFriends } from "@/api";
 import React, { useEffect } from "react";
 
 export const ChatApp = () => {
