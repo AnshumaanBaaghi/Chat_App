@@ -232,7 +232,6 @@ const getUsers = async (req, res, next) => {
 
 const searchNewFriends = async (req, res) => {
   try {
-    // user should be verified
     const new_friends = await User.aggregate([
       {
         $match: {
@@ -256,6 +255,7 @@ const searchNewFriends = async (req, res) => {
       },
     ]);
 
+    console.log("new_friends:", new_friends);
     res.status(200).json({ data: new_friends });
   } catch (error) {
     console.error("Error searching for new friends:", error);
