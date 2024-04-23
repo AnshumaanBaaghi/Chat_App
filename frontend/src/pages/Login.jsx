@@ -34,11 +34,11 @@ export const Login = () => {
   const [showOtpComponent, setShowOtpComponent] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  const val = useSelector((state) => state);
+  const isAuth = useSelector((state) => state.isAuth);
   const dispatch = useDispatch();
   const { toast } = useToast();
   const navigate = useNavigate();
-  console.log("val:", val);
+  console.log("isAuth:", isAuth);
 
   const form = useForm({
     resolver: zodResolver(FormSchema),
@@ -86,7 +86,7 @@ export const Login = () => {
   }
   useEffect(() => {
     (async () => {
-      if (!val.isAuth) {
+      if (!isAuth) {
         try {
           const user = await userDetails();
           if (user?.data?.user) {
@@ -102,7 +102,7 @@ export const Login = () => {
     })();
   }, []);
 
-  if (val.isAuth) {
+  if (isAuth) {
     return <Navigate to={"/"} />;
   }
 

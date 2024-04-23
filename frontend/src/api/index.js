@@ -35,6 +35,7 @@ export const newFriends = () => {
 export const friends = () => {
   return api.get("/user/get-friends");
 };
+
 export const friendRequests = () => {
   return api.get("/user/get-friend-requests");
 };
