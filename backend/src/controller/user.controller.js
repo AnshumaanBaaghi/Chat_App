@@ -223,7 +223,6 @@ const userDetails = async (req, res) => {
   }
 };
 
-// have to move it to middleware
 const getUsers = async (req, res, next) => {
   const all_users = await User.find({ isEmailVerified: true }).select(
     "username email _id"
