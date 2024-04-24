@@ -197,6 +197,7 @@ const verifyOtp = async (req, res) => {
         status: "success",
         message: "OTP verified successfully!",
         user: {
+          userId: user._id,
           name: user.name,
           username: user.username,
           email: user.email,

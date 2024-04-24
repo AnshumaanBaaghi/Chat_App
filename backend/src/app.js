@@ -14,6 +14,7 @@ const io = new Server(httpServer, {
   cors: {
     origin: "http://localhost:5173", // Have to change it
     methods: ["GET", "POST"],
+    credentials: true,
   },
 });
 const limiter = rateLimit({

@@ -23,7 +23,7 @@ export const Popup = () => {
                 key={i}
                 className={`${
                   item === selectedTab ? "bg-[#eee]" : ""
-                } list-none font-sans text-[14px] rounded border-b-0 border-r-0 border-l-0 border-gray-300 w-full py-2 px-3 relative bg-white cursor-pointer flex justify-between items-center flex-1 min-w-0 user-select-none`}
+                } list-none font-sans text-[14px] rounded border-b-0 border-r-0 border-l-0 border-gray-300 w-full py-2 px-3 relative bg-white cursor-pointer flex justify-center items-center flex-1 min-w-0 user-select-none`}
                 onClick={() => setSelectedTab(item)}
               >
                 {`${item.label}`}

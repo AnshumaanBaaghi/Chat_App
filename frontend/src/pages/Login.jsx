@@ -56,8 +56,10 @@ export const Login = () => {
       console.log("res:", res);
       if (res?.data?.user) {
         console.log("res.data.user:", res.data.user);
-        const { email, username, avatar } = res.data.user;
-        dispatch(updateUserDetail({ email, username, avatar }));
+        const { name, email, username, avatar, _id } = res.data.user;
+        dispatch(
+          updateUserDetail({ name, email, username, avatar, userId: _id })
+        );
         dispatch(login());
         navigate("/");
       } else if (res?.data?.email) {
@@ -90,8 +92,11 @@ export const Login = () => {
         try {
           const user = await userDetails();
           if (user?.data?.user) {
-            const { email, username, avatar } = user.data.user;
-            dispatch(updateUserDetail({ email, username, avatar }));
+            console.log("user.data.user:", user.data.user);
+            const { name, email, username, avatar, _id } = user.data.user;
+            dispatch(
+              updateUserDetail({ name, email, username, avatar, userId: _id })
+            );
             dispatch(login());
             navigate("/");
           }

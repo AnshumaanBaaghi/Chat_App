@@ -7,7 +7,7 @@ import {
 
 const initialVal = {
   isAuth: false,
-  userDetail: { name: "", email: "", username: "", avatar: "" },
+  userDetail: { name: "", email: "", username: "", avatar: "", userId: "" },
   friends: [],
   newUsers: [],
   friendRequests: [],

@@ -2,16 +2,18 @@ const cookie = require("cookie");
 const { TOKEN_NAME } = require("../constants");
 const { User } = require("../models/user.model");
 const { FriendRequest } = require("../models/friendRequest.model");
+const jwt = require("jsonwebtoken");
 
 const initializeSocketIO = (io) => {
   return io.on("connection", async (socket) => {
     const cookies = cookie.parse(socket.handshake.headers?.cookie || "");
-    console.log("cookies:", cookies);
     const token = cookies?.[TOKEN_NAME];
-    console.log("token:", token);
     if (!token) return; // Have to Add error here
+    const loggedInUser = jwt.verify(token, process.env.JWT_SECERETKEY);
+    console.log("loggedInUser:", loggedInUser);
+    if (!loggedInUser) return; // Have to Add error here
     const socket_id = socket.id;
-    const user = await User.findByIdAndUpdate(token._id, { socket_id });
+    const user = await User.findByIdAndUpdate(loggedInUser._id, { socket_id });
     // if (!user) return; // Have to Add error here
 
     socket.on("friend_request", async (data) => {
