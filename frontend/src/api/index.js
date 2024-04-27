@@ -32,10 +32,15 @@ export const userDetails = () => {
 export const newFriends = () => {
   return api.get("/user/search-new-friends");
 };
+
 export const friends = () => {
   return api.get("/user/get-friends");
 };
 
 export const friendRequests = () => {
   return api.get("/user/get-friend-requests");
+};
+
+export const sentRequests = () => {
+  return api.get("/user/get-sent-requests");
 };

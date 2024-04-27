@@ -6,7 +6,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { useNavigate } from "react-router-dom";
 
 export const Otp = () => {
-  const { email } = useSelector((state) => state.userDetail);
+  const { email } = useSelector((state) => state.user.userDetail);
   const { toast } = useToast();
   const navigate = useNavigate();
   const sendOrResendOtp = async () => {

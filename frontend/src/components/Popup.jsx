@@ -1,15 +1,23 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { FriendRequests } from "@/components/FriendRequests";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Explore } from "@/components/Explore";
 import { Friends } from "@/components/Friends";
+import { useSelector } from "react-redux";
+import { exploreUsersList } from "@/utils/functions";
 
 export const Popup = () => {
+  const newUsers = useSelector((state) => state.user.newUsers);
+  const sentRequests = useSelector((state) => state.user.sentRequests);
+  const friends = useSelector((state) => state.user.friends);
+  const friendRequests = useSelector((state) => state.user.friendRequests);
+  console.log("friendRequests:", friendRequests);
+
   const [tabs] = useState([
-    { comp: Explore, label: "Explore" },
-    { comp: FriendRequests, label: "Requests" },
-    { comp: Friends, label: "Friends" },
+    { comp: Explore, label: "Explore", arr: newUsers },
+    { comp: FriendRequests, label: "Requests", arr: friendRequests },
+    { comp: Friends, label: "Friends", arr: friends },
   ]);
   const [selectedTab, setSelectedTab] = useState(tabs[0]);
 
@@ -46,7 +54,7 @@ export const Popup = () => {
               exit={{ x: -10, opacity: 0 }}
               transition={{ duration: 0.2 }}
             >
-              {selectedTab ? <selectedTab.comp /> : "😋"}
+              {selectedTab ? <selectedTab.comp arr={selectedTab.arr} /> : "😋"}
             </motion.div>
           </AnimatePresence>
         </ScrollArea>

@@ -1,5 +1,9 @@
-import { applyMiddleware, legacy_createStore } from "redux";
-import { userReducer } from "./reducer/userReducer";
+import { applyMiddleware, combineReducers, legacy_createStore } from "redux";
+import { userReducer } from "@/redux/reducer/userReducer";
 import { thunk } from "redux-thunk";
-
-export const store = legacy_createStore(userReducer, applyMiddleware(thunk));
+import { socketReducer } from "@/redux/reducer/socketReducer";
+const rootReducer = combineReducers({
+  user: userReducer,
+  socket: socketReducer,
+});
+export const store = legacy_createStore(rootReducer, applyMiddleware(thunk));

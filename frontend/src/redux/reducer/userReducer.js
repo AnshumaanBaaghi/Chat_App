@@ -3,6 +3,8 @@ import {
   LOGIN,
   LOGOUT,
   UPDATEUSERDETAIL,
+  GETSENTREQUESTS,
+  GETFRIENDREQUEST,
 } from "../actions/userActions";
 
 const initialVal = {
@@ -11,6 +13,7 @@ const initialVal = {
   friends: [],
   newUsers: [],
   friendRequests: [],
+  sentRequests: [],
 };
 
 export const userReducer = (state = initialVal, { type, payload }) => {
@@ -26,6 +29,9 @@ export const userReducer = (state = initialVal, { type, payload }) => {
 
     case GETNEWFRIENDS:
       return { ...state, newUsers: payload };
+
+    case GETSENTREQUESTS:
+      return { ...state, sentRequests: payload };
 
     default:
       return state;

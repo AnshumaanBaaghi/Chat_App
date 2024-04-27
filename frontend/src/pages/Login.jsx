@@ -34,7 +34,7 @@ export const Login = () => {
   const [showOtpComponent, setShowOtpComponent] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  const isAuth = useSelector((state) => state.isAuth);
+  const isAuth = useSelector((state) => state.user.isAuth);
   const dispatch = useDispatch();
   const { toast } = useToast();
   const navigate = useNavigate();

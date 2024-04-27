@@ -1,8 +1,9 @@
 // Authentication
 
-import { friendRequests, friends, newFriends } from "@/api";
+import { friendRequests, friends, newFriends, sentRequests } from "@/api";
 
 export const UPDATEUSERDETAIL = "UPDATEUSERDETAIL";
+export const GETSENTREQUESTS = "GETSENTREQUESTS";
 export const LOGIN = "LOGIN";
 export const LOGOUT = "LOGOUT";
 
@@ -24,12 +25,22 @@ export const GETFRIENDREQUEST = "GETFRIENDREQUEST";
 
 export const getNewFriends = () => {
   return async (dispatch) => {
-    console.log("dispatch:", dispatch);
     try {
       const new_friends = await newFriends();
       console.log("new_friends:", new_friends.data.data);
       dispatch({ type: GETNEWFRIENDS, payload: new_friends.data.data });
     } catch (error) {}
+  };
+};
+
+export const getSentRequests = () => {
+  return async (dispatch) => {
+    try {
+      const sent_Requests = await sentRequests();
+      dispatch({ type: GETSENTREQUESTS, payload: sent_Requests.data.data });
+    } catch (error) {
+      console.log("error:", error);
+    }
   };
 };
 
@@ -42,10 +53,12 @@ export const getfriends = () => async (dispatch) => {
 
 export const getfriendRequests = () => async (dispatch) => {
   try {
-    const friendRequests = await friendRequests();
+    const friend_Requests = await friendRequests();
     dispatch({
       type: GETFRIENDREQUEST,
-      payload: friendRequests.data.data || [],
+      payload: friend_Requests.data.data || [],
     });
-  } catch (error) {}
+  } catch (error) {
+    console.log("error:", error);
+  }
 };
