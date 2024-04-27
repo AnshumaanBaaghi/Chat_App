@@ -13,14 +13,14 @@ const initializeSocketIO = (io) => {
     console.log("loggedInUser:", loggedInUser);
     if (!loggedInUser) return; // Have to Add error here
     const socket_id = socket.id;
-    const user = await User.findByIdAndUpdate(loggedInUser._id, { socket_id });
+    await User.findByIdAndUpdate(loggedInUser._id, { socket_id });
     // if (!user) return; // Have to Add error here
 
     socket.on("friend_request", async (data) => {
-      console.log("data.to:", data.to);
       // data.to contains userID;
 
       const to = await User.findById(data.to).select("socket_id");
+      // console.log("to:", to);
       const from = await User.findById(data.from).select("socket_id");
 
       await FriendRequest.create({
@@ -30,12 +30,12 @@ const initializeSocketIO = (io) => {
 
       // for checking requests
       io.to(to.socket_id).emit("new-friend-request", {
-        message: "New Friend Received",
+        message: "New Friend Request Received!",
       });
 
       // for sending request
       io.to(from.socket_id).emit("request-sent", {
-        message: "Request Sent Successfully",
+        message: "Request Sent Successfully!",
       });
     });
 

@@ -8,6 +8,7 @@ const {
   searchNewFriends,
   getFriendRequests,
   getFriends,
+  getSentRequests,
 } = require("../controller/user.controller");
 const { User } = require("../models/user.model");
 const { verifyJWT } = require("../middlewares/auth.middlewares");
@@ -25,6 +26,7 @@ router.route("/me").get(userDetails);
 router.route("/search-new-friends").get(verifyJWT, searchNewFriends);
 router.route("/get-friend-requests").get(verifyJWT, getFriendRequests);
 router.route("/get-friends").get(verifyJWT, getFriends);
+router.route("/get-sent-requests").get(verifyJWT, getSentRequests);
 
 router.route("/delete").get(async (req, res) => {
   await User.deleteMany({});

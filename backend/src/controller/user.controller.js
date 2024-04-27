@@ -232,6 +232,14 @@ const getUsers = async (req, res, next) => {
 
 const searchNewFriends = async (req, res) => {
   try {
+    const sentRequests = await FriendRequest.find({ sender: req.user._id });
+    const friendRequests = await FriendRequest.find({
+      recipient: req.user._id,
+    });
+    // console.log("friendRequests:", friendRequests);
+    console.log("sentRequests:", sentRequests);
+    // console.log("req.user.friends:", req.user.friends);
+
     const new_friends = await User.aggregate([
       {
         $match: {
@@ -242,11 +250,14 @@ const searchNewFriends = async (req, res) => {
               },
             },
             { _id: { $nin: req.user.friends.map((id) => id) } },
+            { _id: { $nin: sentRequests.map((obj) => obj.recipient) } },
+            { _id: { $nin: friendRequests.map((obj) => obj.sender) } },
           ],
         },
       },
       {
         $project: {
+          _id: 1,
           name: 1,
           username: 1,
           email: 1,
@@ -265,11 +276,7 @@ const searchNewFriends = async (req, res) => {
 
 const getFriendRequests = async (req, res) => {
   try {
-    // const requests = await FriendRequest.find({
-    //   recipient: req.user._id,
-    // }).populate("sender", "_id name username");
-
-    const requests = await FriendRequest.aggregate([
+    const friendRequests = await FriendRequest.aggregate([
       {
         $match: {
           recipient: req.user._id,
@@ -284,21 +291,23 @@ const getFriendRequests = async (req, res) => {
         },
       },
       {
-        $project: {
-          sender: {
-            $arrayElemAt: ["$sender", 0],
-          },
+        $unwind: "$sender",
+      },
+      {
+        $replaceRoot: {
+          newRoot: "$sender",
         },
       },
       {
         $project: {
-          "sender._id": 1,
-          "sender.name": 1,
-          "sender.username": 1,
+          _id: 1,
+          name: 1,
+          username: 1,
+          avatar: 1,
         },
       },
     ]);
-    req.status(200).json({ requests });
+    res.status(200).json({ data: friendRequests });
   } catch (error) {
     console.log("error:", error);
     res.status(400).json(error);
@@ -338,7 +347,47 @@ const getFriends = async (req, res) => {
         },
       },
     ]);
-    req.status(200).json({ friends });
+    res.status(200).json({ friends });
+  } catch (error) {
+    console.log("error:", error);
+    res.status(400).json(error);
+  }
+};
+
+const getSentRequests = async (req, res) => {
+  try {
+    const sentRequests = await FriendRequest.aggregate([
+      {
+        $match: {
+          sender: req.user._id,
+        },
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "recipient",
+          foreignField: "_id",
+          as: "recipient",
+        },
+      },
+      {
+        $unwind: "$recipient",
+      },
+      {
+        $replaceRoot: {
+          newRoot: "$recipient",
+        },
+      },
+      {
+        $project: {
+          _id: 1,
+          name: 1,
+          username: 1,
+          avatar: 1,
+        },
+      },
+    ]);
+    res.status(200).json({ data: sentRequests });
   } catch (error) {
     console.log("error:", error);
     res.status(400).json(error);
@@ -355,4 +404,5 @@ module.exports = {
   searchNewFriends,
   getFriendRequests,
   getFriends,
+  getSentRequests,
 };
