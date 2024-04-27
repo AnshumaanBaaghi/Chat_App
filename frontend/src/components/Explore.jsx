@@ -1,5 +1,3 @@
-import { useSocket } from "@/socket/useSocket";
-import { exploreUsersList } from "@/utils/functions";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 
@@ -12,6 +10,7 @@ export const Explore = ({ arr }) => {
     console.log("request sent");
     socket.emit("friend_request", { to: receiver_id, from: user.userId });
   };
+
   return (
     <div>
       {arr &&

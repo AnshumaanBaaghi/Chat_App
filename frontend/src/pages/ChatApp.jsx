@@ -6,7 +6,6 @@ import {
   getSentRequests,
   getfriendRequests,
 } from "@/redux/actions/userActions";
-import { useSocket } from "@/socket/useSocket";
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
