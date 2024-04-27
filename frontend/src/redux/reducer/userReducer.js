@@ -27,6 +27,9 @@ export const userReducer = (state = initialVal, { type, payload }) => {
     case LOGOUT:
       return initialVal;
 
+    case GETFRIENDREQUEST:
+      return { ...state, friendRequests: payload };
+
     case GETNEWFRIENDS:
       return { ...state, newUsers: payload };
 

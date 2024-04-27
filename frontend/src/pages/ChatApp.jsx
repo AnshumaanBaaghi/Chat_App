@@ -22,6 +22,7 @@ export const ChatApp = () => {
     dispatch(connectSocket());
     dispatch(getNewFriends());
     dispatch(getSentRequests());
+    dispatch(getfriendRequests());
   }, []);
 
   useEffect(() => {
