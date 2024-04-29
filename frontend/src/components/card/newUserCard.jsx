@@ -11,7 +11,7 @@ export const NewUserCard = ({
       <div>{user.name}</div>
       <button
         className="bg-blue-300 py-1 px-3 rounded-md"
-        onClick={() => sendFriendRequest(socket, user._id, loggedInUser_id)}
+        onClick={() => sendFriendRequest(socket, user.userId, loggedInUser_id)}
       >
         Add
       </button>

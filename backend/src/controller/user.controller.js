@@ -252,7 +252,8 @@ const searchNewFriends = async (req, res) => {
       },
       {
         $project: {
-          _id: 1,
+          _id: 0,
+          userId: "$_id",
           name: 1,
           username: 1,
           email: 1,
@@ -289,15 +290,25 @@ const getFriendRequests = async (req, res) => {
       },
       {
         $replaceRoot: {
-          newRoot: "$sender",
+          newRoot: {
+            $mergeObjects: [
+              "$sender",
+              {
+                requestId: "$_id",
+                userId: "$sender._id",
+              },
+            ],
+          },
         },
       },
       {
         $project: {
-          _id: 1,
+          _id: 0,
           name: 1,
           username: 1,
           avatar: 1,
+          requestId: 1,
+          userId: 1,
         },
       },
     ]);
@@ -374,7 +385,8 @@ const getSentRequests = async (req, res) => {
       },
       {
         $project: {
-          _id: 1,
+          _id: 0,
+          userId: "$_id",
           name: 1,
           username: 1,
           avatar: 1,

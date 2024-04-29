@@ -25,7 +25,7 @@ const initializeSocketIO = (io) => {
 
       if (!to || !from) return;
 
-      await FriendRequest.create({
+      const request = await FriendRequest.create({
         sender: data.from,
         recipient: data.to,
       });
@@ -34,6 +34,7 @@ const initializeSocketIO = (io) => {
       io.to(to.socket_id).emit("new-friend-request", {
         message: "New Friend Request Received!",
         sentBy: data.from,
+        requestId: request._id,
       });
 
       // for sending request

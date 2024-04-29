@@ -17,18 +17,18 @@ export const Explore = ({ arr }) => {
         arr.map((el) =>
           el.type == "newUser" ? (
             <NewUserCard
-              key={el.user._id}
+              key={el.user.userId}
               socket={socket}
               user={el.user}
               loggedInUser_id={user.userId}
               sendFriendRequest={sendFriendRequest}
             />
           ) : el.type == "sentRequest" ? (
-            <SentRequestCard key={el.user._id} user={el.user} />
+            <SentRequestCard key={el.user.userId} user={el.user} />
           ) : el.type == "friendRequest" ? (
-            <FriendRequestCard key={el.user._id} user={el.user} />
+            <FriendRequestCard key={el.user.userId} user={el.user} />
           ) : el.type == "friend" ? (
-            <FriendCard key={el.user._id} user={el.user} />
+            <FriendCard key={el.user.userId} user={el.user} />
           ) : null
         )}
     </div>

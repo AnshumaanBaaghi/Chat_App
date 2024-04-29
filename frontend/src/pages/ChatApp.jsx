@@ -5,6 +5,7 @@ import {
   getNewFriends,
   getSentRequests,
   getfriendRequests,
+  updateFriendRequests,
   updateNewFriends,
   updateSentRequests,
 } from "@/redux/actions/userActions";
@@ -20,23 +21,41 @@ export const ChatApp = () => {
   const socket = useSelector((state) => state.socket.socket);
   const newUsers = useSelector((state) => state.user.newUsers);
   const sentRequests = useSelector((state) => state.user.sentRequests);
+  const friendRequests = useSelector((state) => state.user.friendRequests);
 
   const newUsersRef = useRef(null);
   newUsersRef.current = newUsers;
   const sentRequestsRef = useRef(null);
   sentRequestsRef.current = sentRequests;
+  const friendRequestsRef = useRef(null);
+  friendRequestsRef.current = friendRequests;
 
   const onRequestSent = (data) => {
     const updatedNewFriendsArray = [];
     const updatedSentRequests = sentRequestsRef.current || [];
     newUsersRef.current &&
       newUsersRef.current.forEach((el) =>
-        el._id !== data.sentTo
+        el.userId !== data.sentTo
           ? updatedNewFriendsArray.push(el)
           : updatedSentRequests.push(el)
       );
     dispatch(updateNewFriends(updatedNewFriendsArray));
     dispatch(updateSentRequests(updatedSentRequests));
+  };
+
+  const onReceivedNewRequest = (data) => {
+    // requestId;
+    console.log("new-friend-request:", data);
+    const updatedNewFriendsArray = [];
+    const updatedFriendRequests = friendRequestsRef.current || [];
+    newUsersRef.current &&
+      newUsersRef.current.forEach((el) =>
+        el.userId !== data.sentBy
+          ? updatedNewFriendsArray.push(el)
+          : updatedFriendRequests.push({ ...el, requestId: data.requestId })
+      );
+    dispatch(updateNewFriends(updatedNewFriendsArray));
+    dispatch(updateFriendRequests(updatedFriendRequests));
   };
 
   useEffect(() => {
@@ -53,9 +72,7 @@ export const ChatApp = () => {
     socket.on("connected", (data) => {
       console.log("connected...", data);
     });
-    socket.on(NEWFRIENDREQUEST, (data) => {
-      console.log("new-friend-request:", data);
-    });
+    socket.on(NEWFRIENDREQUEST, onReceivedNewRequest);
     socket.on(REQUESTSENT, onRequestSent);
     socket.on(REQUESTACCEPTED, (data) => {
       console.log("request-accepted:", data);

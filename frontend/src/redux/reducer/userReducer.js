@@ -7,6 +7,7 @@ import {
   GETFRIENDREQUEST,
   UPDATENEWFRIENDS,
   UPDATESENTREQUESTS,
+  UPDATEFRIENDREQUEST,
 } from "../actions/userActions";
 
 const initialVal = {
@@ -38,13 +39,14 @@ export const userReducer = (state = initialVal, { type, payload }) => {
     case GETSENTREQUESTS:
       return { ...state, sentRequests: payload };
 
-    case UPDATENEWFRIENDS: {
+    case UPDATENEWFRIENDS:
       return { ...state, newUsers: payload };
-    }
 
-    case UPDATESENTREQUESTS: {
+    case UPDATESENTREQUESTS:
       return { ...state, sentRequests: payload };
-    }
+
+    case UPDATEFRIENDREQUEST:
+      return { ...state, friendRequests: payload };
 
     default:
       return state;
