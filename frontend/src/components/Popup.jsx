@@ -5,22 +5,13 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Explore } from "@/components/Explore";
 import { Friends } from "@/components/Friends";
 import { useSelector } from "react-redux";
-import { modifyUsersList } from "@/utils/functions";
-
 export const Popup = () => {
   const newUsers = useSelector((state) => state.user.newUsers);
   const sentRequests = useSelector((state) => state.user.sentRequests);
   const friends = useSelector((state) => state.user.friends);
   const friendRequests = useSelector((state) => state.user.friendRequests);
 
-  const [exploreUsersList, setExploreUsersList] = useState([]);
   const [selectedTab, setSelectedTab] = useState("Explore");
-
-  useEffect(() => {
-    setExploreUsersList(
-      modifyUsersList(newUsers, friends, sentRequests, friendRequests)
-    );
-  }, [newUsers, friends, sentRequests, friendRequests]);
 
   return (
     <>
@@ -81,7 +72,12 @@ export const Popup = () => {
               transition={{ duration: 0.2 }}
             >
               {selectedTab === "Explore" ? (
-                <Explore arr={exploreUsersList} />
+                <Explore
+                  newUsers={newUsers}
+                  friends={friends}
+                  sentRequests={sentRequests}
+                  friendRequests={friendRequests}
+                />
               ) : selectedTab === "Requests" ? (
                 <FriendRequests arr={friendRequests} />
               ) : selectedTab === "Friends" ? (

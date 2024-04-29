@@ -49,8 +49,6 @@ export const ChatApp = () => {
   };
 
   const onReceivedNewRequest = (data) => {
-    // requestId;
-    console.log("new-friend-request:", data);
     const updatedNewFriendsArray = [];
     const updatedFriendRequests = friendRequestsRef.current || [];
     newUsersRef.current &&
@@ -64,7 +62,6 @@ export const ChatApp = () => {
   };
 
   const onRequestAccepted = (data) => {
-    console.log("request-accepted:", data);
     if (data.receiverId) {
       // When Someone has accepted your request
       const updatedSentRequests = [];
@@ -78,7 +75,7 @@ export const ChatApp = () => {
       dispatch(updateSentRequests(updatedSentRequests));
       dispatch(updateFriends(updatedFriends));
     } else if (data.senderId) {
-      // When You has accepted someone's request
+      // When You accepted someone's request
       const updatedFriendRequests = [];
       const updatedFriends = friendsRef.current || [];
       friendRequestsRef.current &&

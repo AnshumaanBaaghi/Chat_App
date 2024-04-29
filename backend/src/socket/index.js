@@ -53,14 +53,14 @@ const initializeSocketIO = (io) => {
       const sender = await User.findById(friend_request.sender);
       const receiver = await User.findById(friend_request.recipient);
 
-      // sender.friends.push(friend_request.recipient);
-      // receiver.friends.push(friend_request.sender);
+      sender.friends.push(friend_request.recipient);
+      receiver.friends.push(friend_request.sender);
 
-      // await sender.save({ new: true, validateModifiedOnly: true });
-      // await receiver.save({ new: true, validateModifiedOnly: true });
+      await sender.save({ new: true, validateModifiedOnly: true });
+      await receiver.save({ new: true, validateModifiedOnly: true });
 
       // deleting friend request
-      // await FriendRequest.findByIdAndDelete(data.request_id);
+      await FriendRequest.findByIdAndDelete(data.requestId);
 
       io.to(sender.socket_id).emit("request-accepted", {
         message: `Request Accepted By ${receiver.name}`,

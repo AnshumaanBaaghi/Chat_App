@@ -1,14 +1,10 @@
 import {
-  GETNEWFRIENDS,
   LOGIN,
   LOGOUT,
   UPDATEUSERDETAIL,
-  GETSENTREQUESTS,
-  GETFRIENDREQUEST,
   UPDATENEWFRIENDS,
   UPDATESENTREQUESTS,
   UPDATEFRIENDREQUEST,
-  GETFRIENDS,
   UPDATEFRIENDS,
 } from "../actions/userActions";
 
@@ -31,18 +27,6 @@ export const userReducer = (state = initialVal, { type, payload }) => {
 
     case LOGOUT:
       return initialVal;
-
-    case GETFRIENDREQUEST:
-      return { ...state, friendRequests: payload };
-
-    case GETFRIENDS:
-      return { ...state, friends: payload };
-
-    case GETNEWFRIENDS:
-      return { ...state, newUsers: payload };
-
-    case GETSENTREQUESTS:
-      return { ...state, sentRequests: payload };
 
     case UPDATENEWFRIENDS:
       return { ...state, newUsers: payload };

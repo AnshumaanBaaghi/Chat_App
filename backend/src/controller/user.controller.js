@@ -247,6 +247,7 @@ const searchNewFriends = async (req, res) => {
             { _id: { $nin: req.user.friends.map((id) => id) } },
             { _id: { $nin: sentRequests.map((obj) => obj.recipient) } },
             { _id: { $nin: friendRequests.map((obj) => obj.sender) } },
+            { isEmailVerified: true },
           ],
         },
       },
@@ -340,7 +341,8 @@ const getFriends = async (req, res) => {
       },
       {
         $project: {
-          _id: "$friendDetails._id",
+          _id: 0,
+          userId: "$friendDetails._id",
           name: "$friendDetails.name",
           username: "$friendDetails.username",
           email: "$friendDetails.email",
@@ -349,7 +351,7 @@ const getFriends = async (req, res) => {
       },
     ]);
 
-    res.status(200).json({ friends });
+    res.status(200).json({ data: friends });
   } catch (error) {
     console.log("error:", error);
     res.status(400).json(error);

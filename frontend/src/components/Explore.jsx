@@ -6,36 +6,39 @@ import { FriendRequestCard } from "@/components/card/friendRequestCard";
 import { FriendCard } from "@/components/card/friendCard";
 import { acceptFriendRequest, sendFriendRequest } from "@/socket";
 
-export const Explore = ({ arr }) => {
-  console.log("arr explore:", arr);
+export const Explore = ({
+  newUsers,
+  friends,
+  sentRequests,
+  friendRequests,
+}) => {
   const socket = useSelector((state) => state.socket.socket);
   const user = useSelector((state) => state.user.userDetail);
 
   return (
     <div>
-      {arr &&
-        arr.map((el) =>
-          el.type == "newUser" ? (
-            <NewUserCard
-              key={el.user.userId}
-              socket={socket}
-              user={el.user}
-              loggedInUser_id={user.userId}
-              sendFriendRequest={sendFriendRequest}
-            />
-          ) : el.type == "sentRequest" ? (
-            <SentRequestCard key={el.user.userId} user={el.user} />
-          ) : el.type == "friendRequest" ? (
-            <FriendRequestCard
-              key={el.user.userId}
-              user={el.user}
-              socket={socket}
-              acceptFriendRequest={acceptFriendRequest}
-            />
-          ) : el.type == "friend" ? (
-            <FriendCard key={el.user.userId} user={el.user} />
-          ) : null
-        )}
+      {newUsers &&
+        newUsers.map((el) => (
+          <NewUserCard
+            key={el.userId}
+            socket={socket}
+            user={el}
+            loggedInUser_id={user.userId}
+            sendFriendRequest={sendFriendRequest}
+          />
+        ))}
+      {friends && friends.map((el) => <FriendCard key={el.userId} user={el} />)}
+      {sentRequests &&
+        sentRequests.map((el) => <SentRequestCard key={el.userId} user={el} />)}
+      {friendRequests &&
+        friendRequests.map((el) => (
+          <FriendRequestCard
+            key={el.userId}
+            user={el}
+            socket={socket}
+            acceptFriendRequest={acceptFriendRequest}
+          />
+        ))}
     </div>
   );
 };
