@@ -38,7 +38,6 @@ export const Login = () => {
   const dispatch = useDispatch();
   const { toast } = useToast();
   const navigate = useNavigate();
-  console.log("isAuth:", isAuth);
 
   const form = useForm({
     resolver: zodResolver(FormSchema),
@@ -53,9 +52,7 @@ export const Login = () => {
     setIsLoading(true);
     try {
       const res = await loginUser(data);
-      console.log("res:", res);
       if (res?.data?.user) {
-        console.log("res.data.user:", res.data.user);
         const { name, email, username, avatar, _id } = res.data.user;
         dispatch(
           updateUserDetail({ name, email, username, avatar, userId: _id })
@@ -92,7 +89,6 @@ export const Login = () => {
         try {
           const user = await userDetails();
           if (user?.data?.user) {
-            console.log("user.data.user:", user.data.user);
             const { name, email, username, avatar, _id } = user.data.user;
             dispatch(
               updateUserDetail({ name, email, username, avatar, userId: _id })

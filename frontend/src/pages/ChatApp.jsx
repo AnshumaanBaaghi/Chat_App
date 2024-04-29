@@ -5,8 +5,10 @@ import {
   getNewFriends,
   getSentRequests,
   getfriendRequests,
+  updateNewFriends,
+  updateSentRequests,
 } from "@/redux/actions/userActions";
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 const NEWFRIENDREQUEST = "new-friend-request";
@@ -16,6 +18,26 @@ const REQUESTACCEPTED = "request-accepted";
 export const ChatApp = () => {
   const dispatch = useDispatch();
   const socket = useSelector((state) => state.socket.socket);
+  const newUsers = useSelector((state) => state.user.newUsers);
+  const sentRequests = useSelector((state) => state.user.sentRequests);
+
+  const newUsersRef = useRef(null);
+  newUsersRef.current = newUsers;
+  const sentRequestsRef = useRef(null);
+  sentRequestsRef.current = sentRequests;
+
+  const onRequestSent = (data) => {
+    const updatedNewFriendsArray = [];
+    const updatedSentRequests = sentRequestsRef.current || [];
+    newUsersRef.current &&
+      newUsersRef.current.forEach((el) =>
+        el._id !== data.sentTo
+          ? updatedNewFriendsArray.push(el)
+          : updatedSentRequests.push(el)
+      );
+    dispatch(updateNewFriends(updatedNewFriendsArray));
+    dispatch(updateSentRequests(updatedSentRequests));
+  };
 
   useEffect(() => {
     dispatch(connectSocket());
@@ -25,7 +47,6 @@ export const ChatApp = () => {
   }, []);
 
   useEffect(() => {
-    console.log("chatapp socket:", socket);
     if (!socket) {
       return;
     }
@@ -35,9 +56,7 @@ export const ChatApp = () => {
     socket.on(NEWFRIENDREQUEST, (data) => {
       console.log("new-friend-request:", data);
     });
-    socket.on(REQUESTSENT, (data) => {
-      console.log("request-sent:", data);
-    });
+    socket.on(REQUESTSENT, onRequestSent);
     socket.on(REQUESTACCEPTED, (data) => {
       console.log("request-accepted:", data);
     });

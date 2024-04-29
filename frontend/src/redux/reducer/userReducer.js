@@ -5,13 +5,15 @@ import {
   UPDATEUSERDETAIL,
   GETSENTREQUESTS,
   GETFRIENDREQUEST,
+  UPDATENEWFRIENDS,
+  UPDATESENTREQUESTS,
 } from "../actions/userActions";
 
 const initialVal = {
-  isAuth: false,
+  isAuth: null,
   userDetail: { name: "", email: "", username: "", avatar: "", userId: "" },
   friends: [],
-  newUsers: [],
+  newUsers: ["hello"],
   friendRequests: [],
   sentRequests: [],
 };
@@ -35,6 +37,14 @@ export const userReducer = (state = initialVal, { type, payload }) => {
 
     case GETSENTREQUESTS:
       return { ...state, sentRequests: payload };
+
+    case UPDATENEWFRIENDS: {
+      return { ...state, newUsers: payload };
+    }
+
+    case UPDATESENTREQUESTS: {
+      return { ...state, sentRequests: payload };
+    }
 
     default:
       return state;

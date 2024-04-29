@@ -4,16 +4,12 @@ import { NewUserCard } from "@/components/card/newUserCard";
 import { SentRequestCard } from "@/components/card/sentRequestCard";
 import { FriendRequestCard } from "@/components/card/friendRequestCard";
 import { FriendCard } from "@/components/card/friendCard";
+import { sendFriendRequest } from "@/socket";
 
 export const Explore = ({ arr }) => {
-  console.log("arr:", arr);
+  console.log("arr explore:", arr);
   const socket = useSelector((state) => state.socket.socket);
   const user = useSelector((state) => state.user.userDetail);
-
-  const sendFriendRequest = (receiver_id) => {
-    console.log("request sent");
-    socket.emit("friend_request", { to: receiver_id, from: user.userId });
-  };
 
   return (
     <div>
@@ -22,7 +18,9 @@ export const Explore = ({ arr }) => {
           el.type == "newUser" ? (
             <NewUserCard
               key={el.user._id}
+              socket={socket}
               user={el.user}
+              loggedInUser_id={user.userId}
               sendFriendRequest={sendFriendRequest}
             />
           ) : el.type == "sentRequest" ? (

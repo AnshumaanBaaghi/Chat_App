@@ -38,7 +38,6 @@ export const Otp = () => {
     }
   };
   useEffect(() => {
-    console.log("render");
     sendOrResendOtp();
   }, []);
   return (

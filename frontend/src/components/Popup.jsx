@@ -14,12 +14,6 @@ export const Popup = () => {
   const friendRequests = useSelector((state) => state.user.friendRequests);
 
   const [exploreUsersList, setExploreUsersList] = useState([]);
-  console.log("exploreUsersList:", exploreUsersList);
-  // const [tabs] = useState([
-  //   { comp: Explore, label: "Explore", arr: exploreUsersList },
-  //   { comp: FriendRequests, label: "Requests", arr: friendRequests },
-  //   { comp: Friends, label: "Friends", arr: friends },
-  // ]);
   const [selectedTab, setSelectedTab] = useState("Explore");
 
   useEffect(() => {

@@ -10,18 +10,20 @@ const initializeSocketIO = (io) => {
     const token = cookies?.[TOKEN_NAME];
     if (!token) return; // Have to Add error here
     const loggedInUser = jwt.verify(token, process.env.JWT_SECERETKEY);
-    console.log("loggedInUser:", loggedInUser);
     if (!loggedInUser) return; // Have to Add error here
     const socket_id = socket.id;
     await User.findByIdAndUpdate(loggedInUser._id, { socket_id });
     // if (!user) return; // Have to Add error here
 
     socket.on("friend_request", async (data) => {
+      console.log("data:", data);
       // data.to contains userID;
 
       const to = await User.findById(data.to).select("socket_id");
       // console.log("to:", to);
       const from = await User.findById(data.from).select("socket_id");
+
+      if (!to || !from) return;
 
       await FriendRequest.create({
         sender: data.from,
@@ -31,11 +33,13 @@ const initializeSocketIO = (io) => {
       // for checking requests
       io.to(to.socket_id).emit("new-friend-request", {
         message: "New Friend Request Received!",
+        sentBy: data.from,
       });
 
       // for sending request
       io.to(from.socket_id).emit("request-sent", {
         message: "Request Sent Successfully!",
+        sentTo: data.to,
       });
     });
 

@@ -46,7 +46,6 @@ const register = async (req, res) => {
       password: hashedPassword,
       username,
     });
-    console.log("user:", user);
 
     res.send({
       status: "success",
@@ -189,7 +188,6 @@ const verifyOtp = async (req, res) => {
     user.isEmailVerified = true;
     await user.save();
     const token = user.generateAccessToken();
-    console.log("token:", token);
     res
       .status(200)
       .cookie(TOKEN_NAME, token)
@@ -236,9 +234,6 @@ const searchNewFriends = async (req, res) => {
     const friendRequests = await FriendRequest.find({
       recipient: req.user._id,
     });
-    // console.log("friendRequests:", friendRequests);
-    console.log("sentRequests:", sentRequests);
-    // console.log("req.user.friends:", req.user.friends);
 
     const new_friends = await User.aggregate([
       {
@@ -266,7 +261,6 @@ const searchNewFriends = async (req, res) => {
       },
     ]);
 
-    console.log("new_friends:", new_friends);
     res.status(200).json({ data: new_friends });
   } catch (error) {
     console.error("Error searching for new friends:", error);

@@ -8,6 +8,5 @@ const getSocket = () => {
 
 export const connectSocket = () => {
   const socket = getSocket();
-  console.log("reducer:", socket);
   return { type: "SOCKET", payload: socket };
 };

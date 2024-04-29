@@ -3,7 +3,6 @@
 import { friendRequests, friends, newFriends, sentRequests } from "@/api";
 
 export const UPDATEUSERDETAIL = "UPDATEUSERDETAIL";
-export const GETSENTREQUESTS = "GETSENTREQUESTS";
 export const LOGIN = "LOGIN";
 export const LOGOUT = "LOGOUT";
 
@@ -20,14 +19,19 @@ export const logout = () => {
 
 // Users
 export const GETNEWFRIENDS = "GETNEWFRIENDS";
+export const GETSENTREQUESTS = "GETSENTREQUESTS";
 export const GETFRIENDS = "GETFRIENDS";
 export const GETFRIENDREQUEST = "GETFRIENDREQUEST";
+
+export const UPDATENEWFRIENDS = "UPDATENEWFRIENDS";
+export const UPDATESENTREQUESTS = "UPDATESENTREQUESTS";
+export const UPDATEFRIENDS = "UPDATEFRIENDS";
+export const UPDATEFRIENDREQUEST = "UPDATEFRIENDREQUEST";
 
 export const getNewFriends = () => {
   return async (dispatch) => {
     try {
       const new_friends = await newFriends();
-      console.log("new_friends:", new_friends.data.data);
       dispatch({ type: GETNEWFRIENDS, payload: new_friends.data.data });
     } catch (error) {}
   };
@@ -46,8 +50,8 @@ export const getSentRequests = () => {
 
 export const getfriends = () => async (dispatch) => {
   try {
-    const friends = await friends();
-    dispatch({ type: GETFRIENDS, payload: friends.data.data });
+    const friendsArr = await friends();
+    dispatch({ type: GETFRIENDS, payload: friendsArr.data.data });
   } catch (error) {}
 };
 
@@ -62,3 +66,13 @@ export const getfriendRequests = () => async (dispatch) => {
     console.log("error:", error);
   }
 };
+
+export const updateNewFriends = (payload) => {
+  return { type: UPDATENEWFRIENDS, payload };
+};
+export const updateSentRequests = (payload) => {
+  return { type: UPDATESENTREQUESTS, payload };
+};
+// export const updateNewFriends = (payload) => {
+//   return { type: UPDATENEWFRIENDS, payload };
+// };

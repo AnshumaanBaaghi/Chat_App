@@ -25,7 +25,6 @@ export const OtpComponent = ({
     const combinedOtp = newOtp.reduce((acc, el) => {
       return el == " " ? acc : acc + el;
     }, "");
-    console.log("combinedOtp:", combinedOtp, combinedOtp.length);
     if (combinedOtp.length === length) {
       onOtpSubmit(combinedOtp);
     }
