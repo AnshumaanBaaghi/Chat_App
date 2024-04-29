@@ -47,27 +47,29 @@ const initializeSocketIO = (io) => {
     socket.on("accept-request", async (data) => {
       console.log("data:", data);
 
-      const friend_request = await FriendRequest.findById(data.request_id); // get the document from FriendRequest Collection
+      const friend_request = await FriendRequest.findById(data.requestId); // get the document from FriendRequest Collection
       console.log("friend_request:", friend_request);
-
+      if (!friend_request) return;
       const sender = await User.findById(friend_request.sender);
       const receiver = await User.findById(friend_request.recipient);
 
-      sender.friends.push(friend_request.recipient);
-      receiver.friends.push(friend_request.sender);
+      // sender.friends.push(friend_request.recipient);
+      // receiver.friends.push(friend_request.sender);
 
-      await sender.save({ new: true, validateModifiedOnly: true });
-      await receiver.save({ new: true, validateModifiedOnly: true });
+      // await sender.save({ new: true, validateModifiedOnly: true });
+      // await receiver.save({ new: true, validateModifiedOnly: true });
 
       // deleting friend request
-      await FriendRequest.findByIdAndDelete(data.request_id);
+      // await FriendRequest.findByIdAndDelete(data.request_id);
 
       io.to(sender.socket_id).emit("request-accepted", {
-        message: "Request Accepted",
+        message: `Request Accepted By ${receiver.name}`,
+        receiverId: receiver._id,
       });
 
       io.to(receiver.socket_id).emit("request-accepted", {
-        message: "Request Accepted",
+        message: `You have Accepted Friend Request of ${sender.name}`,
+        senderId: sender._id,
       });
     });
 

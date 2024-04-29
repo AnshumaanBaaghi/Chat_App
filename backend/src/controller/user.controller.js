@@ -336,22 +336,19 @@ const getFriends = async (req, res) => {
         },
       },
       {
+        $unwind: "$friendDetails",
+      },
+      {
         $project: {
-          friendDetails: {
-            $map: {
-              input: "$friendDetails",
-              as: "friend",
-              in: {
-                name: "$$friend.name",
-                username: "$$friend.username",
-                email: "$$friend.email",
-                avatar: "$$friend.avatar",
-              },
-            },
-          },
+          _id: "$friendDetails._id",
+          name: "$friendDetails.name",
+          username: "$friendDetails.username",
+          email: "$friendDetails.email",
+          avatar: "$friendDetails.avatar",
         },
       },
     ]);
+
     res.status(200).json({ friends });
   } catch (error) {
     console.log("error:", error);

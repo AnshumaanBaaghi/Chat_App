@@ -51,8 +51,11 @@ export const getSentRequests = () => {
 export const getfriends = () => async (dispatch) => {
   try {
     const friendsArr = await friends();
-    dispatch({ type: GETFRIENDS, payload: friendsArr.data.data });
-  } catch (error) {}
+    console.log("friendsArr:", friendsArr.data);
+    // dispatch({ type: GETFRIENDS, payload: friendsArr.data.data });
+  } catch (error) {
+    console.log("error:", error);
+  }
 };
 
 export const getfriendRequests = () => async (dispatch) => {
@@ -77,6 +80,6 @@ export const updateSentRequests = (payload) => {
 export const updateFriendRequests = (payload) => {
   return { type: UPDATEFRIENDREQUEST, payload };
 };
-// export const updateNewFriends = (payload) => {
-//   return { type: UPDATENEWFRIENDS, payload };
-// };
+export const updateFriends = (payload) => {
+  return { type: UPDATEFRIENDS, payload };
+};

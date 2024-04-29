@@ -4,4 +4,7 @@ export const sendFriendRequest = (socket, receiver_id, loggedInUser_id) => {
   socket.emit("friend_request", { to: receiver_id, from: loggedInUser_id });
 };
 
-export const acceptFriendRequest = () => {};
+export const acceptFriendRequest = (socket, requestId) => {
+  console.log("request accepted");
+  socket.emit("accept-request", { requestId });
+};

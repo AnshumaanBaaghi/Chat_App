@@ -4,7 +4,7 @@ import { NewUserCard } from "@/components/card/newUserCard";
 import { SentRequestCard } from "@/components/card/sentRequestCard";
 import { FriendRequestCard } from "@/components/card/friendRequestCard";
 import { FriendCard } from "@/components/card/friendCard";
-import { sendFriendRequest } from "@/socket";
+import { acceptFriendRequest, sendFriendRequest } from "@/socket";
 
 export const Explore = ({ arr }) => {
   console.log("arr explore:", arr);
@@ -26,7 +26,12 @@ export const Explore = ({ arr }) => {
           ) : el.type == "sentRequest" ? (
             <SentRequestCard key={el.user.userId} user={el.user} />
           ) : el.type == "friendRequest" ? (
-            <FriendRequestCard key={el.user.userId} user={el.user} />
+            <FriendRequestCard
+              key={el.user.userId}
+              user={el.user}
+              socket={socket}
+              acceptFriendRequest={acceptFriendRequest}
+            />
           ) : el.type == "friend" ? (
             <FriendCard key={el.user.userId} user={el.user} />
           ) : null

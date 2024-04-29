@@ -8,6 +8,8 @@ import {
   UPDATENEWFRIENDS,
   UPDATESENTREQUESTS,
   UPDATEFRIENDREQUEST,
+  GETFRIENDS,
+  UPDATEFRIENDS,
 } from "../actions/userActions";
 
 const initialVal = {
@@ -33,6 +35,9 @@ export const userReducer = (state = initialVal, { type, payload }) => {
     case GETFRIENDREQUEST:
       return { ...state, friendRequests: payload };
 
+    case GETFRIENDS:
+      return { ...state, friends: payload };
+
     case GETNEWFRIENDS:
       return { ...state, newUsers: payload };
 
@@ -47,6 +52,9 @@ export const userReducer = (state = initialVal, { type, payload }) => {
 
     case UPDATEFRIENDREQUEST:
       return { ...state, friendRequests: payload };
+
+    case UPDATEFRIENDS:
+      return { ...state, friends: payload };
 
     default:
       return state;

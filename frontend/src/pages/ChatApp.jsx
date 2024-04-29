@@ -5,7 +5,9 @@ import {
   getNewFriends,
   getSentRequests,
   getfriendRequests,
+  getfriends,
   updateFriendRequests,
+  updateFriends,
   updateNewFriends,
   updateSentRequests,
 } from "@/redux/actions/userActions";
@@ -22,6 +24,7 @@ export const ChatApp = () => {
   const newUsers = useSelector((state) => state.user.newUsers);
   const sentRequests = useSelector((state) => state.user.sentRequests);
   const friendRequests = useSelector((state) => state.user.friendRequests);
+  const friends = useSelector((state) => state.user.friends);
 
   const newUsersRef = useRef(null);
   newUsersRef.current = newUsers;
@@ -29,6 +32,8 @@ export const ChatApp = () => {
   sentRequestsRef.current = sentRequests;
   const friendRequestsRef = useRef(null);
   friendRequestsRef.current = friendRequests;
+  const friendsRef = useRef(null);
+  friendsRef.current = friends;
 
   const onRequestSent = (data) => {
     const updatedNewFriendsArray = [];
@@ -58,11 +63,44 @@ export const ChatApp = () => {
     dispatch(updateFriendRequests(updatedFriendRequests));
   };
 
+  const onRequestAccepted = (data) => {
+    console.log("request-accepted:", data);
+    if (data.receiverId) {
+      // When Someone has accepted your request
+      const updatedSentRequests = [];
+      const updatedFriends = friendsRef.current || [];
+      sentRequestsRef.current &&
+        sentRequestsRef.current.forEach((el) =>
+          el.userId !== data.receiverId
+            ? updatedSentRequests.push(el)
+            : updatedFriends.push(el)
+        );
+      dispatch(updateSentRequests(updatedSentRequests));
+      dispatch(updateFriends(updatedFriends));
+    } else if (data.senderId) {
+      // When You has accepted someone's request
+      const updatedFriendRequests = [];
+      const updatedFriends = friendsRef.current || [];
+      friendRequestsRef.current &&
+        friendRequestsRef.current.forEach((el) => {
+          if (el.userId !== data.senderId) {
+            delete el.requestId;
+            updatedFriendRequests.push(el);
+          } else {
+            updatedFriends.push(el);
+          }
+        });
+      dispatch(updateFriendRequests(updatedFriendRequests));
+      dispatch(updateFriends(updatedFriends));
+    }
+  };
+
   useEffect(() => {
     dispatch(connectSocket());
     dispatch(getNewFriends());
     dispatch(getSentRequests());
     dispatch(getfriendRequests());
+    dispatch(getfriends());
   }, []);
 
   useEffect(() => {
@@ -74,9 +112,7 @@ export const ChatApp = () => {
     });
     socket.on(NEWFRIENDREQUEST, onReceivedNewRequest);
     socket.on(REQUESTSENT, onRequestSent);
-    socket.on(REQUESTACCEPTED, (data) => {
-      console.log("request-accepted:", data);
-    });
+    socket.on(REQUESTACCEPTED, onRequestAccepted);
 
     return () => {
       socket.off("new-friend-request");
