@@ -4,7 +4,10 @@ import { FriendRequests } from "@/components/FriendRequests";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Explore } from "@/components/Explore";
 import { Friends } from "@/components/Friends";
+import { Input } from "@/components/ui/input";
 import { useSelector } from "react-redux";
+import { getFilteredArray } from "@/utils/functions";
+
 export const Popup = () => {
   const newUsers = useSelector((state) => state.user.newUsers);
   const sentRequests = useSelector((state) => state.user.sentRequests);
@@ -12,6 +15,18 @@ export const Popup = () => {
   const friendRequests = useSelector((state) => state.user.friendRequests);
 
   const [selectedTab, setSelectedTab] = useState("Explore");
+  const [query, setQuery] = useState("");
+  const [newUsersArray, setNewUsersArray] = useState([]);
+  const [sentRequestsArray, setSentRequestsArray] = useState([]);
+  const [friendsArray, setFriendsArray] = useState([]);
+  const [friendRequestsArray, setFriendRequestsArray] = useState([]);
+
+  useEffect(() => {
+    setNewUsersArray(getFilteredArray(query, newUsers));
+    setSentRequestsArray(getFilteredArray(query, sentRequests));
+    setFriendsArray(getFilteredArray(query, friends));
+    setFriendRequestsArray(getFilteredArray(query, friendRequests));
+  }, [query, newUsers, sentRequests, friends, friendRequests]);
 
   return (
     <>
@@ -62,7 +77,13 @@ export const Popup = () => {
             </li>
           </ul>
         </nav>
-        <ScrollArea className="flex flex-grow p-2">
+        <div className="py-2 px-3">
+          <Input
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Search..."
+          />
+        </div>
+        <ScrollArea className="flex flex-grow py-2 px-3">
           <AnimatePresence mode="wait">
             <motion.div
               key={selectedTab ? selectedTab.label : "empty"}
@@ -73,15 +94,15 @@ export const Popup = () => {
             >
               {selectedTab === "Explore" ? (
                 <Explore
-                  newUsers={newUsers}
-                  friends={friends}
-                  sentRequests={sentRequests}
-                  friendRequests={friendRequests}
+                  newUsers={newUsersArray}
+                  friends={friendsArray}
+                  sentRequests={sentRequestsArray}
+                  friendRequests={friendRequestsArray}
                 />
               ) : selectedTab === "Requests" ? (
-                <FriendRequests arr={friendRequests} />
+                <FriendRequests arr={friendRequestsArray} />
               ) : selectedTab === "Friends" ? (
-                <Friends arr={friends} />
+                <Friends arr={friendsArray} />
               ) : (
                 "😋"
               )}

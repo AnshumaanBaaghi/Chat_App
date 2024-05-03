@@ -1,11 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import { NewUserCard } from "@/components/card/newUserCard";
 import { SentRequestCard } from "@/components/card/sentRequestCard";
 import { FriendRequestCard } from "@/components/card/friendRequestCard";
 import { FriendCard } from "@/components/card/friendCard";
 import { acceptFriendRequest, sendFriendRequest } from "@/socket";
-import { Input } from "@/components/ui/input";
 import { getFilteredArray } from "@/utils/functions";
 
 export const Explore = ({
@@ -16,13 +15,11 @@ export const Explore = ({
 }) => {
   const socket = useSelector((state) => state.socket.socket);
   const user = useSelector((state) => state.user.userDetail);
-  const [query, setQuery] = useState("");
 
   return (
     <div>
-      <Input onChange={(e) => setQuery(e.target.value)} />
       {newUsers &&
-        getFilteredArray(query, newUsers).map((el) => (
+        newUsers.map((el) => (
           <NewUserCard
             key={el.userId}
             socket={socket}
@@ -32,11 +29,9 @@ export const Explore = ({
           />
         ))}
       {sentRequests &&
-        getFilteredArray(query, sentRequests).map((el) => (
-          <SentRequestCard key={el.userId} user={el} />
-        ))}
+        sentRequests.map((el) => <SentRequestCard key={el.userId} user={el} />)}
       {friendRequests &&
-        getFilteredArray(query, friendRequests).map((el) => (
+        friendRequests.map((el) => (
           <FriendRequestCard
             key={el.userId}
             user={el}
@@ -44,10 +39,11 @@ export const Explore = ({
             acceptFriendRequest={acceptFriendRequest}
           />
         ))}
-      {friends &&
-        getFilteredArray(query, friends).map((el) => (
-          <FriendCard key={el.userId} user={el} />
-        ))}
+      {friends && friends.map((el) => <FriendCard key={el.userId} user={el} />)}
+      {newUsers?.length == 0 &&
+        sentRequests?.length == 0 &&
+        friendRequests?.length == 0 &&
+        friends?.length == 0 && <>Nothing to Explore</>}
     </div>
   );
 };
