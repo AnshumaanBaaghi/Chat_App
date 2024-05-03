@@ -1,21 +1,22 @@
 import React from "react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { ReactIcon } from "../ReactIcon";
+import { FaCircleUser } from "react-icons/fa6";
 
 export const Chat = () => {
   return (
     <div className="px-3">
       <div className="flex gap-3 cursor-pointer border-b  border-b-blue-500 py-3">
+        <Avatar>
+          <AvatarImage src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSX4bPpNmnBUF-JKHYe7g2joB4kJOwuKnp98A&usqp=CAU" />
+          <AvatarFallback>
+            <ReactIcon color="grey" size="100%">
+              <FaCircleUser />
+            </ReactIcon>
+          </AvatarFallback>
+        </Avatar>
         <div
-          className="relative overflow-hidden bg-gray-200 rounded-full"
-          style={{ paddingTop: "12%", width: "12%" }}
-        >
-          <img
-            className="w-full h-full object-cover absolute top-0 left-0"
-            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSX4bPpNmnBUF-JKHYe7g2joB4kJOwuKnp98A&usqp=CAU"
-            alt="Your Image"
-          />
-        </div>
-        <div
-          className="  box-border flex flex-col justify-between"
+          className="box-border flex flex-col justify-between"
           style={{ width: "88%" }}
         >
           <div className="flex justify-between  items-center">

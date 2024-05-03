@@ -3,7 +3,6 @@ import { IoSearchOutline } from "react-icons/io5";
 import { Chat } from "./Chat";
 import { HiUserGroup } from "react-icons/hi2";
 import { FaCircleUser } from "react-icons/fa6";
-import { IconContext } from "react-icons";
 import { ReactIcon } from "../ReactIcon";
 import {
   Dialog,
