@@ -1,9 +1,6 @@
-import React, { useState } from "react";
 import { FriendRequestCard } from "@/components/card/friendRequestCard";
-import { getFilteredArray } from "@/utils/functions";
 
 export const FriendRequests = ({ arr }) => {
-  const [query, setQuery] = useState("");
   return (
     <div>
       {arr?.length > 0 ? (

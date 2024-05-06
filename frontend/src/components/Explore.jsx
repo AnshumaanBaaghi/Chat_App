@@ -1,11 +1,9 @@
-import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import { NewUserCard } from "@/components/card/newUserCard";
 import { SentRequestCard } from "@/components/card/sentRequestCard";
 import { FriendRequestCard } from "@/components/card/friendRequestCard";
 import { FriendCard } from "@/components/card/friendCard";
 import { acceptFriendRequest, sendFriendRequest } from "@/socket";
-import { getFilteredArray } from "@/utils/functions";
 
 export const Explore = ({
   newUsers,
