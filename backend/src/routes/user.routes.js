@@ -13,6 +13,7 @@ const {
 const { User } = require("../models/user.model");
 const { verifyJWT } = require("../middlewares/auth.middlewares");
 const { FriendRequest } = require("../models/friendRequest.model");
+const { Chat } = require("../models/chat/chat.model");
 const router = Router();
 
 router.route("/").get((req, res) => {
@@ -30,7 +31,7 @@ router.route("/get-friends").get(verifyJWT, getFriends);
 router.route("/get-sent-requests").get(verifyJWT, getSentRequests);
 
 router.route("/delete").get(async (req, res) => {
-  await FriendRequest.deleteMany({});
+  await Chat.deleteMany({});
   res.send("deleted");
 });
 

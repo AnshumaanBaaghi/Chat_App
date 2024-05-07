@@ -5,6 +5,7 @@ const cors = require("cors");
 const { rateLimit } = require("express-rate-limit");
 const mongoSanitize = require("express-mongo-sanitize");
 const userRoute = require("./routes/user.routes");
+const chatRouter = require("./routes/chat.routes");
 const { Server } = require("socket.io");
 const { initializeSocketIO } = require("./socket");
 
@@ -42,6 +43,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/user", userRoute);
+app.use("/chat", chatRouter);
 
 initializeSocketIO(io);
 

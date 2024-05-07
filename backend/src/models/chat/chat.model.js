@@ -4,7 +4,7 @@ const chatSchema = new mongoose.Schema(
   {
     name: { type: String, required: true },
     isGroup: { type: Boolean, default: false },
-    participents: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+    participants: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
     latestMessage: { type: mongoose.Schema.Types.ObjectId, ref: "Message" },
     admin: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
   },
@@ -14,3 +14,5 @@ const chatSchema = new mongoose.Schema(
 );
 
 const Chat = new mongoose.model("Chat", chatSchema);
+
+module.exports = { Chat };
