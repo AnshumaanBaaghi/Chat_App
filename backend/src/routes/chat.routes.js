@@ -4,6 +4,9 @@ const {
   createOrGetOneOnOneChat,
   getAllChats,
   createGroupChat,
+  getGroupDetails,
+  renameGroupChat,
+  deleteGroupChat,
 } = require("../controller/chat.controller");
 
 const router = Router();
@@ -11,6 +14,11 @@ router.use(verifyJWT);
 
 router.route("/").get(getAllChats); //For getting all chats of a loggedin user
 router.route("/chat").post(createOrGetOneOnOneChat); // For creating or accessing one-on-one chat
-router.route("/group/create").post(createGroupChat);
+router.route("/group").post(createGroupChat); // for creating Group chat
+router
+  .route("/group/:chatId")
+  .get(getGroupDetails)
+  .patch(renameGroupChat)
+  .delete(deleteGroupChat);
 
 module.exports = router;

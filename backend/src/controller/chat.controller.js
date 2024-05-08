@@ -244,4 +244,158 @@ const createGroupChat = async (req, res) => {
   return res.status(201).json({ message: "Group Created", data: createdGroup });
 };
 
-module.exports = { createOrGetOneOnOneChat, getAllChats, createGroupChat };
+const getGroupDetails = async (req, res) => {
+  const { chatId } = req.params;
+
+  const chat = await Chat.aggregate([
+    { $match: { _id: new mongoose.Types.ObjectId(chatId) } },
+    {
+      $lookup: {
+        from: "users",
+        localField: "participants",
+        foreignField: "_id",
+        as: "participants",
+        pipeline: [
+          {
+            $project: { _id: 1, name: 1, username: 1, avatar: 1 },
+          },
+        ],
+      },
+    },
+    {
+      $lookup: {
+        from: "messages",
+        localField: "latestMessage",
+        foreignField: "_id",
+        as: "latestMessage",
+        pipeline: [
+          {
+            $lookup: {
+              from: "users",
+              localField: "sender",
+              foreignField: "_id",
+              as: "sender",
+              pipeline: [
+                {
+                  $project: { _id: 1, username: 1, name: 1, avatar: 1 },
+                },
+              ],
+            },
+          },
+          {
+            $addFields: {
+              sender: { $first: "$sender" },
+            },
+          },
+        ],
+      },
+    },
+  ]);
+  if (!chat[0]) {
+    return res.status(400).json({ message: "Group chat does not exist" });
+  }
+  res.status(200).json({ message: "Details", data: chat[0] });
+};
+
+const renameGroupChat = async (req, res) => {
+  const { chatId } = req.params;
+  const { name } = req.body;
+
+  const groupChat = await Chat.findOne({
+    _id: new mongoose.Types.ObjectId(chatId),
+    isGroup: true,
+  });
+
+  if (!groupChat) {
+    return res.status(400).json({ message: "Group Doesn't exist" });
+  }
+
+  if (groupChat.admin?.toString() !== req.user._id?.toString()) {
+    return res.status(400).json({ message: "You are not an admin" });
+  }
+
+  const updatedGroupChat = await Chat.findByIdAndUpdate(
+    chatId,
+    { name },
+    { new: true }
+  );
+  return res
+    .status(200)
+    .json({ message: "Group Name Updated", data: updatedGroupChat });
+};
+const deleteGroupChat = async (req, res) => {
+  const { chatId } = req.params;
+  const groupChat = await Chat.aggregate([
+    {
+      $match: {
+        _id: new mongoose.Types.ObjectId(chatId),
+        isGroup: true,
+      },
+    },
+    {
+      $lookup: {
+        from: "users",
+        localField: "participants",
+        foreignField: "_id",
+        as: "participants",
+        pipeline: [
+          {
+            $project: { _id: 1, name: 1, username: 1, avatar: 1 },
+          },
+        ],
+      },
+    },
+    {
+      $lookup: {
+        from: "messages",
+        localField: "latestMessage",
+        foreignField: "_id",
+        as: "latestMessage",
+        pipeline: [
+          {
+            $lookup: {
+              from: "users",
+              localField: "sender",
+              foreignField: "_id",
+              as: "sender",
+              pipeline: [
+                {
+                  $project: { _id: 1, username: 1, name: 1, avatar: 1 },
+                },
+              ],
+            },
+          },
+          {
+            $addFields: {
+              sender: { $first: "$sender" },
+            },
+          },
+        ],
+      },
+    },
+  ]);
+
+  const chat = groupChat[0];
+
+  if (!chat) {
+    return res.status(400).json({ message: "Group chat does not exist" });
+  }
+
+  // check if the user who is deleting is the group admin
+  if (chat.admin?.toString() !== req.user._id?.toString()) {
+    return res.status(400).json({ message: "Only admin can delete the group" });
+  }
+
+  await Chat.findByIdAndDelete(chatId);
+  // TODO: Have to Remove Messages of that group
+  return res.status(200).json({ message: "Group Deleted successfully" });
+};
+
+module.exports = {
+  createOrGetOneOnOneChat,
+  getAllChats,
+  createGroupChat,
+  getGroupDetails,
+  renameGroupChat,
+  deleteGroupChat,
+};
