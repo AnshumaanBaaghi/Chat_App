@@ -1,9 +1,69 @@
 const mongoose = require("mongoose");
 const { Chat } = require("../models/chat/chat.model");
 
-const getOrCreateOneOnOneChat = async (req, res) => {
+const getAllChats = async (req, res) => {
+  try {
+    const chats = await Chat.aggregate([
+      {
+        $match: {
+          participants: { $elemMatch: { $eq: req.user._id } },
+        },
+      },
+      {
+        $sort: {
+          updatedAt: -1,
+        },
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "participants",
+          foreignField: "_id",
+          as: "participants",
+          pipeline: [
+            {
+              $project: { _id: 1, name: 1, username: 1, avatar: 1 },
+            },
+          ],
+        },
+      },
+      {
+        $lookup: {
+          from: "messages",
+          localField: "latestMessage",
+          foreignField: "_id",
+          as: "latestMessage",
+          pipeline: [
+            {
+              $lookup: {
+                from: "users",
+                localField: "sender",
+                foreignField: "_id",
+                as: "sender",
+                pipeline: [
+                  {
+                    $project: { _id: 1, username: 1, name: 1, avatar: 1 },
+                  },
+                ],
+              },
+            },
+            {
+              $addFields: {
+                sender: { $first: "$sender" },
+              },
+            },
+          ],
+        },
+      },
+    ]);
+    res.status(200).json({ data: chats });
+  } catch (error) {
+    res.status(400).json(error);
+  }
+};
+
+const createOrGetOneOnOneChat = async (req, res) => {
   const { receiverId } = req.body;
-  console.log("receiverId:", typeof receiverId);
   if (!receiverId) {
     return res
       .status(400)
@@ -22,11 +82,58 @@ const getOrCreateOneOnOneChat = async (req, res) => {
   const chat = await Chat.aggregate([
     {
       $match: {
+        isGroup: false,
         participants: {
           $all: [req.user._id, receiverObjectId],
         },
       },
     },
+    {
+      $lookup: {
+        from: "users",
+        localField: "participants",
+        foreignField: "_id",
+        as: "participants",
+        pipeline: [
+          {
+            $project: { _id: 1, name: 1, username: 1, avatar: 1 },
+          },
+        ],
+      },
+    },
+    {
+      $lookup: {
+        from: "messages",
+        localField: "latestMessage",
+        foreignField: "_id",
+        as: "latestMessage",
+        pipeline: [
+          {
+            $lookup: {
+              from: "users",
+              localField: "sender",
+              foreignField: "_id",
+              as: "sender",
+              pipeline: [
+                {
+                  $project: { _id: 1, username: 1, name: 1, avatar: 1 },
+                },
+              ],
+            },
+          },
+          {
+            $addFields: {
+              sender: { $first: "$sender" },
+            },
+          },
+        ],
+      },
+    },
+    // {
+    //   $addFields: {
+    //     latestMessage: { $arrayElemAt: ["$latestMessage", 0] },
+    //   },
+    // },
   ]);
   if (chat.length) {
     return res
@@ -43,10 +150,28 @@ const getOrCreateOneOnOneChat = async (req, res) => {
     {
       $match: { _id: newChat._id },
     },
+    {
+      $lookup: {
+        from: "users",
+        localField: "participants",
+        foreignField: "_id",
+        as: "participants",
+      },
+    },
+    {
+      $project: {
+        _id: 1,
+        name: 1,
+        isGroup: 1,
+        participants: { _id: 1, name: 1, username: 1, avatar: 1 },
+      },
+    },
   ]);
-  return res
-    .status(201)
-    .json({ status: "success", message: "new chat details", data: createChat });
+  return res.status(201).json({
+    status: "success",
+    message: "new chat details",
+    data: createChat[0],
+  });
 };
 
-module.exports = { getOrCreateOneOnOneChat };
+module.exports = { createOrGetOneOnOneChat, getAllChats };
