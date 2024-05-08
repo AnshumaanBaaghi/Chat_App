@@ -174,4 +174,74 @@ const createOrGetOneOnOneChat = async (req, res) => {
   });
 };
 
-module.exports = { createOrGetOneOnOneChat, getAllChats };
+const createGroupChat = async (req, res) => {
+  const { name, participants } = req.body;
+
+  if (participants?.includes(req.user._id.toString())) {
+    return res.status(400).json({
+      message: "Participants array should not contain the group creator",
+    });
+  }
+
+  const members = [...new Set([...participants, req.user._id.toString()])];
+  if (members.length < 3) {
+    return res
+      .status(400)
+      .json({ message: "3 or more users required for group chat" });
+  }
+
+  const groupChat = await Chat.create({
+    name,
+    isGroup: true,
+    participants: members,
+    admin: req.user._id,
+  });
+
+  const createdGroup = await Chat.aggregate([
+    { $match: { _id: groupChat._id } },
+    {
+      $lookup: {
+        from: "users",
+        localField: "participants",
+        foreignField: "_id",
+        as: "participants",
+        pipeline: [
+          {
+            $project: { _id: 1, name: 1, username: 1, avatar: 1 },
+          },
+        ],
+      },
+    },
+    {
+      $lookup: {
+        from: "messages",
+        localField: "latestMessage",
+        foreignField: "_id",
+        as: "latestMessage",
+        pipeline: [
+          {
+            $lookup: {
+              from: "users",
+              localField: "sender",
+              foreignField: "_id",
+              as: "sender",
+              pipeline: [
+                {
+                  $project: { _id: 1, username: 1, name: 1, avatar: 1 },
+                },
+              ],
+            },
+          },
+          {
+            $addFields: {
+              sender: { $first: "$sender" },
+            },
+          },
+        ],
+      },
+    },
+  ]);
+  return res.status(201).json({ message: "Group Created", data: createdGroup });
+};
+
+module.exports = { createOrGetOneOnOneChat, getAllChats, createGroupChat };
