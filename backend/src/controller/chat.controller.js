@@ -494,6 +494,103 @@ const addParticipantInGroup = async (req, res) => {
     res.status(400).json({ message: "error ", error });
   }
 };
+const removeParticipantFromGroup = async (req, res) => {
+  const { chatId, participantId } = req.params;
+  try {
+    if (!chatId || !participantId) {
+      return res
+        .status(400)
+        .json({ message: "ChatId and ParticipantId are Required" });
+    }
+    const group = await Chat.aggregate([
+      {
+        $match: {
+          _id: new mongoose.Types.ObjectId(chatId),
+          isGroup: true,
+        },
+      },
+    ]);
+    if (!group[0]) {
+      return res.status(400).json({ message: "Group doesn't exist" });
+    }
+
+    if (group[0].admin?.toString() !== req.user._id?.toString()) {
+      return res.status(400).json({ message: "You are not an admin" });
+    }
+
+    let isParticipantPresent = false;
+    group[0].participants.forEach((participant) => {
+      if (participant.toString() === participantId.toString()) {
+        isParticipantPresent = true;
+      }
+    });
+    if (!isParticipantPresent) {
+      return res.status(400).json({ message: "User doesn't exist in a group" });
+    }
+
+    await Chat.findByIdAndUpdate(chatId, {
+      $pull: {
+        participants: participantId,
+      },
+    });
+
+    const chat = await Chat.aggregate([
+      {
+        $match: {
+          _id: chatId,
+        },
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "participants",
+          foreignField: "_id",
+          as: "participants",
+          pipeline: [
+            {
+              $project: { _id: 1, name: 1, username: 1, avatar: 1 },
+            },
+          ],
+        },
+      },
+      {
+        $lookup: {
+          from: "messages",
+          localField: "latestMessage",
+          foreignField: "_id",
+          as: "latestMessage",
+          pipeline: [
+            {
+              $lookup: {
+                from: "users",
+                localField: "sender",
+                foreignField: "_id",
+                as: "sender",
+                pipeline: [
+                  {
+                    $project: { _id: 1, username: 1, name: 1, avatar: 1 },
+                  },
+                ],
+              },
+            },
+            {
+              $addFields: {
+                sender: { $first: "$sender" },
+              },
+            },
+          ],
+        },
+      },
+    ]);
+
+    res.status(200).json({
+      message: "User Removed successfully from the group",
+      data: chat[0],
+    });
+  } catch (error) {
+    res.status(400).json({ message: "error ", error });
+  }
+};
 
 module.exports = {
   createOrGetOneOnOneChat,
@@ -503,4 +600,5 @@ module.exports = {
   renameGroupChat,
   deleteGroupChat,
   addParticipantInGroup,
+  removeParticipantFromGroup,
 };
