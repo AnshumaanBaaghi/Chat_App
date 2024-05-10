@@ -9,6 +9,7 @@ const api = axios.create({
   withCredentials: true,
 });
 
+//<--------------------------------Users----------------------------------------------->
 export const registerUser = (data) => {
   return api.post("/user/register", data);
 };
@@ -43,4 +44,33 @@ export const friendRequests = () => {
 
 export const sentRequests = () => {
   return api.get("/user/get-sent-requests");
+};
+
+//<-------------------------------------------------Chats------------------------------------------------->
+export const getOrCreateChat_api = (receiverId) => {
+  return api.post("/chat/chat", { receiverId });
+};
+
+export const getAllChats = () => {
+  return api.get("/chat");
+};
+
+export const createGroup = (name, participants = []) => {
+  return api.post("/chat/group", { name, participants });
+};
+
+export const renameGroup = (name, chatId) => {
+  return api.patch(`/chat/group/${chatId}`, { name });
+};
+
+export const deleteGroup = (chatId) => {
+  return api.delete(`/chat/group/${chatId}`);
+};
+
+export const addParticipantInGroup = (chatId, participantId) => {
+  return api.post(`/chat/group/${chatId}/${participantId}`);
+};
+
+export const removeParticipantFromGroup = (chatId, participantId) => {
+  return api.delete(`/chat/group/${chatId}/${participantId}`);
 };

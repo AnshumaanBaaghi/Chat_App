@@ -3,6 +3,7 @@ import { SelectedChat } from "@/components/chat/SelectedChat";
 import { connectSocket } from "@/redux/actions/socketActions";
 import {
   getNewFriends,
+  getOrCreateChat,
   getSentRequests,
   getfriendRequests,
   getfriends,
@@ -89,6 +90,8 @@ export const ChatApp = () => {
         });
       dispatch(updateFriendRequests(updatedFriendRequests));
       dispatch(updateFriends(updatedFriends));
+      // creating chat between users
+      //
     }
   };
 

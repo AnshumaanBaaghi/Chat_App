@@ -325,6 +325,7 @@ const renameGroupChat = async (req, res) => {
     .status(200)
     .json({ message: "Group Name Updated", data: updatedGroupChat });
 };
+
 const deleteGroupChat = async (req, res) => {
   const { chatId } = req.params;
   const groupChat = await Chat.aggregate([

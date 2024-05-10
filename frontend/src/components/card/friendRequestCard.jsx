@@ -1,7 +1,14 @@
 import React from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useDispatch } from "react-redux";
+import { getOrCreateChat } from "@/redux/actions/userActions";
 
 export const FriendRequestCard = ({ socket, user, acceptFriendRequest }) => {
+  const dispatch = useDispatch();
+  const handleClick = () => {
+    acceptFriendRequest(socket, user.requestId);
+    dispatch(getOrCreateChat(user.userId));
+  };
   return (
     <div className="flex justify-between items-center border border-red-300 py-2 px-3">
       <div className="flex gap-5 items-center">
@@ -16,7 +23,7 @@ export const FriendRequestCard = ({ socket, user, acceptFriendRequest }) => {
       </div>
       <button
         className="bg-blue-300 py-1 px-3 rounded-md"
-        onClick={() => acceptFriendRequest(socket, user.requestId)}
+        onClick={handleClick}
       >
         Accept
       </button>

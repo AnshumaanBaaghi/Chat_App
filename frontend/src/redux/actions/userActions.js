@@ -1,6 +1,13 @@
 // <--------------------------------Authentication---------------------------------------->
 
-import { friendRequests, friends, newFriends, sentRequests } from "@/api";
+import {
+  friendRequests,
+  friends,
+  getAllChats,
+  getOrCreateChat_api,
+  newFriends,
+  sentRequests,
+} from "@/api";
 
 export const UPDATEUSERDETAIL = "UPDATEUSERDETAIL";
 export const LOGIN = "LOGIN";
@@ -23,6 +30,7 @@ export const UPDATENEWFRIENDS = "UPDATENEWFRIENDS";
 export const UPDATESENTREQUESTS = "UPDATESENTREQUESTS";
 export const UPDATEFRIENDS = "UPDATEFRIENDS";
 export const UPDATEFRIENDREQUEST = "UPDATEFRIENDREQUEST";
+export const UPDATECHATS = "UPDATECHATS";
 
 export const getNewFriends = () => {
   return async (dispatch) => {
@@ -65,9 +73,37 @@ export const getfriendRequests = () => async (dispatch) => {
   }
 };
 
+export const getChats = () => async (dispatch) => {
+  try {
+    const chats = await getAllChats();
+    dispatch({
+      type: UPDATECHATS,
+      payload: chats.data.data || [],
+    });
+  } catch (error) {
+    console.log("error:", error);
+  }
+};
+
+export const getOrCreateChat = (receiverId) => async (dispatch) => {
+  try {
+    const chats = await getOrCreateChat_api(receiverId);
+    console.log("chats:", chats);
+    // dispatch({
+    //   type: UPDATECHATS,
+    //   payload: chats.data.data || [],
+    // });
+  } catch (error) {
+    console.log("error:", error);
+  }
+  // dispatch(getOrCreateChat_api(receiverId));
+};
+
+// To avoid unneccessary requests
 export const updateNewFriends = (payload) => {
   return { type: UPDATENEWFRIENDS, payload };
 };
+
 export const updateSentRequests = (payload) => {
   return { type: UPDATESENTREQUESTS, payload };
 };
