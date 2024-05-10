@@ -13,8 +13,12 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Popup } from "../Popup";
+import { useSelector } from "react-redux";
 
 export const AllChats = () => {
+  const allChats = useSelector((state) => state.user.chats);
+  const loggedinUser = useSelector((state) => state.user.userDetail);
+  console.log("allChats:", allChats);
   return (
     <div className="w-2/6  h-screen box-border bg-slate-500  flex flex-col gap-2">
       <div className="px-3 flex justify-between">
@@ -45,8 +49,10 @@ export const AllChats = () => {
         />
       </div>
       <div className="bg-slate-300 py-3">
-        <Chat />
-        <Chat />
+        {allChats.length > 0 &&
+          allChats.map((el) => (
+            <Chat key={el._id} chat={el} loggedinUser={loggedinUser} />
+          ))}
       </div>
     </div>
   );

@@ -2,6 +2,7 @@ import { AllChats } from "@/components/chat/AllChats";
 import { SelectedChat } from "@/components/chat/SelectedChat";
 import { connectSocket } from "@/redux/actions/socketActions";
 import {
+  getChats,
   getNewFriends,
   getOrCreateChat,
   getSentRequests,
@@ -101,6 +102,7 @@ export const ChatApp = () => {
     dispatch(getSentRequests());
     dispatch(getfriendRequests());
     dispatch(getfriends());
+    dispatch(getChats());
   }, []);
 
   useEffect(() => {

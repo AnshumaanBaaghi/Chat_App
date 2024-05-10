@@ -2,8 +2,9 @@ import React from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ReactIcon } from "../ReactIcon";
 import { FaCircleUser } from "react-icons/fa6";
+import { getSenderName } from "@/utils/functions";
 
-export const Chat = () => {
+export const Chat = ({ chat, loggedinUser }) => {
   return (
     <div className="px-3">
       <div className="flex gap-3 cursor-pointer border-b  border-b-blue-500 py-3">
@@ -20,7 +21,11 @@ export const Chat = () => {
           style={{ width: "88%" }}
         >
           <div className="flex justify-between  items-center">
-            <h4 className="font-semibold">Users Name</h4>
+            <h4 className="font-semibold">
+              {chat.isGroup
+                ? chat.name
+                : getSenderName(loggedinUser, chat.participants)}
+            </h4>
             <p className="text-xs">1:20 PM</p>
           </div>
           <div className="flex justify-between  items-center">

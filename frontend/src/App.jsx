@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import "./App.css";
 import { AllRoutes } from "./routes/AllRoutes";
 import { Toaster } from "@/components/ui/toaster";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { getNewFriends, getOrCreateChat } from "./redux/actions/userActions";
 import {
   addParticipantInGroup,
@@ -13,13 +13,10 @@ import {
 } from "./api";
 
 function App() {
-  const dispatch = useDispatch();
   const value = useSelector((state) => state);
   console.log("value:", value);
 
   useEffect(() => {
-    // dispatch(getOrCreateChat("ID"));
-
     (async () => {
       try {
         // const res = await createGroup("Bhopal", [

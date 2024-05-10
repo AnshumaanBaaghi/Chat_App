@@ -30,6 +30,7 @@ export const UPDATENEWFRIENDS = "UPDATENEWFRIENDS";
 export const UPDATESENTREQUESTS = "UPDATESENTREQUESTS";
 export const UPDATEFRIENDS = "UPDATEFRIENDS";
 export const UPDATEFRIENDREQUEST = "UPDATEFRIENDREQUEST";
+export const GETCHATS = "GETCHATS";
 export const UPDATECHATS = "UPDATECHATS";
 
 export const getNewFriends = () => {
@@ -76,8 +77,9 @@ export const getfriendRequests = () => async (dispatch) => {
 export const getChats = () => async (dispatch) => {
   try {
     const chats = await getAllChats();
+    console.log("all chats:", chats.data.data);
     dispatch({
-      type: UPDATECHATS,
+      type: GETCHATS,
       payload: chats.data.data || [],
     });
   } catch (error) {
@@ -87,16 +89,16 @@ export const getChats = () => async (dispatch) => {
 
 export const getOrCreateChat = (receiverId) => async (dispatch) => {
   try {
-    const chats = await getOrCreateChat_api(receiverId);
-    console.log("chats:", chats);
-    // dispatch({
-    //   type: UPDATECHATS,
-    //   payload: chats.data.data || [],
-    // });
+    const chat = await getOrCreateChat_api(receiverId);
+    console.log("chat:", chat.data.data);
+    chat.data.data &&
+      dispatch({
+        type: UPDATECHATS,
+        payload: chat.data.data || {},
+      });
   } catch (error) {
     console.log("error:", error);
   }
-  // dispatch(getOrCreateChat_api(receiverId));
 };
 
 // To avoid unneccessary requests
@@ -114,3 +116,5 @@ export const updateFriendRequests = (payload) => {
 export const updateFriends = (payload) => {
   return { type: UPDATEFRIENDS, payload };
 };
+
+export const updateChats = () => {};
