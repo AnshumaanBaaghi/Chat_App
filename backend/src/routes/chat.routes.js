@@ -7,6 +7,7 @@ const {
   getGroupDetails,
   renameGroupChat,
   deleteGroupChat,
+  addParticipantInGroup,
 } = require("../controller/chat.controller");
 
 const router = Router();
@@ -20,5 +21,7 @@ router
   .get(getGroupDetails)
   .patch(renameGroupChat)
   .delete(deleteGroupChat);
+
+router.route("/group/:chatId/:participantId").post(addParticipantInGroup);
 
 module.exports = router;
