@@ -3,11 +3,23 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ReactIcon } from "../ReactIcon";
 import { FaCircleUser } from "react-icons/fa6";
 import { getSenderName } from "@/utils/functions";
+import { useDispatch, useSelector } from "react-redux";
+import { updateSelectedChat } from "@/redux/actions/userActions";
 
 export const Chat = ({ chat, loggedinUser }) => {
+  const dispatch = useDispatch();
+  const selectedChat = useSelector((state) => state.user.selectedChat);
+
+  const handleSelectChat = () => {
+    if (selectedChat && selectedChat._id === chat._id) return; // Avoid Selecting Same Chat
+    dispatch(updateSelectedChat(chat));
+  };
   return (
     <div className="px-3">
-      <div className="flex gap-3 cursor-pointer border-b  border-b-blue-500 py-3">
+      <div
+        className="flex gap-3 cursor-pointer border-b  border-b-blue-500 py-3"
+        onClick={handleSelectChat}
+      >
         <Avatar>
           <AvatarImage src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSX4bPpNmnBUF-JKHYe7g2joB4kJOwuKnp98A&usqp=CAU" />
           <AvatarFallback>

@@ -8,6 +8,7 @@ import {
   UPDATEFRIENDS,
   UPDATECHATS,
   GETCHATS,
+  UPDATESELECTEDCHAT,
 } from "../actions/userActions";
 
 const initialVal = {
@@ -18,7 +19,7 @@ const initialVal = {
   friendRequests: [],
   sentRequests: [],
   chats: [],
-  selectedChat: [],
+  selectedChat: null,
 };
 
 export const userReducer = (state = initialVal, { type, payload }) => {
@@ -46,8 +47,12 @@ export const userReducer = (state = initialVal, { type, payload }) => {
 
     case GETCHATS:
       return { ...state, chats: payload };
+
     case UPDATECHATS:
       return { ...state, chats: [...state.chats, payload] };
+
+    case UPDATESELECTEDCHAT:
+      return { ...state, selectedChat: payload };
 
     default:
       return state;

@@ -32,6 +32,7 @@ export const UPDATEFRIENDS = "UPDATEFRIENDS";
 export const UPDATEFRIENDREQUEST = "UPDATEFRIENDREQUEST";
 export const GETCHATS = "GETCHATS";
 export const UPDATECHATS = "UPDATECHATS";
+export const UPDATESELECTEDCHAT = "UPDATESELECTEDCHAT";
 
 export const getNewFriends = () => {
   return async (dispatch) => {
@@ -118,3 +119,8 @@ export const updateFriends = (payload) => {
 };
 
 export const updateChats = () => {};
+
+export const updateSelectedChat = (payload) => {
+  console.log("payload:", payload);
+  return { type: UPDATESELECTEDCHAT, payload };
+};
