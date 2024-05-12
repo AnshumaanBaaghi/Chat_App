@@ -74,3 +74,13 @@ export const addParticipantInGroup = (chatId, participantId) => {
 export const removeParticipantFromGroup = (chatId, participantId) => {
   return api.delete(`/chat/group/${chatId}/${participantId}`);
 };
+
+// <----------------------- Messages ----------------------------------->
+
+export const getAllMessages = (chatId) => {
+  return api.get(`/message/${chatId}`);
+};
+
+export const sendMessage = (chatId, content) => {
+  return api.post(`/message/${chatId}`, { content });
+};

@@ -1,18 +1,45 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Messages } from "@/components/chat/Messages";
 import { useSelector } from "react-redux";
 import { getSenderName } from "@/utils/functions";
+import { getAllMessages, sendMessage } from "@/api";
 
 export const SelectedChat = () => {
   const selectedChat = useSelector((state) => state.user.selectedChat);
   const loggedinUser = useSelector((state) => state.user.userDetail);
+
   const [messages, setMessages] = useState([]);
-  // const chatOr
-  console.log("selectedChat:", selectedChat);
+  const [typedMessages, setTypedMessages] = useState("");
+
+  const handleChange = (e) => {
+    setTypedMessages(e.target.value);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    console.log("submit...");
+    setTypedMessages("");
+    try {
+      const res = await sendMessage(selectedChat._id, typedMessages);
+      console.log(res.data);
+    } catch (error) {
+      console.log("error:", error);
+    }
+  };
+
+  const getMessages = async () => {
+    try {
+      const res = await getAllMessages(selectedChat._id);
+      setMessages(res.data?.data || []);
+    } catch (error) {
+      console.log("error:", error);
+    }
+  };
   useEffect(() => {
+    console.log("selectedChat:", selectedChat);
     if (!selectedChat) return;
-    // Make an Api request to get messages
+    getMessages();
   }, [selectedChat]);
 
   return (
@@ -45,18 +72,17 @@ export const SelectedChat = () => {
             className="py-4 px-9 bg-purple-500 flex items-end"
             style={{ height: "calc(100vh - 128px)" }}
           >
-            <Messages />
+            <Messages messages={messages} isGroup={selectedChat?.isGroup} />
           </ScrollArea>
           <div className="h-16 bg-orange-400 flex px-3 gap-3 items-center">
             <div>Emoji</div>
-            <form
-              //   onSubmit={form.handleSubmit(onSubmit)}
-              className="flex w-full gap-3"
-            >
+            <form onSubmit={handleSubmit} className="flex w-full gap-3">
               <input
                 type="text"
                 className="h-9 w-full rounded-md border bg-transparent px-3 py-1 text-sm shadow-sm outline-none"
                 placeholder="Type a message"
+                value={typedMessages}
+                onChange={handleChange}
               />
               <button type="submit" className="bg-red-500">
                 send

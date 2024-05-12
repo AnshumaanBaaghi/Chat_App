@@ -1,15 +1,22 @@
 import React from "react";
+import { MessageCard } from "../card/messageCard";
+import { useSelector } from "react-redux";
 
-export const Messages = () => {
+export const Messages = ({ messages, isGroup }) => {
+  console.log("messages:", messages);
+  const { userDetail } = useSelector((state) => state.user);
   return (
     <div className="flex flex-col gap-4 bg-red-400 ">
-      <div className="text-center">Today</div>
-      <div className="flex">
-        <p className="max-w-[60%] bg-blue-300 p-2">hello</p>
-      </div>
-      <div className="flex justify-end">
-        <p className="max-w-[60%] bg-blue-300 text-right p-2">ha bhai</p>
-      </div>
+      {/* <div className="text-center">Today</div> */}
+      {messages.length > 0 &&
+        messages.map((el) => (
+          <MessageCard
+            key={el._id}
+            message={el.content}
+            isOwnMessage={el.sender._id === userDetail?.userId}
+            isGroup={isGroup}
+          />
+        ))}
     </div>
   );
 };
