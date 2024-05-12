@@ -56,6 +56,11 @@ const getAllChats = async (req, res) => {
           ],
         },
       },
+      {
+        $addFields: {
+          latestMessage: { $arrayElemAt: ["$latestMessage", 0] },
+        },
+      },
     ]);
     res.status(200).json({ data: chats });
   } catch (error) {

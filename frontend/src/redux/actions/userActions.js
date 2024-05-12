@@ -30,7 +30,6 @@ export const UPDATENEWFRIENDS = "UPDATENEWFRIENDS";
 export const UPDATESENTREQUESTS = "UPDATESENTREQUESTS";
 export const UPDATEFRIENDS = "UPDATEFRIENDS";
 export const UPDATEFRIENDREQUEST = "UPDATEFRIENDREQUEST";
-export const GETCHATS = "GETCHATS";
 export const UPDATECHATS = "UPDATECHATS";
 export const UPDATESELECTEDCHAT = "UPDATESELECTEDCHAT";
 
@@ -80,7 +79,7 @@ export const getChats = () => async (dispatch) => {
     const chats = await getAllChats();
     console.log("all chats:", chats.data.data);
     dispatch({
-      type: GETCHATS,
+      type: UPDATECHATS,
       payload: chats.data.data || [],
     });
   } catch (error) {
@@ -118,9 +117,10 @@ export const updateFriends = (payload) => {
   return { type: UPDATEFRIENDS, payload };
 };
 
-export const updateChats = () => {};
+export const updateChats = (payload) => {
+  return { type: UPDATECHATS, payload };
+};
 
 export const updateSelectedChat = (payload) => {
-  console.log("payload:", payload);
   return { type: UPDATESELECTEDCHAT, payload };
 };

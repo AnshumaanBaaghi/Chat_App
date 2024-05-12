@@ -3,7 +3,6 @@ import { MessageCard } from "../card/messageCard";
 import { useSelector } from "react-redux";
 
 export const Messages = ({ messages, isGroup }) => {
-  console.log("messages:", messages);
   const { userDetail } = useSelector((state) => state.user);
   return (
     <div className="flex flex-col gap-4 bg-red-400 ">

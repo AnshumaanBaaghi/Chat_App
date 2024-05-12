@@ -41,7 +41,9 @@ export const Chat = ({ chat, loggedinUser }) => {
             <p className="text-xs">1:20 PM</p>
           </div>
           <div className="flex justify-between  items-center">
-            <p className="text-sm">latsest message</p>
+            <p className="text-sm">
+              {chat?.latestMessage?.content || "Tap to Chat"}
+            </p>
             <p className="w-6 h-6 rounded-full bg-green-700 text-xs flex items-center justify-center">
               1
             </p>

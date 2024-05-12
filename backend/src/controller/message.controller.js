@@ -54,7 +54,6 @@ const getAllMessages = async (req, res) => {
         },
       },
     ]);
-    console.log("messages:", messages);
     return res.status(200).json({ message: "Success", data: messages });
   } catch (error) {
     return res.status(400).json({ message: error });
@@ -64,7 +63,6 @@ const getAllMessages = async (req, res) => {
 const sendMessage = async (req, res) => {
   const { chatId } = req.params;
   const { content } = req.body;
-  console.log("chatId:", chatId);
   if (!chatId || !content.trim()) {
     return res.status(400).json({ message: "ChatId and Content is Required" });
   }
@@ -86,7 +84,46 @@ const sendMessage = async (req, res) => {
       content: content.trim(),
       chatId: chatId,
     });
-    return res.status(200).json({ message: "Message created Successfully" });
+    chat.latestMessage = message._id;
+    await chat.save();
+
+    const createdMessage = await Message.aggregate([
+      {
+        $match: {
+          _id: message._id,
+        },
+      },
+      {
+        $lookup: {
+          from: "users",
+          foreignField: "_id",
+          localField: "sender",
+          as: "sender",
+          pipeline: [
+            {
+              $project: {
+                username: 1,
+                avatar: 1,
+                email: 1,
+              },
+            },
+          ],
+        },
+      },
+      {
+        $addFields: {
+          sender: { $first: "$sender" },
+        },
+      },
+    ]);
+    if (!createdMessage[0]) {
+      return res.status(500).json({ message: "Internal server error" });
+    }
+
+    return res.status(200).json({
+      message: "Message created Successfully",
+      data: createdMessage[0],
+    });
   } catch (error) {
     return res.status(400).json({ message: error });
   }

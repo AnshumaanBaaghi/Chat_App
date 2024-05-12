@@ -1,13 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Messages } from "@/components/chat/Messages";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { getSenderName } from "@/utils/functions";
 import { getAllMessages, sendMessage } from "@/api";
+import { updateChats, updateSelectedChat } from "@/redux/actions/userActions";
 
 export const SelectedChat = () => {
   const selectedChat = useSelector((state) => state.user.selectedChat);
   const loggedinUser = useSelector((state) => state.user.userDetail);
+  const chats = useSelector((state) => state.user.chats);
+  console.log("chats:", chats);
+  const dispatch = useDispatch();
 
   const [messages, setMessages] = useState([]);
   const [typedMessages, setTypedMessages] = useState("");
@@ -22,7 +26,14 @@ export const SelectedChat = () => {
     setTypedMessages("");
     try {
       const res = await sendMessage(selectedChat._id, typedMessages);
-      console.log(res.data);
+      if (!res.data?.data) return;
+      setMessages((pre) => [...pre, res.data.data]);
+      const updatedChats = chats.map((el) =>
+        el._id === selectedChat._id
+          ? { ...el, latestMessage: res.data.data }
+          : el
+      );
+      dispatch(updateChats(updatedChats));
     } catch (error) {
       console.log("error:", error);
     }
