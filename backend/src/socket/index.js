@@ -11,34 +11,29 @@ const initializeSocketIO = (io) => {
     if (!token) return; // Have to Add error here
     const loggedInUser = jwt.verify(token, process.env.JWT_SECERETKEY);
     if (!loggedInUser) return; // Have to Add error here
-    const socket_id = socket.id;
-    await User.findByIdAndUpdate(loggedInUser._id, { socket_id });
     // if (!user) return; // Have to Add error here
+    socket.join(loggedInUser._id);
+    console.log("User Connected", loggedInUser._id);
 
     socket.on("friend_request", async (data) => {
-      console.log("data:", data);
+      console.log("data: friend_request:", data);
       // data.to contains userID;
-
-      const to = await User.findById(data.to).select("socket_id");
-      // console.log("to:", to);
-      const from = await User.findById(data.from).select("socket_id");
-
-      if (!to || !from) return;
 
       const request = await FriendRequest.create({
         sender: data.from,
         recipient: data.to,
       });
+      console.log("request: created: ", request);
 
       // for checking requests
-      io.to(to.socket_id).emit("new-friend-request", {
+      io.to(data.to).emit("new-friend-request", {
         message: "New Friend Request Received!",
         sentBy: data.from,
         requestId: request._id,
       });
 
       // for sending request
-      io.to(from.socket_id).emit("request-sent", {
+      io.to(data.from).emit("request-sent", {
         message: "Request Sent Successfully!",
         sentTo: data.to,
       });
@@ -62,12 +57,14 @@ const initializeSocketIO = (io) => {
       // deleting friend request
       await FriendRequest.findByIdAndDelete(data.requestId);
 
-      io.to(sender.socket_id).emit("request-accepted", {
+      console.log("sender._id:", sender._id);
+      io.to(sender._id.toString()).emit("request-accepted", {
         message: `Request Accepted By ${receiver.name}`,
         receiverId: receiver._id,
       });
 
-      io.to(receiver.socket_id).emit("request-accepted", {
+      console.log("receiver._id:", receiver._id);
+      io.to(receiver._id.toString()).emit("request-accepted", {
         message: `You have Accepted Friend Request of ${sender.name}`,
         senderId: sender._id,
       });

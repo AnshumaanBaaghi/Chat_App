@@ -53,9 +53,6 @@ const userSchema = new mongoose.Schema(
     emailVerificationExpiry: {
       type: Date,
     },
-    socket_id: {
-      type: String,
-    },
     friends: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
   },
   { timestamps: true }
