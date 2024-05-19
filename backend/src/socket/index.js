@@ -11,8 +11,8 @@ const initializeSocketIO = (io) => {
     if (!token) return; // Have to Add error here
     const loggedInUser = jwt.verify(token, process.env.JWT_SECERETKEY);
     if (!loggedInUser) return; // Have to Add error here
-    // if (!user) return; // Have to Add error here
-    socket.join(loggedInUser._id);
+
+    socket.join(loggedInUser._id.toString());
     console.log("User Connected", loggedInUser._id);
 
     socket.on("friend_request", async (data) => {
@@ -43,7 +43,6 @@ const initializeSocketIO = (io) => {
       console.log("data:", data);
 
       const friend_request = await FriendRequest.findById(data.requestId); // get the document from FriendRequest Collection
-      console.log("friend_request:", friend_request);
       if (!friend_request) return;
       const sender = await User.findById(friend_request.sender);
       const receiver = await User.findById(friend_request.recipient);
@@ -57,13 +56,11 @@ const initializeSocketIO = (io) => {
       // deleting friend request
       await FriendRequest.findByIdAndDelete(data.requestId);
 
-      console.log("sender._id:", sender._id);
       io.to(sender._id.toString()).emit("request-accepted", {
         message: `Request Accepted By ${receiver.name}`,
         receiverId: receiver._id,
       });
 
-      console.log("receiver._id:", receiver._id);
       io.to(receiver._id.toString()).emit("request-accepted", {
         message: `You have Accepted Friend Request of ${sender.name}`,
         senderId: sender._id,
@@ -77,4 +74,9 @@ const initializeSocketIO = (io) => {
   });
 };
 
-module.exports = { initializeSocketIO };
+// To avoid emitting event from frontend
+const emitSocketEvent = (req, roomId, event, payload) => {
+  req.app.get("io").to(roomId).emit(event, payload);
+};
+
+module.exports = { initializeSocketIO, emitSocketEvent };

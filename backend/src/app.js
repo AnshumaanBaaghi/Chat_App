@@ -19,6 +19,7 @@ const io = new Server(httpServer, {
     credentials: true,
   },
 });
+
 const limiter = rateLimit({
   windowMs: 60 * 60 * 1000,
   limit: 1000,
@@ -26,6 +27,8 @@ const limiter = rateLimit({
   legacyHeaders: false,
   message: "Rate Limit Exceed",
 });
+
+app.set("io", io);
 
 app.use(express.json({ limit: "16kb" }));
 app.use(express.urlencoded({ extended: true }));

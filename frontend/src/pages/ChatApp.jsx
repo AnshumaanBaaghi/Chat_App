@@ -8,12 +8,13 @@ import {
   getSentRequests,
   getfriendRequests,
   getfriends,
+  updateChats,
   updateFriendRequests,
   updateFriends,
   updateNewFriends,
   updateSentRequests,
 } from "@/redux/actions/userActions";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 const NEWFRIENDREQUEST = "new-friend-request";
@@ -27,6 +28,8 @@ export const ChatApp = () => {
   const sentRequests = useSelector((state) => state.user.sentRequests);
   const friendRequests = useSelector((state) => state.user.friendRequests);
   const friends = useSelector((state) => state.user.friends);
+  const selectedChat = useSelector((state) => state.user.selectedChat);
+  const chats = useSelector((state) => state.user.chats);
 
   const newUsersRef = useRef(null);
   newUsersRef.current = newUsers;
@@ -36,6 +39,13 @@ export const ChatApp = () => {
   friendRequestsRef.current = friendRequests;
   const friendsRef = useRef(null);
   friendsRef.current = friends;
+  const selectedChatRef = useRef(null);
+  selectedChatRef.current = selectedChat;
+  const chatsRef = useRef(null);
+  chatsRef.current = chats;
+
+  const [messages, setMessages] = useState([]);
+  console.log("messages:", messages);
 
   const onRequestSent = (data) => {
     const updatedNewFriendsArray = [];
@@ -91,8 +101,18 @@ export const ChatApp = () => {
         });
       dispatch(updateFriendRequests(updatedFriendRequests));
       dispatch(updateFriends(updatedFriends));
-      // creating chat between users
-      //
+    }
+  };
+
+  const onMessageReceived = (message) => {
+    const updatedChats = chatsRef.current?.map((el) =>
+      el._id === message.chatId ? { ...el, latestMessage: message } : el
+    );
+    dispatch(updateChats(updatedChats));
+    if (message.chatId === selectedChatRef.current?._id) {
+      setMessages((pre) => [...pre, message]);
+    } else {
+      // TODO-> update the list of unread messages
     }
   };
 
@@ -115,6 +135,7 @@ export const ChatApp = () => {
     socket.on(NEWFRIENDREQUEST, onReceivedNewRequest);
     socket.on(REQUESTSENT, onRequestSent);
     socket.on(REQUESTACCEPTED, onRequestAccepted);
+    socket.on("messageReceived", onMessageReceived);
 
     return () => {
       socket.off("new-friend-request");
@@ -126,7 +147,7 @@ export const ChatApp = () => {
   return (
     <div className="flex">
       <AllChats />
-      <SelectedChat />
+      <SelectedChat messages={messages} setMessages={setMessages} />
     </div>
   );
 };

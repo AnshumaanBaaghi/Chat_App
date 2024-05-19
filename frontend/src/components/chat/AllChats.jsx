@@ -18,7 +18,6 @@ import { useSelector } from "react-redux";
 export const AllChats = () => {
   const allChats = useSelector((state) => state.user.chats);
   const loggedinUser = useSelector((state) => state.user.userDetail);
-  console.log("allChats:", allChats);
   return (
     <div className="w-2/6  h-screen box-border bg-slate-500  flex flex-col gap-2">
       <div className="px-3 flex justify-between">
