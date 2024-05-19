@@ -1,6 +1,7 @@
 const { default: mongoose } = require("mongoose");
 const { Chat } = require("../models/chat/chat.model");
 const { Message } = require("../models/chat/message.model");
+const { emitSocketEvent } = require("../socket");
 
 const getAllMessages = async (req, res) => {
   const { chatId } = req.params;
@@ -120,6 +121,12 @@ const sendMessage = async (req, res) => {
       return res.status(500).json({ message: "Internal server error" });
     }
 
+    // emitSocketEvent(req);
+    const io = req.app.get("io");
+    chat.participants.forEach((participant) => {
+      if (participant.toString() === req.user._id.toString()) return;
+      io.to(participant.toString()).emit("messageReceived", createdMessage[0]);
+    });
     return res.status(200).json({
       message: "Message created Successfully",
       data: createdMessage[0],

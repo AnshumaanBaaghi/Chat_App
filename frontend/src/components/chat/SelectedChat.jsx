@@ -6,14 +6,13 @@ import { getSenderName } from "@/utils/functions";
 import { getAllMessages, sendMessage } from "@/api";
 import { updateChats, updateSelectedChat } from "@/redux/actions/userActions";
 
-export const SelectedChat = () => {
+export const SelectedChat = ({ messages, setMessages }) => {
   const selectedChat = useSelector((state) => state.user.selectedChat);
   const loggedinUser = useSelector((state) => state.user.userDetail);
   const chats = useSelector((state) => state.user.chats);
   console.log("chats:", chats);
   const dispatch = useDispatch();
 
-  const [messages, setMessages] = useState([]);
   const [typedMessages, setTypedMessages] = useState("");
 
   const handleChange = (e) => {
@@ -40,6 +39,7 @@ export const SelectedChat = () => {
   };
 
   const getMessages = async () => {
+    setMessages([]);
     try {
       const res = await getAllMessages(selectedChat._id);
       setMessages(res.data?.data || []);
