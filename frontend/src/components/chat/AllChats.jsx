@@ -15,7 +15,7 @@ import {
 import { Popup } from "../Popup";
 import { useSelector } from "react-redux";
 
-export const AllChats = () => {
+export const AllChats = ({ typingUsersObject }) => {
   const allChats = useSelector((state) => state.user.chats);
   const loggedinUser = useSelector((state) => state.user.userDetail);
   return (
@@ -50,7 +50,12 @@ export const AllChats = () => {
       <div className="bg-slate-300 py-3">
         {allChats.length > 0 &&
           allChats.map((el) => (
-            <Chat key={el._id} chat={el} loggedinUser={loggedinUser} />
+            <Chat
+              key={el._id}
+              chat={el}
+              loggedinUser={loggedinUser}
+              isSomeOneTyping={typingUsersObject[el._id]}
+            />
           ))}
       </div>
     </div>

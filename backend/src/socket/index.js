@@ -16,14 +16,12 @@ const initializeSocketIO = (io) => {
     console.log("User Connected", loggedInUser._id);
 
     socket.on("friend_request", async (data) => {
-      console.log("data: friend_request:", data);
       // data.to contains userID;
 
       const request = await FriendRequest.create({
         sender: data.from,
         recipient: data.to,
       });
-      console.log("request: created: ", request);
 
       // for checking requests
       io.to(data.to).emit("new-friend-request", {
@@ -40,8 +38,6 @@ const initializeSocketIO = (io) => {
     });
 
     socket.on("accept-request", async (data) => {
-      console.log("data:", data);
-
       const friend_request = await FriendRequest.findById(data.requestId); // get the document from FriendRequest Collection
       if (!friend_request) return;
       const sender = await User.findById(friend_request.sender);
@@ -64,6 +60,23 @@ const initializeSocketIO = (io) => {
       io.to(receiver._id.toString()).emit("request-accepted", {
         message: `You have Accepted Friend Request of ${sender.name}`,
         senderId: sender._id,
+      });
+    });
+
+    socket.on("typing", async ({ chat, typer }) => {
+      chat.participants?.forEach((participant) => {
+        if (participant._id.toString() === typer.userId.toString()) return;
+        socket
+          .to(participant._id.toString())
+          .emit("someone typing", { typer, chat });
+      });
+    });
+    socket.on("stop typing", async ({ chat, typer }) => {
+      chat.participants?.forEach((participant) => {
+        if (participant._id.toString() === typer.userId.toString()) return;
+        socket
+          .to(participant._id.toString())
+          .emit("someone stop typing", { typer, chat });
       });
     });
 

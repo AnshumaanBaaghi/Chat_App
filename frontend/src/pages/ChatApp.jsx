@@ -30,6 +30,7 @@ export const ChatApp = () => {
   const friends = useSelector((state) => state.user.friends);
   const selectedChat = useSelector((state) => state.user.selectedChat);
   const chats = useSelector((state) => state.user.chats);
+  const loggedinUser = useSelector((state) => state.user.userDetail);
 
   const newUsersRef = useRef(null);
   newUsersRef.current = newUsers;
@@ -43,9 +44,13 @@ export const ChatApp = () => {
   selectedChatRef.current = selectedChat;
   const chatsRef = useRef(null);
   chatsRef.current = chats;
+  const typingTimeoutRef = useRef(null);
+  const loggedinUserRef = useRef(null);
+  loggedinUserRef.current = loggedinUser;
 
   const [messages, setMessages] = useState([]);
-  console.log("messages:", messages);
+  const [selfTyping, setSelfTyping] = useState(false);
+  const [typingUsersObject, setTypingUsersObject] = useState({}); // it's an nested object which contains the key as chatID and value as typer detail
 
   const onRequestSent = (data) => {
     const updatedNewFriendsArray = [];
@@ -116,6 +121,28 @@ export const ChatApp = () => {
     }
   };
 
+  const handleTypingMessageChange = () => {
+    if (!selfTyping) {
+      setSelfTyping(true);
+
+      socket.emit("typing", {
+        chat: selectedChatRef.current,
+        typer: loggedinUserRef.current,
+      });
+    }
+    if (typingTimeoutRef.current) {
+      clearTimeout(typingTimeoutRef.current);
+    }
+
+    typingTimeoutRef.current = setTimeout(() => {
+      socket.emit("stop typing", {
+        chat: selectedChatRef.current,
+        typer: loggedinUserRef.current,
+      });
+      setSelfTyping(false);
+    }, 3000);
+  };
+
   useEffect(() => {
     dispatch(connectSocket());
     dispatch(getNewFriends());
@@ -136,18 +163,35 @@ export const ChatApp = () => {
     socket.on(REQUESTSENT, onRequestSent);
     socket.on(REQUESTACCEPTED, onRequestAccepted);
     socket.on("messageReceived", onMessageReceived);
+    socket.on("someone typing", (data) => {
+      setTypingUsersObject((pre) => ({ ...pre, [data.chat._id]: data.typer }));
+    });
+    socket.on("someone stop typing", ({ typer, chat }) => {
+      setTypingUsersObject((prev) => {
+        const { [chat._id]: _, ...restTypingData } = prev;
+        return restTypingData;
+      });
+    });
 
     return () => {
       socket.off("new-friend-request");
       socket.off("request-sent");
       socket.off("request-accepted");
+      socket.off("messageReceived");
+      socket.off("someone typing");
+      socket.off("someone stoped typing");
     };
   }, [socket]);
 
   return (
     <div className="flex">
-      <AllChats />
-      <SelectedChat messages={messages} setMessages={setMessages} />
+      <AllChats typingUsersObject={typingUsersObject} />
+      <SelectedChat
+        messages={messages}
+        setMessages={setMessages}
+        handleTypingMessageChange={handleTypingMessageChange}
+        typingUsersObject={typingUsersObject}
+      />
     </div>
   );
 };

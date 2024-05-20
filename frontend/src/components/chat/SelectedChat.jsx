@@ -6,22 +6,27 @@ import { getSenderName } from "@/utils/functions";
 import { getAllMessages, sendMessage } from "@/api";
 import { updateChats, updateSelectedChat } from "@/redux/actions/userActions";
 
-export const SelectedChat = ({ messages, setMessages }) => {
+export const SelectedChat = ({
+  handleTypingMessageChange,
+  messages,
+  setMessages,
+  typingUsersObject,
+}) => {
   const selectedChat = useSelector((state) => state.user.selectedChat);
   const loggedinUser = useSelector((state) => state.user.userDetail);
   const chats = useSelector((state) => state.user.chats);
-  console.log("chats:", chats);
   const dispatch = useDispatch();
 
   const [typedMessages, setTypedMessages] = useState("");
+  const [someoneTyping, setSomeoneTyping] = useState(null);
 
   const handleChange = (e) => {
     setTypedMessages(e.target.value);
+    handleTypingMessageChange();
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("submit...");
     setTypedMessages("");
     try {
       const res = await sendMessage(selectedChat._id, typedMessages);
@@ -47,12 +52,23 @@ export const SelectedChat = ({ messages, setMessages }) => {
       console.log("error:", error);
     }
   };
+
+  const checkTyperInCurrentChat = () => {
+    if (typingUsersObject[selectedChat?._id]) {
+      setSomeoneTyping(typingUsersObject[selectedChat._id]);
+      return;
+    }
+    setSomeoneTyping(null);
+  };
+
   useEffect(() => {
-    console.log("selectedChat:", selectedChat);
     if (!selectedChat) return;
     getMessages();
   }, [selectedChat]);
 
+  useEffect(() => {
+    checkTyperInCurrentChat();
+  }, [typingUsersObject]);
   return (
     <div className="bg-red-200 w-4/6">
       {selectedChat ? (
@@ -70,11 +86,14 @@ export const SelectedChat = ({ messages, setMessages }) => {
                   alt="Your Image"
                 />
               </div>
-              <h4 className="font-semibold">
-                {selectedChat?.isGroup
-                  ? selectedChat.name
-                  : getSenderName(loggedinUser, selectedChat.participants)}
-              </h4>
+              <span className="transition-opacity transition-transform duration-300">
+                <h4 className="font-semibold">
+                  {selectedChat?.isGroup
+                    ? selectedChat.name
+                    : getSenderName(loggedinUser, selectedChat.participants)}
+                </h4>
+                {someoneTyping && <div>typing...</div>}
+              </span>
             </div>
             <div className=""></div>
           </div>

@@ -6,7 +6,7 @@ import { getSenderName } from "@/utils/functions";
 import { useDispatch, useSelector } from "react-redux";
 import { updateSelectedChat } from "@/redux/actions/userActions";
 
-export const Chat = ({ chat, loggedinUser }) => {
+export const Chat = ({ chat, loggedinUser, isSomeOneTyping }) => {
   const dispatch = useDispatch();
   const selectedChat = useSelector((state) => state.user.selectedChat);
 
@@ -42,7 +42,11 @@ export const Chat = ({ chat, loggedinUser }) => {
           </div>
           <div className="flex justify-between  items-center">
             <p className="text-sm">
-              {chat?.latestMessage?.content || "Tap to Chat"}
+              {isSomeOneTyping
+                ? `${
+                    chat.isGroup ? isSomeOneTyping.name + " is " : ""
+                  }typing...`
+                : chat?.latestMessage?.content || "Tap to Chat"}
             </p>
             <p className="w-6 h-6 rounded-full bg-green-700 text-xs flex items-center justify-center">
               1
