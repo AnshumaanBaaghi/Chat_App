@@ -1,3 +1,4 @@
+// Only for name or username query
 export const getFilteredArray = (query, arr) => {
   if (!query) return arr;
   const pattern = query.split("").join(".*");
