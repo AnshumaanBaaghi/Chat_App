@@ -107,6 +107,11 @@ export const ChatApp = () => {
       dispatch(updateFriendRequests(updatedFriendRequests));
       dispatch(updateFriends(updatedFriends));
     }
+    // const updatedChats = chats.map((el) =>
+    //   el._id === selectedChat._id ? { ...el, latestMessage: res.data.data } : el
+    // );
+    // dispatch(updateChats(updatedChats));
+    dispatch(getChats()); //TODO: Avoid this API call
   };
 
   const onMessageReceived = (message) => {
@@ -171,6 +176,11 @@ export const ChatApp = () => {
         const { [chat._id]: _, ...restTypingData } = prev;
         return restTypingData;
       });
+    });
+    socket.on("chat created", (group) => {
+      console.log("chat created:", group);
+      const updatedChats = [group, ...(chatsRef.current || [])];
+      dispatch(updateChats(updatedChats));
     });
 
     return () => {

@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const { Chat } = require("../models/chat/chat.model");
 const { User } = require("../models/user.model");
+const { emitSocketEvent } = require("../socket");
 
 const getAllChats = async (req, res) => {
   try {
@@ -247,7 +248,16 @@ const createGroupChat = async (req, res) => {
       },
     },
   ]);
-
+  createGroupChat.participants?.forEach((participant) => {
+    if (req.user._id.toString() === participant._id.toString()) return;
+    console.log("chat created");
+    emitSocketEvent(
+      req,
+      participant._id.toString(),
+      "chat created",
+      createdGroup
+    );
+  });
   return res.status(201).json({ message: "Group Created", data: createdGroup });
 };
 

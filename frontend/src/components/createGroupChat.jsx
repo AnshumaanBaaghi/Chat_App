@@ -5,6 +5,7 @@ import { FriendCard } from "./card/friendCard";
 import { FaArrowLeft } from "react-icons/fa6";
 import { createGroup } from "@/api";
 import { getChats } from "@/redux/actions/userActions";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export const CreateGroupChat = ({ setShowCreateGroupModal }) => {
   const friends = useSelector((state) => state.user.friends);
@@ -51,16 +52,23 @@ export const CreateGroupChat = ({ setShowCreateGroupModal }) => {
         style={{ width: "200%" }}
       >
         <div className="w-[100%] bg-red-400 h-[50vh]">
-          <button onClick={() => setShowCreateGroupModal(false)}>
-            <FaArrowLeft />
-          </button>
+          <div className="flex">
+            <button onClick={() => setShowCreateGroupModal(false)}>
+              <FaArrowLeft />
+            </button>
+            <h2>Add Participants</h2>
+          </div>
           <div className="mt-2">
             {selectedParticipants.map((friend) => (
               <div
                 key={friend.userId}
                 className="inline-flex items-center px-3 py-1 mr-2 mb-2 rounded-full bg-blue-100 text-blue-800"
               >
-                {friend.name}
+                <Avatar size="2rem" className="mr-2">
+                  <AvatarImage src="https:encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ4ZLEEDaC7_8qJqkthsik-Q0rr7TSzGfU6XA&usqp=CAU" />
+                  <AvatarFallback>CN</AvatarFallback>
+                </Avatar>
+                <span>{friend.name}</span>
                 <button
                   type="button"
                   className="ml-2 text-blue-600 hover:text-blue-900 focus:outline-none"

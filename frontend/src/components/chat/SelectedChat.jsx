@@ -5,6 +5,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { getSenderName } from "@/utils/functions";
 import { getAllMessages, sendMessage } from "@/api";
 import { updateChats, updateSelectedChat } from "@/redux/actions/userActions";
+import { storage } from "@/firebase/firebase";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { uploadImage } from "@/firebase/uploadImage";
 
 export const SelectedChat = ({
   handleTypingMessageChange,
@@ -60,6 +63,21 @@ export const SelectedChat = ({
     }
     setSomeoneTyping(null);
   };
+
+  //--------------------------------
+  const handleUpload = async (e) => {
+    console.log("handleUpload:");
+    const localImagePath = e.target.files[0];
+    const firebasePath = `profileImages/${"user1"}`;
+    if (!localImagePath) return;
+    try {
+      const url = await uploadImage(localImagePath, firebasePath);
+      console.log("url:", url);
+    } catch (error) {
+      console.log("error:", error);
+    }
+  };
+  //--------------------------------
 
   useEffect(() => {
     if (!selectedChat) return;
@@ -122,7 +140,8 @@ export const SelectedChat = ({
         </div>
       ) : (
         <div className="border border-red-600 w-full h-screen flex items-center justify-center">
-          Select Chat to Start Conversation
+          {/* Select Chat to Start Conversation */}
+          <input type="file" onChange={handleUpload} />
         </div>
       )}
     </div>
