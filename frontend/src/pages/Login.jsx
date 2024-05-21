@@ -20,6 +20,8 @@ import { login, updateUserDetail } from "@/redux/actions/userActions";
 import { Loading } from "@/components/loading";
 import { useToast } from "@/components/ui/use-toast";
 import { Navigate, useNavigate } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
+import { UploadProfile } from "@/components/card/uploadProfile";
 
 const FormSchema = z.object({
   emailOrUsername: z.string().min(5, {
@@ -32,6 +34,7 @@ const FormSchema = z.object({
 
 export const Login = () => {
   const [showOtpComponent, setShowOtpComponent] = useState(false);
+  const [currentStep, setCurrentStep] = useState("login");
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const isAuth = useSelector((state) => state.user.isAuth);
@@ -48,6 +51,9 @@ export const Login = () => {
   });
 
   async function onSubmit(data) {
+    setShowOtpComponent(true);
+    setCurrentStep("otp");
+    return;
     setErrorMessage("");
     setIsLoading(true);
     try {
@@ -60,7 +66,9 @@ export const Login = () => {
         dispatch(login());
         navigate("/");
       } else if (res?.data?.email) {
-        dispatch(updateUserDetail({ email: res?.data?.email }));
+        dispatch(
+          updateUserDetail({ email: res.data.email, userId: res.data._id })
+        );
         setShowOtpComponent(true);
       } else {
         toast({
@@ -109,8 +117,82 @@ export const Login = () => {
 
   return (
     <div className="flex h-screen items-center">
-      <div className="w-1/3 m-auto border border-red-500 rounded-xl overflow-visible">
-        <div
+      <div className="w-1/3 m-auto min-h-[50vh] flex flex-col justify-center border border-red-500 rounded-xl">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={currentStep ? currentStep : "empty"}
+            initial={{ x: 10, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            exit={{ x: -10, opacity: 0 }}
+            transition={{ duration: 0.2 }}
+          >
+            {currentStep === "login" ? (
+              <div
+                className="py-10 flex justify-center items-center"
+                style={{ width: "100%" }}
+              >
+                <Form {...form}>
+                  <form
+                    onSubmit={form.handleSubmit(onSubmit)}
+                    className="w-4/5 space-y-6"
+                  >
+                    <FormField
+                      control={form.control}
+                      name="emailOrUsername"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Username</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="Enter Your Username"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="password"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Password</FormLabel>
+                          <FormControl>
+                            <Input
+                              type="password"
+                              placeholder="Enter Password"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormError message={errorMessage} />
+                    {!isLoading ? (
+                      <Button type="submit" className="w-full">
+                        Submit
+                      </Button>
+                    ) : (
+                      <Button className="w-full">
+                        <Loading />
+                      </Button>
+                    )}
+                  </form>
+                </Form>
+              </div>
+            ) : currentStep === "otp" ? (
+              <Otp setCurrentStep={setCurrentStep} />
+            ) : currentStep === "addProfilePart" ? (
+              <UploadProfile />
+            ) : (
+              ""
+            )}
+          </motion.div>
+        </AnimatePresence>
+        {/* <div
           className={`grid grid-cols-2 border box-border border-green-600 transition-transform duration-500 ${
             showOtpComponent && "-translate-x-1/2"
           }`}
@@ -170,7 +252,7 @@ export const Login = () => {
             </Form>
           </div>
           {showOtpComponent && <Otp />}
-        </div>
+        </div> */}
       </div>
     </div>
   );

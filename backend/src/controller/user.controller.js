@@ -100,6 +100,7 @@ const login = async (req, res) => {
     res.status(200).json({
       status: "success",
       email: user.email,
+      _id: user._id,
       message: "Email is not verified",
     });
   } catch (error) {
@@ -217,6 +218,19 @@ const userDetails = async (req, res) => {
     }
     const user = jwt.verify(token[TOKEN_NAME], process.env.JWT_SECERETKEY);
     return res.status(200).json({ status: "success", user });
+  } catch (error) {
+    return res.status(400).send(error);
+  }
+};
+const updateUser = async (req, res) => {
+  const value = req.body;
+  try {
+    const updatedUser = await User.findByIdAndUpdate(req.user._id, value);
+    return res.status(200).json({
+      status: "success",
+      message: "User Details Updated",
+      updatedUser,
+    });
   } catch (error) {
     return res.status(400).send(error);
   }
@@ -405,6 +419,7 @@ module.exports = {
   sendOtp,
   verifyOtp,
   userDetails,
+  updateUser,
   getUsers,
   searchNewFriends,
   getFriendRequests,

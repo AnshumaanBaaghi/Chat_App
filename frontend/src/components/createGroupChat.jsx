@@ -6,6 +6,7 @@ import { FaArrowLeft } from "react-icons/fa6";
 import { createGroup } from "@/api";
 import { getChats } from "@/redux/actions/userActions";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { motion } from "framer-motion";
 
 export const CreateGroupChat = ({ setShowCreateGroupModal }) => {
   const friends = useSelector((state) => state.user.friends);
@@ -125,6 +126,27 @@ export const CreateGroupChat = ({ setShowCreateGroupModal }) => {
             <button onClick={() => setShowSecondStep(false)}>
               <FaArrowLeft />
             </button>
+            <motion.div
+              className="w-[200px] h-[200px] bg-white"
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                color: "black",
+              }}
+              animate={{
+                scale: [1, 2, 2, 1, 1],
+                rotate: [0, 0, 180, 180, 0],
+                borderRadius: ["0%", "0%", "50%", "50%", "50%"],
+              }}
+              transition={{
+                duration: 1.5,
+                ease: "easeInOut",
+                times: [0, 0.2, 0.5, 0.8, 1],
+              }}
+            >
+              user Image
+            </motion.div>
             <input
               type="text"
               value={groupName}

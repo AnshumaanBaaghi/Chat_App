@@ -5,10 +5,9 @@ import { useSelector } from "react-redux";
 import { useToast } from "@/components/ui/use-toast";
 import { useNavigate } from "react-router-dom";
 
-export const Otp = () => {
+export const Otp = ({ setCurrentStep }) => {
   const { email } = useSelector((state) => state.user.userDetail);
   const { toast } = useToast();
-  const navigate = useNavigate();
   const sendOrResendOtp = async () => {
     try {
       await sendOtp(email);
@@ -24,8 +23,9 @@ export const Otp = () => {
 
   const handleOtpSubmit = async (otp) => {
     try {
-      await verifyOtp(otp, email);
-      navigate("/");
+      // await verifyOtp(otp, email);
+      console.log("verified");
+      setCurrentStep("addProfilePart");
     } catch (error) {
       if (error?.response?.data?.status == "error") {
         toast({
@@ -38,7 +38,7 @@ export const Otp = () => {
     }
   };
   useEffect(() => {
-    sendOrResendOtp();
+    // sendOrResendOtp();
   }, []);
   return (
     <OtpComponent

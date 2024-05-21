@@ -61,7 +61,7 @@ export const OtpComponent = ({
     }
   }, []);
   return (
-    <div className="py-10 w-full box-border border border-green-800">
+    <div className="py-10 w-full box-border min-h-[50vh]">
       <h2 className="px-4">OTP Verification</h2>
       <p className="px-4">Enter the OTP sent to {email}</p>
       <div className="border border-red-800 px-4 flex gap-5">

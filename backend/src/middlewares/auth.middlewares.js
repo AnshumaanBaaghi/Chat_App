@@ -3,11 +3,12 @@ const { User } = require("../models/user.model");
 const jwt = require("jsonwebtoken");
 const verifyJWT = async (req, res, next) => {
   const token = req.cookies;
+  console.log("token:", token);
   try {
     if (!token[TOKEN_NAME]) {
       return res
-        .status(200)
-        .json({ status: "success", message: "Token doesn't exist" });
+        .status(501)
+        .json({ status: "error", message: "Token doesn't exist" });
     }
     const decodedToken = jwt.verify(
       token[TOKEN_NAME],
