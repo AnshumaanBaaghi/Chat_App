@@ -29,6 +29,9 @@ export const verifyOtp = (otp, email) => {
 export const userDetails = () => {
   return api.get("/user/me");
 };
+export const updateUserDetails = (data) => {
+  return api.post("/user/me", data);
+};
 
 export const newFriends = () => {
   return api.get("/user/search-new-friends");

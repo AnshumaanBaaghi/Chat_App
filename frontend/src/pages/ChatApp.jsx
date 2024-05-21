@@ -125,6 +125,13 @@ export const ChatApp = () => {
       // TODO-> update the list of unread messages
     }
   };
+  const handleStopTyping = () => {
+    socket.emit("stop typing", {
+      chat: selectedChatRef.current,
+      typer: loggedinUserRef.current,
+    });
+    setSelfTyping(false);
+  };
 
   const handleTypingMessageChange = () => {
     if (!selfTyping) {
@@ -140,11 +147,7 @@ export const ChatApp = () => {
     }
 
     typingTimeoutRef.current = setTimeout(() => {
-      socket.emit("stop typing", {
-        chat: selectedChatRef.current,
-        typer: loggedinUserRef.current,
-      });
-      setSelfTyping(false);
+      handleStopTyping();
     }, 3000);
   };
 
@@ -171,7 +174,7 @@ export const ChatApp = () => {
     socket.on("someone typing", (data) => {
       setTypingUsersObject((pre) => ({ ...pre, [data.chat._id]: data.typer }));
     });
-    socket.on("someone stop typing", ({ typer, chat }) => {
+    socket.on("someone stop typing", ({ chat }) => {
       setTypingUsersObject((prev) => {
         const { [chat._id]: _, ...restTypingData } = prev;
         return restTypingData;
@@ -190,6 +193,7 @@ export const ChatApp = () => {
       socket.off("messageReceived");
       socket.off("someone typing");
       socket.off("someone stoped typing");
+      socket.off("chat created");
     };
   }, [socket]);
 
@@ -197,6 +201,7 @@ export const ChatApp = () => {
     <div className="flex">
       <AllChats typingUsersObject={typingUsersObject} />
       <SelectedChat
+        handleStopTyping={handleStopTyping}
         messages={messages}
         setMessages={setMessages}
         handleTypingMessageChange={handleTypingMessageChange}

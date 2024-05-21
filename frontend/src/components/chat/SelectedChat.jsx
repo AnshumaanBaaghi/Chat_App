@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Messages } from "@/components/chat/Messages";
 import { useDispatch, useSelector } from "react-redux";
@@ -14,11 +14,14 @@ export const SelectedChat = ({
   messages,
   setMessages,
   typingUsersObject,
+  handleStopTyping,
 }) => {
   const selectedChat = useSelector((state) => state.user.selectedChat);
   const loggedinUser = useSelector((state) => state.user.userDetail);
   const chats = useSelector((state) => state.user.chats);
   const dispatch = useDispatch();
+
+  const inputRef = useRef(null);
 
   const [typedMessages, setTypedMessages] = useState("");
   const [someoneTyping, setSomeoneTyping] = useState(null);
@@ -31,6 +34,7 @@ export const SelectedChat = ({
   const handleSubmit = async (e) => {
     e.preventDefault();
     setTypedMessages("");
+    handleStopTyping();
     try {
       const res = await sendMessage(selectedChat._id, typedMessages);
       if (!res.data?.data) return;
@@ -66,7 +70,6 @@ export const SelectedChat = ({
 
   //--------------------------------
   const handleUpload = async (e) => {
-    console.log("handleUpload:");
     const localImagePath = e.target.files[0];
     const firebasePath = `profileImages/${"user1"}`;
     if (!localImagePath) return;
@@ -82,6 +85,7 @@ export const SelectedChat = ({
   useEffect(() => {
     if (!selectedChat) return;
     getMessages();
+    inputRef.current.focus();
   }, [selectedChat]);
 
   useEffect(() => {
@@ -131,6 +135,7 @@ export const SelectedChat = ({
                 placeholder="Type a message"
                 value={typedMessages}
                 onChange={handleChange}
+                ref={inputRef}
               />
               <button type="submit" className="bg-red-500">
                 send
@@ -141,7 +146,7 @@ export const SelectedChat = ({
       ) : (
         <div className="border border-red-600 w-full h-screen flex items-center justify-center">
           {/* Select Chat to Start Conversation */}
-          <input type="file" onChange={handleUpload} />
+          <input type="file" accept="image/*" onChange={handleUpload} />
         </div>
       )}
     </div>

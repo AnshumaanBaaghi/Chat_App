@@ -51,6 +51,7 @@ const FormSchema = z.object({
 
 export const Register = () => {
   const [showOtpComponent, setShowOtpComponent] = useState(false);
+  const [showAddProfileSection, setShowAddProfileSection] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const isAuth = useSelector((state) => state.user.isAuth);
@@ -69,6 +70,8 @@ export const Register = () => {
   });
 
   async function onSubmit(data) {
+    setShowOtpComponent(true);
+    return;
     setErrorMessage("");
     setIsLoading(true);
     try {
@@ -116,7 +119,7 @@ export const Register = () => {
 
   return (
     <div className="flex h-screen items-center">
-      <div className="w-1/3 m-auto border border-red-500 rounded-xl overflow-visible">
+      <div className="w-1/3 m-auto border border-red-500 rounded-xl overflow-hidden">
         <div
           className={`grid grid-cols-2 border box-border border-green-600 transition-transform duration-500 ${
             showOtpComponent && "-translate-x-1/2"
@@ -203,8 +206,15 @@ export const Register = () => {
               </form>
             </Form>
           </div>
-          {showOtpComponent && <Otp />}
+          {showOtpComponent && (
+            <Otp setShowAddProfileSection={setShowAddProfileSection} />
+          )}
         </div>
+        {/* {showAddProfileSection && (
+          <div className="absolute left-0 top-0 bg-slate-200 w-full h-full rounded-xl">
+            profile
+          </div>
+        )} */}
       </div>
     </div>
   );
