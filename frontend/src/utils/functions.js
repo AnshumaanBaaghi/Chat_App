@@ -9,13 +9,7 @@ export const getFilteredArray = (query, arr) => {
   return filteredArray;
 };
 
-export const getSenderName = (loggedinUser, participants) => {
-  return participants[0]._id === loggedinUser.userId
-    ? participants[1].name
-    : participants[0].name;
-};
-
-export const getSenderDetails = (loggedinUser, participants) => {
+export const getOppositeUserDetails = (loggedinUser, participants) => {
   return participants[0]._id === loggedinUser.userId
     ? participants[1]
     : participants[0];

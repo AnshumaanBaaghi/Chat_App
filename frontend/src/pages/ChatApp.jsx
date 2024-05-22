@@ -198,8 +198,11 @@ export const ChatApp = () => {
   }, [socket]);
 
   return (
-    <div className="flex">
-      <AllChats typingUsersObject={typingUsersObject} />
+    <div className="flex ">
+      <AllChats
+        typingUsersObject={typingUsersObject}
+        selectedChat={selectedChat}
+      />
       <SelectedChat
         handleStopTyping={handleStopTyping}
         messages={messages}

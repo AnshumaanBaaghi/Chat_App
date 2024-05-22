@@ -2,30 +2,47 @@ import React from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ReactIcon } from "../ReactIcon";
 import { FaCircleUser } from "react-icons/fa6";
-import { getSenderName } from "@/utils/functions";
+import { RiGroupLine } from "react-icons/ri";
+import { getOppositeUserDetails } from "@/utils/functions";
 import { useDispatch, useSelector } from "react-redux";
 import { updateSelectedChat } from "@/redux/actions/userActions";
 
 export const Chat = ({ chat, loggedinUser, isSomeOneTyping }) => {
   const dispatch = useDispatch();
   const selectedChat = useSelector((state) => state.user.selectedChat);
+  console.log("chat.isGroup.avatar:", chat);
 
   const handleSelectChat = () => {
     if (selectedChat && selectedChat._id === chat._id) return; // Avoid Selecting Same Chat
     dispatch(updateSelectedChat(chat));
   };
+
+  const getTwoLetters = () => {
+    const name = getOppositeUserDetails(
+      loggedinUser,
+      chat.participants
+    ).name.split(" ");
+    const l1 = name[0][0];
+    const l2 = (name[1] && name[1][0]) || name[0][1];
+    return (l1 + l2).toUpperCase();
+  };
+
   return (
     <div className="px-3">
       <div
         className="flex gap-3 cursor-pointer border-b  border-b-blue-500 py-3"
         onClick={handleSelectChat}
       >
-        <Avatar>
-          <AvatarImage src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSX4bPpNmnBUF-JKHYe7g2joB4kJOwuKnp98A&usqp=CAU" />
+        <Avatar size="3.5rem">
+          <AvatarImage src={chat.isGroup ? chat.avatar : ""} />
           <AvatarFallback>
-            <ReactIcon color="grey" size="100%">
-              <FaCircleUser />
-            </ReactIcon>
+            {chat.isGroup ? (
+              <ReactIcon color="gray" size="100%">
+                <FaCircleUser />
+              </ReactIcon>
+            ) : (
+              getTwoLetters()
+            )}
           </AvatarFallback>
         </Avatar>
         <div
@@ -36,7 +53,7 @@ export const Chat = ({ chat, loggedinUser, isSomeOneTyping }) => {
             <h4 className="font-semibold">
               {chat.isGroup
                 ? chat.name
-                : getSenderName(loggedinUser, chat.participants)}
+                : getOppositeUserDetails(loggedinUser, chat.participants).name}
             </h4>
             <p className="text-xs">1:20 PM</p>
           </div>

@@ -2,12 +2,12 @@ import React, { useEffect, useRef, useState } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Messages } from "@/components/chat/Messages";
 import { useDispatch, useSelector } from "react-redux";
-import { getSenderName } from "@/utils/functions";
+import { getOppositeUserDetails } from "@/utils/functions";
 import { getAllMessages, sendMessage } from "@/api";
 import { updateChats, updateSelectedChat } from "@/redux/actions/userActions";
-import { storage } from "@/firebase/firebase";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { uploadImage } from "@/firebase/uploadImage";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { ReactIcon } from "../ReactIcon";
+import { FaArrowLeft, FaCircleUser } from "react-icons/fa6";
 
 export const SelectedChat = ({
   handleTypingMessageChange,
@@ -68,19 +68,9 @@ export const SelectedChat = ({
     setSomeoneTyping(null);
   };
 
-  //--------------------------------
-  const handleUpload = async (e) => {
-    const localImagePath = e.target.files[0];
-    const firebasePath = `profileImages/${"user1"}`;
-    if (!localImagePath) return;
-    try {
-      const url = await uploadImage(localImagePath, firebasePath);
-      console.log("url:", url);
-    } catch (error) {
-      console.log("error:", error);
-    }
+  const unSelectChat = () => {
+    dispatch(updateSelectedChat(null));
   };
-  //--------------------------------
 
   useEffect(() => {
     if (!selectedChat) return;
@@ -92,13 +82,40 @@ export const SelectedChat = ({
     checkTyperInCurrentChat();
   }, [typingUsersObject]);
   return (
-    <div className="bg-red-200 w-4/6">
+    <div
+      className={`bg-red-200  w-full  ${
+        selectedChat ? "block" : "hidden"
+      } md:w-4/6 md:block`}
+    >
       {selectedChat ? (
         <div>
           {/* Heading */}
           <div className="w-full h-16 bg-blue-500 flex justify-between items-center p-3">
             <div className="bg-green-300 flex gap-5 items-center">
               <div
+                className={`${selectedChat ? "block" : "hidden"} md:hidden`}
+                onClick={unSelectChat}
+              >
+                <ReactIcon color="gray" size="30px">
+                  <FaArrowLeft />
+                </ReactIcon>
+              </div>
+
+              <Avatar size="3.5rem">
+                <AvatarImage
+                  src={selectedChat.isGroup ? selectedChat.avatar : ""}
+                />
+                <AvatarFallback>
+                  {selectedChat.isGroup ? (
+                    <ReactIcon color="gray" size="100%">
+                      <FaCircleUser />
+                    </ReactIcon>
+                  ) : (
+                    "Group"
+                  )}
+                </AvatarFallback>
+              </Avatar>
+              {/* <div
                 className="relative overflow-hidden bg-gray-200 rounded-full"
                 style={{ height: "40px", width: "40px" }}
               >
@@ -107,12 +124,15 @@ export const SelectedChat = ({
                   src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSX4bPpNmnBUF-JKHYe7g2joB4kJOwuKnp98A&usqp=CAU"
                   alt="Your Image"
                 />
-              </div>
+              </div> */}
               <span className="transition-opacity transition-transform duration-300">
                 <h4 className="font-semibold">
                   {selectedChat?.isGroup
                     ? selectedChat.name
-                    : getSenderName(loggedinUser, selectedChat.participants)}
+                    : getOppositeUserDetails(
+                        loggedinUser,
+                        selectedChat.participants
+                      ).name}
                 </h4>
                 {someoneTyping && <div>typing...</div>}
               </span>
@@ -145,8 +165,7 @@ export const SelectedChat = ({
         </div>
       ) : (
         <div className="border border-red-600 w-full h-screen flex items-center justify-center">
-          {/* Select Chat to Start Conversation */}
-          <input type="file" accept="image/*" onChange={handleUpload} />
+          Select Chat to Start Conversation
         </div>
       )}
     </div>
