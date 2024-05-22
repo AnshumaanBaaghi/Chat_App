@@ -5,10 +5,10 @@ const {
   getAllChats,
   createGroupChat,
   getGroupDetails,
-  renameGroupChat,
   deleteGroupChat,
   addParticipantInGroup,
   removeParticipantFromGroup,
+  updateGroupChat,
 } = require("../controller/chat.controller");
 
 const router = Router();
@@ -20,7 +20,7 @@ router.route("/group").post(createGroupChat); // for creating Group chat
 router
   .route("/group/:chatId")
   .get(getGroupDetails)
-  .patch(renameGroupChat)
+  .patch(updateGroupChat)
   .delete(deleteGroupChat);
 
 router

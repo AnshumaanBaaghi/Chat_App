@@ -7,6 +7,9 @@ import { createGroup } from "@/api";
 import { getChats } from "@/redux/actions/userActions";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { motion } from "framer-motion";
+import { ImageUploadInputBox } from "./card/imageUploadInputBox";
+import { v4 } from "uuid";
+import { Button } from "./ui/button";
 
 export const CreateGroupChat = ({ setShowCreateGroupModal }) => {
   const friends = useSelector((state) => state.user.friends);
@@ -15,6 +18,7 @@ export const CreateGroupChat = ({ setShowCreateGroupModal }) => {
   const [groupName, setGroupName] = useState("");
   const [selectedParticipants, setSelectedParticipants] = useState([]);
   const [showSecondStep, setShowSecondStep] = useState(false);
+  const [imageUrl, setImageUrl] = useState(null);
 
   const filteredOptions = getFilteredArray(query, friends).filter((friend) => {
     for (let i = 0; i < selectedParticipants.length; i++) {
@@ -26,16 +30,18 @@ export const CreateGroupChat = ({ setShowCreateGroupModal }) => {
   const selectUser = (friend) => {
     setSelectedParticipants((prev) => [...prev, friend]);
   };
+
   const unselectUser = (friend) => {
     setSelectedParticipants((prev) =>
       prev.filter((el) => el.userId !== friend.userId)
     );
   };
+
   const handleSubmit = async () => {
     if (selectedParticipants.length < 2) return; // TODO: add toast here
     const participants = selectedParticipants.map((el) => el.userId);
     try {
-      await createGroup(groupName, participants);
+      await createGroup(groupName, participants, imageUrl);
       setShowCreateGroupModal(false);
       dispatch(getChats());
     } catch (error) {
@@ -126,27 +132,13 @@ export const CreateGroupChat = ({ setShowCreateGroupModal }) => {
             <button onClick={() => setShowSecondStep(false)}>
               <FaArrowLeft />
             </button>
-            <motion.div
-              className="w-[200px] h-[200px] bg-white"
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                color: "black",
-              }}
-              animate={{
-                scale: [1, 2, 2, 1, 1],
-                rotate: [0, 0, 180, 180, 0],
-                borderRadius: ["0%", "0%", "50%", "50%", "50%"],
-              }}
-              transition={{
-                duration: 1.5,
-                ease: "easeInOut",
-                times: [0, 0.2, 0.5, 0.8, 1],
-              }}
-            >
-              user Image
-            </motion.div>
+            <ImageUploadInputBox
+              imageUrl={imageUrl}
+              setImageUrl={setImageUrl}
+              firebasePath={`groupImages/${v4()}`}
+              placeholder="Add Group Picture"
+              size="12rem"
+            />
             <input
               type="text"
               value={groupName}
@@ -154,9 +146,9 @@ export const CreateGroupChat = ({ setShowCreateGroupModal }) => {
               placeholder="Group Name"
               className="w-full bg-white border border-gray-300 rounded-md shadow-sm pl-3 pr-10 py-2 text-left focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
             />
-            <button disabled={!groupName.trim()} onClick={handleSubmit}>
+            <Button disabled={!groupName.trim()} onClick={handleSubmit}>
               create
-            </button>
+            </Button>
           </div>
         )}
       </div>

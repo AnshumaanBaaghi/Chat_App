@@ -7,6 +7,7 @@ const chatSchema = new mongoose.Schema(
     participants: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
     latestMessage: { type: mongoose.Schema.Types.ObjectId, ref: "Message" },
     admin: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+    avatar: { type: String },
   },
   {
     timestamps: true,

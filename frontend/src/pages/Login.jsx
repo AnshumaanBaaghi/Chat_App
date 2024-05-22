@@ -58,24 +58,15 @@ export const Login = () => {
     setIsLoading(true);
     try {
       const res = await loginUser(data);
-      if (res?.data?.user) {
-        const { name, email, username, avatar, _id } = res.data.user;
-        dispatch(
-          updateUserDetail({ name, email, username, avatar, userId: _id })
-        );
+      const { name, email, username, avatar, _id } = res.data.user;
+      dispatch(
+        updateUserDetail({ name, email, username, avatar, userId: _id })
+      );
+      if (res?.data?.isEmailVerified) {
         dispatch(login());
         navigate("/");
-      } else if (res?.data?.email) {
-        dispatch(
-          updateUserDetail({ email: res.data.email, userId: res.data._id })
-        );
-        setCurrentStep("otp");
       } else {
-        toast({
-          variant: "destructive",
-          title: "Uh oh! Something went wrong.",
-          description: "There was a problem with your request.",
-        });
+        setCurrentStep("otp");
       }
     } catch (error) {
       if (error?.response?.data?.status == "error") {
@@ -92,11 +83,18 @@ export const Login = () => {
     }
   }
 
-  const uploadImageToDB = async (url) => {
-    return updateUserDetails({ avatar: url });
+  const uploadImageToDB = async () => {
+    if (!imageUrl) return;
+    try {
+      await updateUserDetails({ avatar: imageUrl });
+      dispatch(updateUserDetail({ avatar: imageUrl }));
+      dispatch(login());
+    } catch (error) {
+      console.log("error:", error);
+    }
   };
 
-  const updateAuthStatus = () => {
+  const skipProfileImage = () => {
     dispatch(login());
   };
 
@@ -200,15 +198,14 @@ export const Login = () => {
                   imageUrl={imageUrl}
                   setImageUrl={setImageUrl}
                   firebasePath={`profileImages/${userId || v4()}`}
-                  uploadImageToDB={uploadImageToDB}
                   placeholder="Add Profile Picture"
                   size="12rem"
                 />
                 <div className=" w-full flex justify-around mt-6">
-                  <Button variant="outline" onClick={updateAuthStatus}>
+                  <Button variant="outline" onClick={skipProfileImage}>
                     Skip
                   </Button>
-                  <Button disabled={!imageUrl} onClick={updateAuthStatus}>
+                  <Button disabled={!imageUrl} onClick={uploadImageToDB}>
                     Next
                   </Button>
                 </div>

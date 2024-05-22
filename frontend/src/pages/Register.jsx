@@ -12,7 +12,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { FormError } from "@/components/formError";
-import { registerUser, userDetails } from "@/api";
+import { registerUser, updateUserDetails, userDetails } from "@/api";
 import { Otp } from "./Otp";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -79,9 +79,11 @@ export const Register = () => {
     setErrorMessage("");
     setIsLoading(true);
     try {
-      await registerUser(data);
+      const res = await registerUser(data);
+      console.log("register:", res);
+      const { name, email, username, avatar, _id } = res.data.user;
       dispatch(
-        updateUserDetail({ email: data.email, username: data.username })
+        updateUserDetail({ name, email, username, avatar, userId: _id })
       );
       setCurrentStep("otp");
     } catch (error) {
@@ -99,8 +101,19 @@ export const Register = () => {
     }
   }
 
-  const uploadImageToDB = async (url) => {
-    return updateUserDetails({ avatar: url });
+  const uploadImageToDB = async () => {
+    if (!imageUrl) return;
+    try {
+      await updateUserDetails({ avatar: imageUrl });
+      dispatch(updateUserDetail({ avatar: imageUrl }));
+      dispatch(login());
+    } catch (error) {
+      console.log("error:", error);
+    }
+  };
+
+  const skipProfileImage = () => {
+    dispatch(login());
   };
 
   useEffect(() => {
@@ -227,14 +240,24 @@ export const Register = () => {
               ) : currentStep === "otp" ? (
                 <Otp setCurrentStep={setCurrentStep} />
               ) : currentStep === "addProfilePart" ? (
-                <ImageUploadInputBox
-                  imageUrl={imageUrl}
-                  setImageUrl={setImageUrl}
-                  firebasePath={`profileImages/${userId || v4()}`}
-                  uploadImageToDB={uploadImageToDB}
-                  placeholder="Add Profile Picture"
-                  size="12rem"
-                />
+                <div className=" flex flex-col items-center m-6">
+                  <ImageUploadInputBox
+                    imageUrl={imageUrl}
+                    setImageUrl={setImageUrl}
+                    firebasePath={`profileImages/${userId || v4()}`}
+                    uploadImageToDB={uploadImageToDB}
+                    placeholder="Add Profile Picture"
+                    size="12rem"
+                  />
+                  <div className=" w-full flex justify-around mt-6">
+                    <Button variant="outline" onClick={skipProfileImage}>
+                      Skip
+                    </Button>
+                    <Button disabled={!imageUrl} onClick={uploadImageToDB}>
+                      Next
+                    </Button>
+                  </div>
+                </div>
               ) : (
                 ""
               )}
@@ -242,100 +265,6 @@ export const Register = () => {
           </AnimatePresence>
         </div>
       </div>
-      {/* <div className="flex h-screen items-center">
-        <div className="w-1/3 m-auto border border-red-500 rounded-xl overflow-hidden">
-          <div
-            className={`grid grid-cols-2 border box-border border-green-600 transition-transform duration-500 ${
-              showOtpComponent && "-translate-x-1/2"
-            }`}
-            style={{ width: "200%" }}
-          >
-            <div
-              className="py-10 flex justify-center items-center"
-              style={{ width: "100%" }}
-            >
-              <Form {...form}>
-                <form
-                  onSubmit={form.handleSubmit(onSubmit)}
-                  className="w-4/5 space-y-6"
-                >
-                  <FormField
-                    control={form.control}
-                    name="name"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Name</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Enter Your Name" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="username"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Username</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Enter Your Username" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="email"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Email</FormLabel>
-                        <FormControl>
-                          <Input placeholder="example@example.com" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="password"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Password</FormLabel>
-                        <FormControl>
-                          <Input
-                            type="password"
-                            placeholder="Enter Password"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormError message={errorMessage} />
-                  {!isLoading ? (
-                    <Button type="submit" className="w-full">
-                      Submit
-                    </Button>
-                  ) : (
-                    <Button className="w-full">
-                      <Loading />
-                    </Button>
-                  )}
-                </form>
-              </Form>
-            </div>
-            {showOtpComponent && (
-              <Otp setShowAddProfileSection={setShowAddProfileSection} />
-            )}
-          </div>
-        </div>
-      </div> */}
     </>
   );
 };

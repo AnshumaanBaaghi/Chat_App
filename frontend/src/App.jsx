@@ -9,7 +9,6 @@ import {
   createGroup,
   deleteGroup,
   removeParticipantFromGroup,
-  renameGroup,
 } from "./api";
 
 function App() {

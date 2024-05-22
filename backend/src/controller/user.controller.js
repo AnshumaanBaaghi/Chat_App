@@ -39,7 +39,9 @@ const register = async (req, res) => {
         message: "Username already exist!",
       });
     }
+
     const hashedPassword = await bcrypt.hash(password, 9);
+
     const user = await User.create({
       email,
       name,
@@ -47,8 +49,13 @@ const register = async (req, res) => {
       username,
     });
 
+    const registeredUser = await User.findById(user._id).select(
+      "-password -resetPasswordToken -emailVerificationToken -emailVerificationExpiry"
+    );
+
     res.send({
       status: "success",
+      user: registeredUser,
       message: "Users registered successfully",
     });
   } catch (error) {
@@ -87,21 +94,12 @@ const login = async (req, res) => {
       "-password -resetPasswordToken -emailVerificationToken -emailVerificationExpiry"
     );
 
-    if (user.isEmailVerified) {
-      // add access token here
-      const token = user.generateAccessToken();
-      return res.status(200).cookie(TOKEN_NAME, token).json({
-        status: "success",
-        user: loggedInUser,
-        message: "login success",
-      });
-    }
-
-    res.status(200).json({
+    const token = user.generateAccessToken();
+    return res.status(200).cookie(TOKEN_NAME, token).json({
       status: "success",
-      email: user.email,
-      _id: user._id,
-      message: "Email is not verified",
+      user: loggedInUser,
+      isEmailVerified: user.isEmailVerified,
+      message: "login success",
     });
   } catch (error) {
     res.send(error);

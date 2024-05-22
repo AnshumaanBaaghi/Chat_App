@@ -16,12 +16,10 @@ export const ImageUploadInputBox = ({
   imageUrl,
   setImageUrl,
   firebasePath,
-  uploadImageToDB,
   placeholder = "Upload Image",
   size,
 }) => {
   const [isLoading, setIsLoading] = useState(false);
-  const dispatch = useDispatch();
 
   const handleImageUpload = async (e) => {
     const localImagePath = e.target.files[0];
@@ -30,9 +28,7 @@ export const ImageUploadInputBox = ({
     setImageUrl(null);
     try {
       const url = await uploadImage(localImagePath, firebasePath);
-      await uploadImageToDB(url);
       setImageUrl(url);
-      dispatch(updateUserDetail({ avatar: url }));
     } catch (error) {
       console.log("error:", error);
     }
@@ -79,7 +75,7 @@ export const ImageUploadInputBox = ({
           {imageUrl && (
             <span
               className="absolute inset-0 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 bg-black bg-opacity-50 rounded-full"
-              style={{ width: "10rem", height: "10rem" }}
+              style={{ width: size, height: size }}
             >
               Update Image
             </span>

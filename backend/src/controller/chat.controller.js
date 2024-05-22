@@ -182,7 +182,7 @@ const createOrGetOneOnOneChat = async (req, res) => {
 };
 
 const createGroupChat = async (req, res) => {
-  const { name, participants } = req.body;
+  const { name, participants, avatar } = req.body;
 
   if (participants?.includes(req.user._id.toString())) {
     return res.status(400).json({
@@ -202,6 +202,7 @@ const createGroupChat = async (req, res) => {
     isGroup: true,
     participants: members,
     admin: req.user._id,
+    avatar,
   });
 
   const createdGroup = await Chat.aggregate([
@@ -315,9 +316,9 @@ const getGroupDetails = async (req, res) => {
   res.status(200).json({ message: "Details", data: chat[0] });
 };
 
-const renameGroupChat = async (req, res) => {
+const updateGroupChat = async (req, res) => {
   const { chatId } = req.params;
-  const { name } = req.body;
+  const values = req.body;
 
   const groupChat = await Chat.findOne({
     _id: new mongoose.Types.ObjectId(chatId),
@@ -334,12 +335,12 @@ const renameGroupChat = async (req, res) => {
 
   const updatedGroupChat = await Chat.findByIdAndUpdate(
     chatId,
-    { name },
+    { ...values },
     { new: true }
   );
   return res
     .status(200)
-    .json({ message: "Group Name Updated", data: updatedGroupChat });
+    .json({ message: "Group Updated", data: updatedGroupChat });
 };
 
 const deleteGroupChat = async (req, res) => {
@@ -511,6 +512,7 @@ const addParticipantInGroup = async (req, res) => {
     res.status(400).json({ message: "error ", error });
   }
 };
+
 const removeParticipantFromGroup = async (req, res) => {
   const { chatId, participantId } = req.params;
   try {
@@ -614,7 +616,7 @@ module.exports = {
   getAllChats,
   createGroupChat,
   getGroupDetails,
-  renameGroupChat,
+  updateGroupChat,
   deleteGroupChat,
   addParticipantInGroup,
   removeParticipantFromGroup,

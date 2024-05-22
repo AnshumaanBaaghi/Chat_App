@@ -58,12 +58,12 @@ export const getAllChats = () => {
   return api.get("/chat");
 };
 
-export const createGroup = (name, participants = []) => {
-  return api.post("/chat/group", { name, participants });
+export const createGroup = (name, participants = [], avatar) => {
+  return api.post("/chat/group", { name, participants, avatar });
 };
 
-export const renameGroup = (name, chatId) => {
-  return api.patch(`/chat/group/${chatId}`, { name });
+export const updateGroup = (obj, chatId) => {
+  return api.patch(`/chat/group/${chatId}`, obj);
 };
 
 export const deleteGroup = (chatId) => {

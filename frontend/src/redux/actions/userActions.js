@@ -113,6 +113,7 @@ export const updateSentRequests = (payload) => {
 export const updateFriendRequests = (payload) => {
   return { type: UPDATEFRIENDREQUEST, payload };
 };
+
 export const updateFriends = (payload) => {
   return { type: UPDATEFRIENDS, payload };
 };

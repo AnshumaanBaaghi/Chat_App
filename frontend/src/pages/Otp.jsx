@@ -22,8 +22,7 @@ export const Otp = ({ setCurrentStep }) => {
 
   const handleOtpSubmit = async (otp) => {
     try {
-      // await verifyOtp(otp, email);
-      console.log("verified");
+      await verifyOtp(otp, email);
       setCurrentStep("addProfilePart");
     } catch (error) {
       if (error?.response?.data?.status == "error") {
@@ -37,7 +36,7 @@ export const Otp = ({ setCurrentStep }) => {
     }
   };
   useEffect(() => {
-    // sendOrResendOtp();
+    sendOrResendOtp();
   }, []);
   return (
     <OtpComponent
