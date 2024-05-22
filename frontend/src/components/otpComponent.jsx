@@ -33,9 +33,11 @@ export const OtpComponent = ({
       inputRefs[index + 1].focus();
     }
   };
+
   const handleClick = (index) => {
     inputRefs[index].setSelectionRange(1, 1);
   };
+
   const handleKeyDown = (e, index) => {
     if (
       e.key === "Backspace" &&

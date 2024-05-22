@@ -20,6 +20,9 @@ import { login, updateUserDetail } from "@/redux/actions/userActions";
 import { Loading } from "@/components/loading";
 import { useToast } from "@/components/ui/use-toast";
 import { Navigate, useNavigate } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
+import { ImageUploadInputBox } from "@/components/card/imageUploadInputBox";
+import { v4 } from "uuid";
 
 const FormSchema = z.object({
   name: z.string().min(5, {
@@ -50,11 +53,14 @@ const FormSchema = z.object({
 });
 
 export const Register = () => {
-  const [showOtpComponent, setShowOtpComponent] = useState(false);
-  const [showAddProfileSection, setShowAddProfileSection] = useState(false);
+  const [currentStep, setCurrentStep] = useState("login");
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [imageUrl, setImageUrl] = useState(null);
+
   const isAuth = useSelector((state) => state.user.isAuth);
+  const { userId } = useSelector((state) => state.user.userDetail);
+
   const dispatch = useDispatch();
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -70,8 +76,6 @@ export const Register = () => {
   });
 
   async function onSubmit(data) {
-    setShowOtpComponent(true);
-    return;
     setErrorMessage("");
     setIsLoading(true);
     try {
@@ -79,7 +83,7 @@ export const Register = () => {
       dispatch(
         updateUserDetail({ email: data.email, username: data.username })
       );
-      setShowOtpComponent(true);
+      setCurrentStep("otp");
     } catch (error) {
       if (error?.response?.data?.status == "error") {
         setErrorMessage(error.response.data.message);
@@ -94,6 +98,10 @@ export const Register = () => {
       setIsLoading(false);
     }
   }
+
+  const uploadImageToDB = async (url) => {
+    return updateUserDetails({ avatar: url });
+  };
 
   useEffect(() => {
     (async () => {
@@ -118,104 +126,216 @@ export const Register = () => {
   }
 
   return (
-    <div className="flex h-screen items-center">
-      <div className="w-1/3 m-auto border border-red-500 rounded-xl overflow-hidden">
-        <div
-          className={`grid grid-cols-2 border box-border border-green-600 transition-transform duration-500 ${
-            showOtpComponent && "-translate-x-1/2"
-          }`}
-          style={{ width: "200%" }}
-        >
-          <div
-            className="py-10 flex justify-center items-center"
-            style={{ width: "100%" }}
-          >
-            <Form {...form}>
-              <form
-                onSubmit={form.handleSubmit(onSubmit)}
-                className="w-4/5 space-y-6"
-              >
-                <FormField
-                  control={form.control}
-                  name="name"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Name</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Enter Your Name" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="username"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Username</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Enter Your Username" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+    <>
+      <div className="flex h-screen items-center">
+        <div className="w-1/3 m-auto min-h-[50vh] flex flex-col justify-center border border-red-500 rounded-xl">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={currentStep ? currentStep : "empty"}
+              initial={{ x: 10, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              exit={{ x: -10, opacity: 0 }}
+              transition={{ duration: 0.2 }}
+            >
+              {currentStep === "login" ? (
+                <div
+                  className="py-10 flex justify-center items-center"
+                  style={{ width: "100%" }}
+                >
+                  <Form {...form}>
+                    <form
+                      onSubmit={form.handleSubmit(onSubmit)}
+                      className="w-4/5 space-y-6"
+                    >
+                      <FormField
+                        control={form.control}
+                        name="name"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Name</FormLabel>
+                            <FormControl>
+                              <Input placeholder="Enter Your Name" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="username"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Username</FormLabel>
+                            <FormControl>
+                              <Input
+                                placeholder="Enter Your Username"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
 
-                <FormField
-                  control={form.control}
-                  name="email"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Email</FormLabel>
-                      <FormControl>
-                        <Input placeholder="example@example.com" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                      <FormField
+                        control={form.control}
+                        name="email"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Email</FormLabel>
+                            <FormControl>
+                              <Input
+                                placeholder="example@example.com"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
 
-                <FormField
-                  control={form.control}
-                  name="password"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Password</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="password"
-                          placeholder="Enter Password"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
+                      <FormField
+                        control={form.control}
+                        name="password"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Password</FormLabel>
+                            <FormControl>
+                              <Input
+                                type="password"
+                                placeholder="Enter Password"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormError message={errorMessage} />
+                      {!isLoading ? (
+                        <Button type="submit" className="w-full">
+                          Submit
+                        </Button>
+                      ) : (
+                        <Button className="w-full">
+                          <Loading />
+                        </Button>
+                      )}
+                    </form>
+                  </Form>
+                </div>
+              ) : currentStep === "otp" ? (
+                <Otp setCurrentStep={setCurrentStep} />
+              ) : currentStep === "addProfilePart" ? (
+                <ImageUploadInputBox
+                  imageUrl={imageUrl}
+                  setImageUrl={setImageUrl}
+                  firebasePath={`profileImages/${userId || v4()}`}
+                  uploadImageToDB={uploadImageToDB}
+                  placeholder="Add Profile Picture"
+                  size="12rem"
                 />
-                <FormError message={errorMessage} />
-                {!isLoading ? (
-                  <Button type="submit" className="w-full">
-                    Submit
-                  </Button>
-                ) : (
-                  <Button className="w-full">
-                    <Loading />
-                  </Button>
-                )}
-              </form>
-            </Form>
-          </div>
-          {showOtpComponent && (
-            <Otp setShowAddProfileSection={setShowAddProfileSection} />
-          )}
+              ) : (
+                ""
+              )}
+            </motion.div>
+          </AnimatePresence>
         </div>
-        {/* {showAddProfileSection && (
-          <div className="absolute left-0 top-0 bg-slate-200 w-full h-full rounded-xl">
-            profile
-          </div>
-        )} */}
       </div>
-    </div>
+      {/* <div className="flex h-screen items-center">
+        <div className="w-1/3 m-auto border border-red-500 rounded-xl overflow-hidden">
+          <div
+            className={`grid grid-cols-2 border box-border border-green-600 transition-transform duration-500 ${
+              showOtpComponent && "-translate-x-1/2"
+            }`}
+            style={{ width: "200%" }}
+          >
+            <div
+              className="py-10 flex justify-center items-center"
+              style={{ width: "100%" }}
+            >
+              <Form {...form}>
+                <form
+                  onSubmit={form.handleSubmit(onSubmit)}
+                  className="w-4/5 space-y-6"
+                >
+                  <FormField
+                    control={form.control}
+                    name="name"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Name</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Enter Your Name" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="username"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Username</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Enter Your Username" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="email"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Email</FormLabel>
+                        <FormControl>
+                          <Input placeholder="example@example.com" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="password"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Password</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="password"
+                            placeholder="Enter Password"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormError message={errorMessage} />
+                  {!isLoading ? (
+                    <Button type="submit" className="w-full">
+                      Submit
+                    </Button>
+                  ) : (
+                    <Button className="w-full">
+                      <Loading />
+                    </Button>
+                  )}
+                </form>
+              </Form>
+            </div>
+            {showOtpComponent && (
+              <Otp setShowAddProfileSection={setShowAddProfileSection} />
+            )}
+          </div>
+        </div>
+      </div> */}
+    </>
   );
 };

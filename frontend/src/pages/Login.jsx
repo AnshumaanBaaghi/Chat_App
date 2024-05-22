@@ -12,7 +12,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { FormError } from "@/components/formError";
-import { loginUser, userDetails } from "@/api";
+import { loginUser, updateUserDetails, userDetails } from "@/api";
 import { Otp } from "./Otp";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -21,7 +21,8 @@ import { Loading } from "@/components/loading";
 import { useToast } from "@/components/ui/use-toast";
 import { Navigate, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { UploadProfile } from "@/components/card/uploadProfile";
+import { ImageUploadInputBox } from "@/components/card/imageUploadInputBox";
+import { v4 } from "uuid";
 
 const FormSchema = z.object({
   emailOrUsername: z.string().min(5, {
@@ -33,11 +34,13 @@ const FormSchema = z.object({
 });
 
 export const Login = () => {
-  const [showOtpComponent, setShowOtpComponent] = useState(false);
   const [currentStep, setCurrentStep] = useState("login");
   const [isLoading, setIsLoading] = useState(false);
+  const [imageUrl, setImageUrl] = useState(null);
   const [errorMessage, setErrorMessage] = useState("");
+
   const isAuth = useSelector((state) => state.user.isAuth);
+  const { userId } = useSelector((state) => state.user.userDetail);
   const dispatch = useDispatch();
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -51,9 +54,6 @@ export const Login = () => {
   });
 
   async function onSubmit(data) {
-    setShowOtpComponent(true);
-    setCurrentStep("otp");
-    return;
     setErrorMessage("");
     setIsLoading(true);
     try {
@@ -69,7 +69,7 @@ export const Login = () => {
         dispatch(
           updateUserDetail({ email: res.data.email, userId: res.data._id })
         );
-        setShowOtpComponent(true);
+        setCurrentStep("otp");
       } else {
         toast({
           variant: "destructive",
@@ -91,6 +91,15 @@ export const Login = () => {
       setIsLoading(false);
     }
   }
+
+  const uploadImageToDB = async (url) => {
+    return updateUserDetails({ avatar: url });
+  };
+
+  const updateAuthStatus = () => {
+    dispatch(login());
+  };
+
   useEffect(() => {
     (async () => {
       if (!isAuth) {
@@ -186,73 +195,29 @@ export const Login = () => {
             ) : currentStep === "otp" ? (
               <Otp setCurrentStep={setCurrentStep} />
             ) : currentStep === "addProfilePart" ? (
-              <UploadProfile />
+              <div className=" flex flex-col items-center m-6">
+                <ImageUploadInputBox
+                  imageUrl={imageUrl}
+                  setImageUrl={setImageUrl}
+                  firebasePath={`profileImages/${userId || v4()}`}
+                  uploadImageToDB={uploadImageToDB}
+                  placeholder="Add Profile Picture"
+                  size="12rem"
+                />
+                <div className=" w-full flex justify-around mt-6">
+                  <Button variant="outline" onClick={updateAuthStatus}>
+                    Skip
+                  </Button>
+                  <Button disabled={!imageUrl} onClick={updateAuthStatus}>
+                    Next
+                  </Button>
+                </div>
+              </div>
             ) : (
               ""
             )}
           </motion.div>
         </AnimatePresence>
-        {/* <div
-          className={`grid grid-cols-2 border box-border border-green-600 transition-transform duration-500 ${
-            showOtpComponent && "-translate-x-1/2"
-          }`}
-          style={{ width: "200%" }}
-        >
-          <div
-            className="py-10 flex justify-center items-center"
-            style={{ width: "100%" }}
-          >
-            <Form {...form}>
-              <form
-                onSubmit={form.handleSubmit(onSubmit)}
-                className="w-4/5 space-y-6"
-              >
-                <FormField
-                  control={form.control}
-                  name="emailOrUsername"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Username</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Enter Your Username" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="password"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Password</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="password"
-                          placeholder="Enter Password"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormError message={errorMessage} />
-                {!isLoading ? (
-                  <Button type="submit" className="w-full">
-                    Submit
-                  </Button>
-                ) : (
-                  <Button className="w-full">
-                    <Loading />
-                  </Button>
-                )}
-              </form>
-            </Form>
-          </div>
-          {showOtpComponent && <Otp />}
-        </div> */}
       </div>
     </div>
   );

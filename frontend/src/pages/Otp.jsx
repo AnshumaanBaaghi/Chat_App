@@ -3,7 +3,6 @@ import { OtpComponent } from "@/components/otpComponent";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useToast } from "@/components/ui/use-toast";
-import { useNavigate } from "react-router-dom";
 
 export const Otp = ({ setCurrentStep }) => {
   const { email } = useSelector((state) => state.user.userDetail);
