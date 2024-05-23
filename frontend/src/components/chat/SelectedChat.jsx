@@ -83,15 +83,15 @@ export const SelectedChat = ({
   }, [typingUsersObject]);
   return (
     <div
-      className={`bg-red-200  w-full  ${
+      className={`bg-[#15171c] w-full  ${
         selectedChat ? "block" : "hidden"
-      } md:w-4/6 md:block`}
+      } md:w-4/6 md:block border-l border-l-[#1f212a]`}
     >
       {selectedChat ? (
         <div>
           {/* Heading */}
-          <div className="w-full h-16 bg-blue-500 flex justify-between items-center p-3">
-            <div className="bg-green-300 flex gap-5 items-center">
+          <div className="w-full h-16 bg-[#0d0e12] flex justify-between items-center p-3">
+            <div className="flex gap-5 items-center text-white">
               <div
                 className={`${selectedChat ? "block" : "hidden"} md:hidden`}
                 onClick={unSelectChat}
@@ -101,7 +101,7 @@ export const SelectedChat = ({
                 </ReactIcon>
               </div>
 
-              <Avatar size="3.5rem">
+              <Avatar size="2.5rem">
                 <AvatarImage
                   src={selectedChat.isGroup ? selectedChat.avatar : ""}
                 />
@@ -115,18 +115,8 @@ export const SelectedChat = ({
                   )}
                 </AvatarFallback>
               </Avatar>
-              {/* <div
-                className="relative overflow-hidden bg-gray-200 rounded-full"
-                style={{ height: "40px", width: "40px" }}
-              >
-                <img
-                  className="w-full h-full object-cover absolute top-0 left-0"
-                  src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSX4bPpNmnBUF-JKHYe7g2joB4kJOwuKnp98A&usqp=CAU"
-                  alt="Your Image"
-                />
-              </div> */}
               <span className="transition-opacity transition-transform duration-300">
-                <h4 className="font-semibold">
+                <h4 className="">
                   {selectedChat?.isGroup
                     ? selectedChat.name
                     : getOppositeUserDetails(
@@ -134,24 +124,26 @@ export const SelectedChat = ({
                         selectedChat.participants
                       ).name}
                 </h4>
-                {someoneTyping && <div>typing...</div>}
+                {someoneTyping && (
+                  <div className="text-[#00a261] text-[13px]">typing...</div>
+                )}
               </span>
             </div>
             <div className=""></div>
           </div>
           {/* Chats */}
           <ScrollArea
-            className="py-4 px-9 bg-purple-500 flex items-end"
+            className="py-4 px-9 bg-[#212728] flex items-end"
             style={{ height: "calc(100vh - 128px)" }}
           >
             <Messages messages={messages} isGroup={selectedChat?.isGroup} />
           </ScrollArea>
-          <div className="h-16 bg-orange-400 flex px-3 gap-3 items-center">
+          <div className="h-16 bg-gray flex px-3 gap-3 items-center">
             <div>Emoji</div>
             <form onSubmit={handleSubmit} className="flex w-full gap-3">
               <input
                 type="text"
-                className="h-9 w-full rounded-md border bg-transparent px-3 py-1 text-sm shadow-sm outline-none"
+                className="h-9 w-full rounded-md bg-transparent px-3 py-1 text-sm shadow-sm outline-stone-800 border border-[#1f212a] text-white"
                 placeholder="Type a message"
                 value={typedMessages}
                 onChange={handleChange}
@@ -164,7 +156,7 @@ export const SelectedChat = ({
           </div>
         </div>
       ) : (
-        <div className="border border-red-600 w-full h-screen flex items-center justify-center">
+        <div className="text-white w-full h-screen flex items-center justify-center">
           Select Chat to Start Conversation
         </div>
       )}

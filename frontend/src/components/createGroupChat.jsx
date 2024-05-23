@@ -50,6 +50,10 @@ export const CreateGroupChat = ({ setShowCreateGroupModal }) => {
     console.log("working");
   };
 
+  const onRemoveImage = () => {
+    setImageUrl(null);
+  };
+
   return (
     <div className="w-full overflow-hidden bg-gray-500 h-full">
       <div
@@ -136,6 +140,7 @@ export const CreateGroupChat = ({ setShowCreateGroupModal }) => {
               imageUrl={imageUrl}
               setImageUrl={setImageUrl}
               firebasePath={`groupImages/${v4()}`}
+              onRemoveImage={onRemoveImage}
               placeholder="Add Group Picture"
               size="12rem"
             />

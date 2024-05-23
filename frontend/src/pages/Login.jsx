@@ -59,6 +59,7 @@ export const Login = () => {
     try {
       const res = await loginUser(data);
       const { name, email, username, avatar, _id } = res.data.user;
+      console.log("avatar login:", avatar);
       dispatch(
         updateUserDetail({ name, email, username, avatar, userId: _id })
       );
@@ -98,6 +99,10 @@ export const Login = () => {
     dispatch(login());
   };
 
+  const onRemoveImage = () => {
+    setImageUrl(null);
+  };
+
   useEffect(() => {
     (async () => {
       if (!isAuth) {
@@ -105,6 +110,7 @@ export const Login = () => {
           const user = await userDetails();
           if (user?.data?.user) {
             const { name, email, username, avatar, _id } = user.data.user;
+            console.log("avatar login2:", avatar);
             dispatch(
               updateUserDetail({ name, email, username, avatar, userId: _id })
             );
@@ -198,6 +204,7 @@ export const Login = () => {
                   imageUrl={imageUrl}
                   setImageUrl={setImageUrl}
                   firebasePath={`profileImages/${userId || v4()}`}
+                  onRemoveImage={onRemoveImage}
                   placeholder="Add Profile Picture"
                   size="12rem"
                 />

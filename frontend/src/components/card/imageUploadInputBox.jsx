@@ -1,6 +1,5 @@
 import { uploadImage } from "@/firebase/uploadImage";
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
 import { motion } from "framer-motion";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -10,12 +9,13 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Loading } from "../loading";
-import { updateUserDetail } from "@/redux/actions/userActions";
 
 export const ImageUploadInputBox = ({
   imageUrl,
   setImageUrl,
   firebasePath,
+  onRemoveImage,
+  onChangeImage,
   placeholder = "Upload Image",
   size,
 }) => {
@@ -28,12 +28,16 @@ export const ImageUploadInputBox = ({
     setImageUrl(null);
     try {
       const url = await uploadImage(localImagePath, firebasePath);
-      setImageUrl(url);
+      await setImageUrl(url);
+      {
+        onChangeImage && onChangeImage(url);
+      }
     } catch (error) {
       console.log("error:", error);
     }
     setIsLoading(false);
   };
+
   const handleClick = () => {
     if (imageUrl) return;
     triggerFileInput();
@@ -60,7 +64,7 @@ export const ImageUploadInputBox = ({
           animate={{ opacity: 1, scale: 1 }}
           transition={{
             duration: 0.8,
-            delay: 0.5,
+            delay: 0.8,
             ease: [0, 0.71, 0.2, 1.01],
           }}
         >
@@ -85,7 +89,9 @@ export const ImageUploadInputBox = ({
           <DropdownMenuItem onClick={triggerFileInput}>
             Change Image
           </DropdownMenuItem>
-          <DropdownMenuItem>Remove Image</DropdownMenuItem>
+          <DropdownMenuItem onClick={onRemoveImage}>
+            Remove Image
+          </DropdownMenuItem>
         </DropdownMenuContent>
       </div>
     </DropdownMenu>

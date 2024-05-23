@@ -25,7 +25,7 @@ router.route("/register").post(register);
 router.route("/login").post(login);
 router.route("/send-otp").post(sendOtp);
 router.route("/verify-otp").post(verifyOtp);
-router.route("/me").get(userDetails).post(verifyJWT, updateUser);
+router.route("/me").get(verifyJWT, userDetails).post(verifyJWT, updateUser);
 router.route("/search-new-friends").get(verifyJWT, searchNewFriends);
 router.route("/get-friend-requests").get(verifyJWT, getFriendRequests);
 router.route("/get-friends").get(verifyJWT, getFriends);

@@ -30,7 +30,7 @@ export const Chat = ({ chat, loggedinUser, isSomeOneTyping }) => {
   return (
     <div className="px-3">
       <div
-        className="flex gap-3 cursor-pointer border-b  border-b-blue-500 py-3"
+        className="flex gap-3 cursor-pointer border-b border-b-[#959cb647] py-3"
         onClick={handleSelectChat}
       >
         <Avatar size="3.5rem">
@@ -45,27 +45,24 @@ export const Chat = ({ chat, loggedinUser, isSomeOneTyping }) => {
             )}
           </AvatarFallback>
         </Avatar>
-        <div
-          className="box-border flex flex-col justify-between"
-          style={{ width: "88%" }}
-        >
+        <div className="box-border flex flex-col w-full justify-between ">
           <div className="flex justify-between  items-center">
-            <h4 className="font-semibold">
+            <h4 className="font-semibold text-white">
               {chat.isGroup
                 ? chat.name
                 : getOppositeUserDetails(loggedinUser, chat.participants).name}
             </h4>
-            <p className="text-xs">1:20 PM</p>
+            <p className="text-xs text-white">1:20 PM</p>
           </div>
           <div className="flex justify-between  items-center">
-            <p className="text-sm">
+            <p className="text-sm text-[#9a9cae]">
               {isSomeOneTyping
                 ? `${
                     chat.isGroup ? isSomeOneTyping.name + " is " : ""
                   }typing...`
                 : chat?.latestMessage?.content || "Tap to Chat"}
             </p>
-            <p className="w-6 h-6 rounded-full bg-green-700 text-xs flex items-center justify-center">
+            <p className="w-6 h-6 rounded-full text-white bg-[#00a261] text-xs flex items-center justify-center">
               1
             </p>
           </div>

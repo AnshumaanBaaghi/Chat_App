@@ -207,19 +207,9 @@ const verifyOtp = async (req, res) => {
 };
 
 const userDetails = async (req, res) => {
-  const token = req.cookies;
-  try {
-    if (!token[TOKEN_NAME]) {
-      return res
-        .status(200)
-        .json({ status: "success", message: "Token doesn't exist" });
-    }
-    const user = jwt.verify(token[TOKEN_NAME], process.env.JWT_SECERETKEY);
-    return res.status(200).json({ status: "success", user });
-  } catch (error) {
-    return res.status(400).send(error);
-  }
+  return res.status(200).json({ status: "success", user: req.user });
 };
+
 const updateUser = async (req, res) => {
   const value = req.body;
   try {
