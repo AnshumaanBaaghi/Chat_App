@@ -7,17 +7,25 @@ import { GoPlus } from "react-icons/go";
 import { ReactIcon } from "../ReactIcon";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Popup } from "../Popup";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { CreateGroupChat } from "../createGroupChat";
 import { UserProfileSidebar } from "../UserProfileSidebar";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { updateSelectedChat } from "@/redux/actions/userActions";
 
 export const AllChats = ({ typingUsersObject, selectedChat }) => {
-  const allChats = useSelector((state) => state.user.chats);
+  const chats = useSelector((state) => state.user.chats);
   const loggedinUser = useSelector((state) => state.user.userDetail);
+
   const [showCreateGroupModal, setShowCreateGroupModal] = useState(false);
   const [showUserProfileSidebar, setShowUserProfileSidebar] = useState(false);
+  const dispatch = useDispatch();
+
+  const handleSelectChat = (chat) => {
+    if (selectedChat && selectedChat._id === chat._id) return; // Avoid Selecting Same Chat
+    dispatch(updateSelectedChat(chat));
+  };
   return (
     <div
       className={`w-full md:w-2/6 md:flex ${
@@ -66,12 +74,13 @@ export const AllChats = ({ typingUsersObject, selectedChat }) => {
       </div>
       <ScrollArea>
         <div className="bg-[#0d0e12]  mx-3 py-3  rounded-xl flex-grow">
-          {allChats.length > 0 &&
-            allChats.map((el) => (
+          {chats.length > 0 &&
+            chats.map((el) => (
               <Chat
                 key={el._id}
                 chat={el}
                 loggedinUser={loggedinUser}
+                handleSelectChat={handleSelectChat}
                 isSomeOneTyping={typingUsersObject[el._id]}
               />
             ))}

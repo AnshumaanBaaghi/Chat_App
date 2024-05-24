@@ -7,15 +7,15 @@ import { getOppositeUserDetails } from "@/utils/functions";
 import { useDispatch, useSelector } from "react-redux";
 import { updateSelectedChat } from "@/redux/actions/userActions";
 
-export const Chat = ({ chat, loggedinUser, isSomeOneTyping }) => {
+export const Chat = ({
+  chat,
+  loggedinUser,
+  isSomeOneTyping,
+  handleSelectChat,
+}) => {
   const dispatch = useDispatch();
   const selectedChat = useSelector((state) => state.user.selectedChat);
   console.log("chat.isGroup.avatar:", chat);
-
-  const handleSelectChat = () => {
-    if (selectedChat && selectedChat._id === chat._id) return; // Avoid Selecting Same Chat
-    dispatch(updateSelectedChat(chat));
-  };
 
   const getTwoLetters = () => {
     const name = getOppositeUserDetails(
@@ -31,10 +31,16 @@ export const Chat = ({ chat, loggedinUser, isSomeOneTyping }) => {
     <div className="px-3">
       <div
         className="flex gap-3 cursor-pointer border-b border-b-[#959cb647] py-3"
-        onClick={handleSelectChat}
+        onClick={() => handleSelectChat(chat)}
       >
         <Avatar size="3.5rem">
-          <AvatarImage src={chat.isGroup ? chat.avatar : ""} />
+          <AvatarImage
+            src={
+              chat.isGroup
+                ? chat.avatar
+                : getOppositeUserDetails(loggedinUser, chat.participants).avatar
+            }
+          />
           <AvatarFallback>
             {chat.isGroup ? (
               <ReactIcon color="gray" size="100%">

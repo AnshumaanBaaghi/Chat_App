@@ -1,10 +1,10 @@
+import { ChatOrGroupDetails } from "@/components/ChatOrGroupDetails";
 import { AllChats } from "@/components/chat/AllChats";
 import { SelectedChat } from "@/components/chat/SelectedChat";
 import { connectSocket } from "@/redux/actions/socketActions";
 import {
   getChats,
   getNewFriends,
-  getOrCreateChat,
   getSentRequests,
   getfriendRequests,
   getfriends,
@@ -14,6 +14,7 @@ import {
   updateNewFriends,
   updateSentRequests,
 } from "@/redux/actions/userActions";
+
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -210,6 +211,7 @@ export const ChatApp = () => {
         handleTypingMessageChange={handleTypingMessageChange}
         typingUsersObject={typingUsersObject}
       />
+      <ChatOrGroupDetails selectedChat={selectedChat} />
     </div>
   );
 };

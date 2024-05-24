@@ -25,6 +25,7 @@ export const SelectedChat = ({
 
   const [typedMessages, setTypedMessages] = useState("");
   const [someoneTyping, setSomeoneTyping] = useState(null);
+  const [showTapToInfoMessage, setShowTapToInfoMessage] = useState(false);
 
   const handleChange = (e) => {
     setTypedMessages(e.target.value);
@@ -72,15 +73,27 @@ export const SelectedChat = ({
     dispatch(updateSelectedChat(null));
   };
 
+  const openChatDetailSheet = () => {
+    document.getElementById("openChatDetailSheet").click();
+  };
+
   useEffect(() => {
     if (!selectedChat) return;
+    setShowTapToInfoMessage(true);
     getMessages();
     inputRef.current.focus();
+    const timerId = setTimeout(() => {
+      setShowTapToInfoMessage(false);
+    }, 1000);
+    return () => {
+      clearTimeout(timerId);
+    };
   }, [selectedChat]);
 
   useEffect(() => {
     checkTyperInCurrentChat();
   }, [typingUsersObject]);
+
   return (
     <div
       className={`bg-[#15171c] w-full  ${
@@ -90,7 +103,11 @@ export const SelectedChat = ({
       {selectedChat ? (
         <div>
           {/* Heading */}
-          <div className="w-full h-16 bg-[#0d0e12] flex justify-between items-center p-3">
+
+          <div
+            onClick={openChatDetailSheet}
+            className="w-full h-16 bg-[#0d0e12] flex justify-between items-center p-3 cursor-pointer"
+          >
             <div className="flex gap-5 items-center text-white">
               <div
                 className={`${selectedChat ? "block" : "hidden"} md:hidden`}
@@ -100,8 +117,7 @@ export const SelectedChat = ({
                   <FaArrowLeft />
                 </ReactIcon>
               </div>
-
-              <Avatar size="2.5rem">
+              <Avatar size="2.5rem" className="cursor-pointer">
                 <AvatarImage
                   src={selectedChat.isGroup ? selectedChat.avatar : ""}
                 />
@@ -115,8 +131,8 @@ export const SelectedChat = ({
                   )}
                 </AvatarFallback>
               </Avatar>
-              <span className="transition-opacity transition-transform duration-300">
-                <h4 className="">
+              <span className="transition-opacity transition-transform duration-300 cursor-pointer">
+                <h4>
                   {selectedChat?.isGroup
                     ? selectedChat.name
                     : getOppositeUserDetails(
@@ -124,8 +140,15 @@ export const SelectedChat = ({
                         selectedChat.participants
                       ).name}
                 </h4>
-                {someoneTyping && (
+                {someoneTyping ? (
                   <div className="text-[#00a261] text-[13px]">typing...</div>
+                ) : (
+                  showTapToInfoMessage && (
+                    <div className=" text-[13px]">
+                      Click here for{" "}
+                      {selectedChat.isGroup ? "Group" : "Contact"} info
+                    </div>
+                  )
                 )}
               </span>
             </div>

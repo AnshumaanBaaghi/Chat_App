@@ -14,3 +14,27 @@ export const getOppositeUserDetails = (loggedinUser, participants) => {
     ? participants[1]
     : participants[0];
 };
+
+export const getAdminDetails = (adminId, participants) => {
+  for (let i = 0; i < participants.length; i++) {
+    if (participants[i]._id === adminId) {
+      return participants[i];
+    }
+  }
+  return {};
+};
+
+export const rearangeParticipants = (loggedinUser, adminId, participants) => {
+  let admin;
+  const remainingParticipants = [];
+  participants.forEach((el) => {
+    if (el._id !== adminId && el._id !== loggedinUser.userId) {
+      remainingParticipants.push(el);
+    } else if (el._id === adminId) {
+      admin = el;
+    }
+  });
+  const youAndAdmin =
+    loggedinUser?.userId == admin?._id ? [admin] : [loggedinUser, admin];
+  return [...youAndAdmin, ...remainingParticipants];
+};
