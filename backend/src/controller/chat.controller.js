@@ -44,7 +44,7 @@ const getAllChats = async (req, res) => {
                 as: "sender",
                 pipeline: [
                   {
-                    $project: { _id: 1, username: 1, name: 1, avatar: 1 },
+                    $project: { _id: 1, name: 1, username: 1, avatar: 1 },
                   },
                 ],
               },

@@ -103,6 +103,8 @@ const sendMessage = async (req, res) => {
           pipeline: [
             {
               $project: {
+                _id: 1,
+                name: 1,
                 username: 1,
                 avatar: 1,
                 email: 1,

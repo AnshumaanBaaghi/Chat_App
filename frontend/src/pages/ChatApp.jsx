@@ -116,6 +116,7 @@ export const ChatApp = () => {
   };
 
   const onMessageReceived = (message) => {
+    console.log("message received:", message);
     const updatedChats = chatsRef.current?.map((el) =>
       el._id === message.chatId ? { ...el, latestMessage: message } : el
     );

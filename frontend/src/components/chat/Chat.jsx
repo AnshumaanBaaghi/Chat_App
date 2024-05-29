@@ -63,10 +63,18 @@ export const Chat = ({
           <div className="flex justify-between  items-center">
             <p className="text-sm text-[#9a9cae]">
               {isSomeOneTyping
-                ? `${
-                    chat.isGroup ? isSomeOneTyping.name + " is " : ""
-                  }typing...`
-                : chat?.latestMessage?.content || "Tap to Chat"}
+                ? chat.isGroup
+                  ? `${isSomeOneTyping.name} is typing...`
+                  : "typing..."
+                : chat?.latestMessage?.content
+                ? chat.isGroup
+                  ? `${
+                      chat.latestMessage.sender._id === loggedinUser.userId
+                        ? "You"
+                        : chat.latestMessage.sender.name
+                    }: ${chat.latestMessage.content}`
+                  : chat.latestMessage.content
+                : "Tap to Chat"}
             </p>
             <p className="w-6 h-6 rounded-full text-white bg-[#00a261] text-xs flex items-center justify-center">
               1
