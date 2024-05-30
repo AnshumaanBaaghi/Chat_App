@@ -8,6 +8,7 @@ import { updateChats, updateSelectedChat } from "@/redux/actions/userActions";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ReactIcon } from "../ReactIcon";
 import { FaArrowLeft, FaCircleUser } from "react-icons/fa6";
+import { MdOutlineEmojiEmotions } from "react-icons/md";
 
 export const SelectedChat = ({
   handleTypingMessageChange,
@@ -162,7 +163,9 @@ export const SelectedChat = ({
             <Messages messages={messages} isGroup={selectedChat?.isGroup} />
           </ScrollArea>
           <div className="h-16 bg-gray flex px-3 gap-3 items-center">
-            <div>Emoji</div>
+            <ReactIcon color="gray" size="2.3rem">
+              <MdOutlineEmojiEmotions />
+            </ReactIcon>
             <form onSubmit={handleSubmit} className="flex w-full gap-3">
               <input
                 type="text"
