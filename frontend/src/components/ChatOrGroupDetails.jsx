@@ -22,11 +22,11 @@ import { ImageUploadInputBox } from "./card/imageUploadInputBox";
 import { updateGroup } from "@/api";
 import { updateChats, updateSelectedChat } from "@/redux/actions/userActions";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 
 export const ChatOrGroupDetails = ({ selectedChat }) => {
   const loggedinUser = useSelector((state) => state.user.userDetail);
   const chats = useSelector((state) => state.user.chats);
-
   const dispatch = useDispatch();
 
   const [imageUrl, setImageUrl] = useState(null);
@@ -91,20 +91,45 @@ export const ChatOrGroupDetails = ({ selectedChat }) => {
                 />
               ) : (
                 <Avatar size="17rem">
-                  <AvatarImage src={selectedChat.avatar} />
+                  <AvatarImage
+                    src={selectedChat.avatar}
+                    className="cursor-pointer"
+                    onClick={() => console.log("workig...")}
+                  />
                   <AvatarFallback>No Profile</AvatarFallback>
                 </Avatar>
               )
             ) : (
               <Avatar size="17rem">
-                <AvatarImage
-                  src={
-                    getOppositeUserDetails(
-                      loggedinUser,
-                      selectedChat.participants
-                    ).avatar
-                  }
-                />
+                <Dialog>
+                  <DialogTrigger>
+                    <AvatarImage
+                      src={
+                        getOppositeUserDetails(
+                          loggedinUser,
+                          selectedChat.participants
+                        ).avatar
+                      }
+                      className="cursor-pointer"
+                    />
+                  </DialogTrigger>
+                  <DialogContent className="max-w-[50vw] max-h-[100vh] h-fit flex justify-center bg-transparent border-none">
+                    <ScrollArea>
+                      <Avatar size="40rem">
+                        <AvatarImage
+                          src={
+                            getOppositeUserDetails(
+                              loggedinUser,
+                              selectedChat.participants
+                            ).avatar
+                          }
+                        />
+                        <AvatarFallback>No Profile</AvatarFallback>
+                      </Avatar>
+                    </ScrollArea>
+                  </DialogContent>
+                </Dialog>
+
                 <AvatarFallback>No Profile</AvatarFallback>
               </Avatar>
             )}
