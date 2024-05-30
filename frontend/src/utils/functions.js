@@ -38,3 +38,17 @@ export const rearangeParticipants = (loggedinUser, adminId, participants) => {
     loggedinUser?.userId == admin?._id ? [admin] : [loggedinUser, admin];
   return [...youAndAdmin, ...remainingParticipants];
 };
+
+export const timeConverter = (inputTime) => {
+  const dateObj = new Date(inputTime);
+
+  const options = {
+    timeZone: "Asia/Kolkata",
+    hour12: true,
+    hour: "2-digit",
+    minute: "2-digit",
+  };
+  const formattedTime = dateObj.toLocaleString("en-US", options);
+
+  return formattedTime;
+};

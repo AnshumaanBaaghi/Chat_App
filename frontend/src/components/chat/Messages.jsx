@@ -1,6 +1,7 @@
 import React from "react";
 import { MessageCard } from "../card/messageCard";
 import { useSelector } from "react-redux";
+import { timeConverter } from "@/utils/functions";
 
 export const Messages = ({ messages, isGroup }) => {
   console.log("messages:", messages);
@@ -19,6 +20,7 @@ export const Messages = ({ messages, isGroup }) => {
             isSenderSameAsLastSender={
               el.sender._id === messages[index - 1]?.sender?._id
             }
+            time={timeConverter(el.updatedAt)}
           />
         ))}
     </div>

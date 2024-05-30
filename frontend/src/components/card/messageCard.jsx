@@ -9,6 +9,7 @@ export const MessageCard = ({
   isOwnMessage,
   sender,
   isSenderSameAsLastSender,
+  time,
 }) => {
   return (
     <div className={`flex gap-1 ${isOwnMessage ? "justify-end" : ""}`}>
@@ -30,7 +31,7 @@ export const MessageCard = ({
         }`}
       >
         <div>{message}</div>
-        <span className="absolute right-2 text-xs bottom-1">07:20 PM</span>
+        <span className="absolute right-2 text-xs bottom-1">{time}</span>
       </p>
     </div>
   );
