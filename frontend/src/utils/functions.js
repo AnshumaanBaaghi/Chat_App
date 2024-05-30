@@ -40,6 +40,7 @@ export const rearangeParticipants = (loggedinUser, adminId, participants) => {
 };
 
 export const timeConverter = (inputTime) => {
+  // This function converts "2024-05-30T19:59:33.206Z" (UTC) to "01:29 AM" (IST)
   const dateObj = new Date(inputTime);
 
   const options = {
@@ -51,4 +52,27 @@ export const timeConverter = (inputTime) => {
   const formattedTime = dateObj.toLocaleString("en-US", options);
 
   return formattedTime;
+};
+
+export const dateConverter = (inputTime) => {
+  const dateObj = new Date(inputTime);
+
+  const options = {
+    timeZone: "Asia/Kolkata",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  };
+  const formattedDate = dateObj.toLocaleDateString("en-GB", options);
+
+  const today = new Date();
+  const formattedToday = today.toLocaleDateString("en-GB", options);
+  if (formattedDate === formattedToday) return "Today";
+
+  const yesterday = new Date();
+  yesterday.setDate(yesterday.getDate() - 1);
+  const formattedYesterday = yesterday.toLocaleDateString("en-GB", options);
+  if (formattedDate === formattedYesterday) return "Yesterday";
+
+  return formattedDate;
 };

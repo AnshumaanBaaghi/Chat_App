@@ -1,14 +1,13 @@
 import React from "react";
 import { MessageCard } from "../card/messageCard";
 import { useSelector } from "react-redux";
-import { timeConverter } from "@/utils/functions";
+import { dateConverter, timeConverter } from "@/utils/functions";
 
 export const Messages = ({ messages, isGroup }) => {
   console.log("messages:", messages);
   const { userDetail } = useSelector((state) => state.user);
   return (
     <div className="flex flex-col gap-[1px] bg-red-400 ">
-      {/* <div className="text-center">Today</div> */}
       {messages.length > 0 &&
         messages.map((el, index) => (
           <MessageCard
@@ -21,6 +20,11 @@ export const Messages = ({ messages, isGroup }) => {
               el.sender._id === messages[index - 1]?.sender?._id
             }
             time={timeConverter(el.updatedAt)}
+            isMessageDateIsSameAsPreviousMessageDate={
+              dateConverter(el.updatedAt) ===
+              dateConverter(messages[index - 1]?.updatedAt)
+            }
+            day={dateConverter(el.updatedAt)}
           />
         ))}
     </div>
