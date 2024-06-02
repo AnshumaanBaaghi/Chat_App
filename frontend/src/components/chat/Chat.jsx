@@ -28,9 +28,9 @@ export const Chat = ({
   };
 
   return (
-    <div className="px-3">
+    <div className="px-3 box-border w-full">
       <div
-        className="flex gap-3 cursor-pointer border-b border-b-[#959cb647] py-3"
+        className="flex gap-3 cursor-pointer border-b border-b-[#959cb647] py-3 box-border overflow-hidden"
         onClick={() => handleSelectChat(chat)}
       >
         <Avatar size="3.5rem">
@@ -52,16 +52,22 @@ export const Chat = ({
           </AvatarFallback>
         </Avatar>
         <div className="box-border flex flex-col w-full justify-between ">
-          <div className="flex justify-between  items-center">
-            <h4 className="font-semibold text-white">
+          <div
+            className="grid justify-between  items-center"
+            style={{ gridTemplateColumns: "80% 15%" }}
+          >
+            <h4 className="font-semibold text-white overflow-hidden text-ellipsis whitespace-nowrap">
               {chat.isGroup
                 ? chat.name
                 : getOppositeUserDetails(loggedinUser, chat.participants).name}
             </h4>
-            <p className="text-xs text-white">1:20 PM</p>
+            <p className="text-xs text-white flex justify-end">1:20 PM</p>
           </div>
-          <div className="flex justify-between  items-center">
-            <p className="text-sm text-[#9a9cae]">
+          <div
+            className="grid justify-between w-full  items-center box-border"
+            style={{ gridTemplateColumns: "88% 10%" }}
+          >
+            <p className="text-sm text-[#9a9cae] overflow-hidden text-ellipsis whitespace-nowrap">
               {isSomeOneTyping
                 ? chat.isGroup
                   ? `${isSomeOneTyping.name} is typing...`
@@ -76,9 +82,11 @@ export const Chat = ({
                   : chat.latestMessage.content
                 : "Tap to Chat"}
             </p>
-            <p className="w-6 h-6 rounded-full text-white bg-[#00a261] text-xs flex items-center justify-center">
-              1
-            </p>
+            <div className="flex justify-end">
+              <p className="w-6 h-6 rounded-full text-white bg-[#00a261] text-xs flex items-center justify-center">
+                1
+              </p>
+            </div>
           </div>
         </div>
       </div>

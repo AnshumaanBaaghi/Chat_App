@@ -2,7 +2,10 @@ import React, { useEffect, useRef, useState } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Messages } from "@/components/chat/Messages";
 import { useDispatch, useSelector } from "react-redux";
-import { getOppositeUserDetails } from "@/utils/functions";
+import {
+  getOppositeUserDetails,
+  rearangeParticipants,
+} from "@/utils/functions";
 import { getAllMessages, sendMessage } from "@/api";
 import { updateChats, updateSelectedChat } from "@/redux/actions/userActions";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -85,7 +88,7 @@ export const SelectedChat = ({
     inputRef.current.focus();
     const timerId = setTimeout(() => {
       setShowTapToInfoMessage(false);
-    }, 1000);
+    }, 2000);
     return () => {
       clearTimeout(timerId);
     };
@@ -132,8 +135,13 @@ export const SelectedChat = ({
                   )}
                 </AvatarFallback>
               </Avatar>
-              <span className="transition-opacity transition-transform duration-300 cursor-pointer">
-                <h4>
+              <span
+                className="grid pr-3  transition-opacity transition-transform duration-300 cursor-pointer"
+                style={{
+                  gridTemplateColumns: "100%",
+                }}
+              >
+                <h4 className="overflow-hidden text-ellipsis whitespace-nowrap">
                   {selectedChat?.isGroup
                     ? selectedChat.name
                     : getOppositeUserDetails(
@@ -143,11 +151,21 @@ export const SelectedChat = ({
                 </h4>
                 {someoneTyping ? (
                   <div className="text-[#00a261] text-[13px]">typing...</div>
+                ) : showTapToInfoMessage ? (
+                  <div className="text-[13px]">
+                    Click here for {selectedChat.isGroup ? "Group" : "Contact"}{" "}
+                    info
+                  </div>
                 ) : (
-                  showTapToInfoMessage && (
-                    <div className=" text-[13px]">
-                      Click here for{" "}
-                      {selectedChat.isGroup ? "Group" : "Contact"} info
+                  selectedChat.isGroup && (
+                    <div className="text-[13px] overflow-hidden text-ellipsis whitespace-nowrap">
+                      {rearangeParticipants(
+                        loggedinUser,
+                        selectedChat.admin,
+                        selectedChat.participants
+                      )
+                        .map((el) => el.name)
+                        .join(", ")}
                     </div>
                   )
                 )}

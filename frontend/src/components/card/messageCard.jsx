@@ -42,7 +42,7 @@ export const MessageCard = ({
               : ""
           }`}
         >
-          <div>{message}</div>
+          <span>{message}</span>
           <span className="absolute right-2 text-xs bottom-1">{time}</span>
         </p>
       </div>
