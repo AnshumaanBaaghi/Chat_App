@@ -14,7 +14,11 @@ import { UserProfileSidebar } from "../UserProfileSidebar";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { updateSelectedChat } from "@/redux/actions/userActions";
 
-export const AllChats = ({ typingUsersObject, selectedChat }) => {
+export const AllChats = ({
+  typingUsersObject,
+  selectedChat,
+  unreadMessages,
+}) => {
   const chats = useSelector((state) => state.user.chats);
   const loggedinUser = useSelector((state) => state.user.userDetail);
 
@@ -82,6 +86,7 @@ export const AllChats = ({ typingUsersObject, selectedChat }) => {
                 loggedinUser={loggedinUser}
                 handleSelectChat={handleSelectChat}
                 isSomeOneTyping={typingUsersObject[el._id]}
+                isAnyUnreadMessages={unreadMessages[el._id]}
               />
             ))}
         </div>

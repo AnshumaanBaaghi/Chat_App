@@ -16,7 +16,11 @@ import { loginUser, updateUserDetails, userDetails } from "@/api";
 import { Otp } from "./Otp";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { login, updateUserDetail } from "@/redux/actions/userActions";
+import {
+  login,
+  updateUnreadMessages,
+  updateUserDetail,
+} from "@/redux/actions/userActions";
 import { Loading } from "@/components/loading";
 import { useToast } from "@/components/ui/use-toast";
 import { Navigate, useNavigate } from "react-router-dom";
@@ -58,11 +62,19 @@ export const Login = () => {
     setIsLoading(true);
     try {
       const res = await loginUser(data);
-      const { name, email, username, avatar, _id } = res.data.user;
+      const { name, email, username, avatar, _id, unreadMessages } =
+        res.data.user;
       console.log("avatar login:", avatar);
       dispatch(
-        updateUserDetail({ name, email, username, avatar, userId: _id })
+        updateUserDetail({
+          name,
+          email,
+          username,
+          avatar,
+          userId: _id,
+        })
       );
+      dispatch(updateUnreadMessages(unreadMessages));
       if (res?.data?.isEmailVerified) {
         dispatch(login());
         navigate("/");
@@ -109,11 +121,20 @@ export const Login = () => {
         try {
           const user = await userDetails();
           if (user?.data?.user) {
-            const { name, email, username, avatar, _id } = user.data.user;
+            const { name, email, username, avatar, _id, unreadMessages } =
+              user.data.user;
             console.log("avatar login2:", avatar);
             dispatch(
-              updateUserDetail({ name, email, username, avatar, userId: _id })
+              updateUserDetail({
+                name,
+                email,
+                username,
+                avatar,
+                userId: _id,
+              })
             );
+            dispatch(updateUnreadMessages(unreadMessages));
+
             dispatch(login());
             navigate("/");
           }

@@ -122,8 +122,19 @@ export const Register = () => {
         try {
           const user = await userDetails();
           if (user?.data?.user) {
-            const { email, username, avatar, name } = user.data.user;
-            dispatch(updateUserDetail({ email, username, avatar, name }));
+            const { email, username, avatar, name, unreadMessages, _id } =
+              user.data.user;
+            dispatch(
+              updateUserDetail({
+                email,
+                username,
+                avatar,
+                name,
+                userId: _id,
+              })
+            );
+            dispatch(updateUnreadMessages(unreadMessages));
+
             dispatch(login());
             navigate("/");
           }

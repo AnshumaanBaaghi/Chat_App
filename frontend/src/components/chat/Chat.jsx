@@ -12,6 +12,7 @@ export const Chat = ({
   loggedinUser,
   isSomeOneTyping,
   handleSelectChat,
+  isAnyUnreadMessages,
 }) => {
   const dispatch = useDispatch();
   const selectedChat = useSelector((state) => state.user.selectedChat);
@@ -83,9 +84,11 @@ export const Chat = ({
                 : "Tap to Chat"}
             </p>
             <div className="flex justify-end">
-              <p className="w-6 h-6 rounded-full text-white bg-[#00a261] text-xs flex items-center justify-center">
-                1
-              </p>
+              {isAnyUnreadMessages && (
+                <p className="w-6 h-6 rounded-full text-white bg-[#00a261] text-xs flex items-center justify-center">
+                  {isAnyUnreadMessages}
+                </p>
+              )}
             </div>
           </div>
         </div>

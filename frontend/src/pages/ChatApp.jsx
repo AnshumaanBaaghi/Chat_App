@@ -32,6 +32,7 @@ export const ChatApp = () => {
   const selectedChat = useSelector((state) => state.user.selectedChat);
   const chats = useSelector((state) => state.user.chats);
   const loggedinUser = useSelector((state) => state.user.userDetail);
+  const unreadMessages = useSelector((state) => state.user.unreadMessages);
 
   const newUsersRef = useRef(null);
   newUsersRef.current = newUsers;
@@ -48,6 +49,8 @@ export const ChatApp = () => {
   const typingTimeoutRef = useRef(null);
   const loggedinUserRef = useRef(null);
   loggedinUserRef.current = loggedinUser;
+  const unreadMessagesRef = useRef(null);
+  unreadMessagesRef.current = unreadMessages;
 
   const [messages, setMessages] = useState([]);
   const [selfTyping, setSelfTyping] = useState(false);
@@ -204,6 +207,7 @@ export const ChatApp = () => {
       <AllChats
         typingUsersObject={typingUsersObject}
         selectedChat={selectedChat}
+        unreadMessages={unreadMessages}
       />
       <SelectedChat
         handleStopTyping={handleStopTyping}
