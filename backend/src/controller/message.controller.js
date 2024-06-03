@@ -2,6 +2,7 @@ const { default: mongoose } = require("mongoose");
 const { Chat } = require("../models/chat/chat.model");
 const { Message } = require("../models/chat/message.model");
 const { emitSocketEvent } = require("../socket");
+const { User } = require("../models/user.model");
 
 const getAllMessages = async (req, res) => {
   const { chatId } = req.params;
@@ -123,8 +124,26 @@ const sendMessage = async (req, res) => {
       return res.status(500).json({ message: "Internal server error" });
     }
 
-    chat.participants.forEach((participant) => {
+    chat.participants.forEach(async (participant) => {
       if (participant.toString() === req.user._id.toString()) return;
+      const user = await User.findById(participant);
+
+      if (!user.unreadMessages) {
+        user.unreadMessages = {};
+      }
+      if (user.unreadMessages[chatId]) {
+        console.log("phele se h bhai");
+        console.log(
+          "user.unreadMessages[chatId]:",
+          user.unreadMessages[chatId]
+        );
+        user.unreadMessages[chatId] += 1;
+      } else {
+        console.log("nhi h bhai");
+        user.unreadMessages[chatId] = 1;
+      }
+      user.markModified("unreadMessages");
+      await user.save();
       emitSocketEvent(
         req,
         participant.toString(),

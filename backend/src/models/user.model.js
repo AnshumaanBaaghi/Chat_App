@@ -54,6 +54,7 @@ const userSchema = new mongoose.Schema(
       type: Date,
     },
     friends: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+    unreadMessages: { type: Object, default: {} },
   },
   { timestamps: true }
 );

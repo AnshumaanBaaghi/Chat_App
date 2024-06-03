@@ -199,6 +199,7 @@ const verifyOtp = async (req, res) => {
           username: user.username,
           email: user.email,
           avatar: user.avatar,
+          unreadMessages: user.unreadMessages,
         },
       });
   } catch (error) {
@@ -401,6 +402,23 @@ const getSentRequests = async (req, res) => {
   }
 };
 
+const deleteUnreadMessages = async (req, res) => {
+  const { chatId } = req.params;
+  if (!chatId) {
+    return res.status(400).json({ message: "chatId is required" });
+  }
+  try {
+    const user = await User.findById(req.user._id);
+    delete user.unreadMessages[chatId];
+
+    user.markModified("unreadMessages");
+    await user.save();
+    res.status(200).json({ message: "message readed" });
+  } catch (error) {
+    res.status(400).json(error);
+  }
+};
+
 module.exports = {
   login,
   register,
@@ -413,4 +431,5 @@ module.exports = {
   getFriendRequests,
   getFriends,
   getSentRequests,
+  deleteUnreadMessages,
 };
