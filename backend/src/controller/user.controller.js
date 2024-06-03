@@ -409,11 +409,17 @@ const deleteUnreadMessages = async (req, res) => {
   }
   try {
     const user = await User.findById(req.user._id);
-    delete user.unreadMessages[chatId];
+    if (user && user.unreadMessages) {
+      const obj = { ...user.unreadMessages };
+      delete obj[chatId];
+      await User.findByIdAndUpdate(req.user._id, { unreadMessages: obj });
 
-    user.markModified("unreadMessages");
-    await user.save();
-    res.status(200).json({ message: "message readed" });
+      res.status(200).json({ message: "Message marked as read" });
+    } else {
+      res
+        .status(404)
+        .json({ message: "User not found or unreadMessages not found" });
+    }
   } catch (error) {
     res.status(400).json(error);
   }

@@ -1,3 +1,4 @@
+import { removeUnreadMessage_api } from "@/api";
 import { ChatOrGroupDetails } from "@/components/ChatOrGroupDetails";
 import { AllChats } from "@/components/chat/AllChats";
 import { SelectedChat } from "@/components/chat/SelectedChat";
@@ -13,6 +14,7 @@ import {
   updateFriends,
   updateNewFriends,
   updateSentRequests,
+  updateUnreadMessages,
 } from "@/redux/actions/userActions";
 
 import React, { useEffect, useRef, useState } from "react";
@@ -118,16 +120,43 @@ export const ChatApp = () => {
     dispatch(getChats()); //TODO: Avoid this API call
   };
 
-  const onMessageReceived = (message) => {
-    console.log("message received:", message);
-    const updatedChats = chatsRef.current?.map((el) =>
-      el._id === message.chatId ? { ...el, latestMessage: message } : el
-    );
+  const onMessageReceived = async (message) => {
+    const updatedChats = chatsRef.current?.reduce((acc, el) => {
+      if (el._id === message.chatId) {
+        const updatedChat = { ...el, latestMessage: message };
+        return [updatedChat, ...acc];
+      }
+      return [...acc, el];
+    }, []);
     dispatch(updateChats(updatedChats));
     if (message.chatId === selectedChatRef.current?._id) {
       setMessages((pre) => [...pre, message]);
+      // TODO-> Remove unread  Message for DB
+      try {
+        if (
+          unreadMessagesRef.current &&
+          unreadMessagesRef.current[message.chatId]
+        ) {
+          await removeUnreadMessage_api(message.chatId);
+          const updatedUnreadMessages = {
+            ...unreadMessagesRef.current,
+          };
+          delete updatedUnreadMessages[message.chatId];
+          dispatch(updateUnreadMessages(updatedUnreadMessages));
+        }
+      } catch (error) {
+        console.log("error:", error);
+      }
     } else {
       // TODO-> update the list of unread messages
+      if (unreadMessagesRef.current) {
+        const updatedUnreadMessages = {
+          ...unreadMessagesRef.current,
+          [message.chatId]:
+            (+unreadMessagesRef.current[message.chatId] || 0) + 1,
+        };
+        dispatch(updateUnreadMessages(updatedUnreadMessages));
+      }
     }
   };
   const handleStopTyping = () => {
@@ -215,6 +244,7 @@ export const ChatApp = () => {
         setMessages={setMessages}
         handleTypingMessageChange={handleTypingMessageChange}
         typingUsersObject={typingUsersObject}
+        unreadMessages={unreadMessages}
       />
       <ChatOrGroupDetails selectedChat={selectedChat} />
     </div>

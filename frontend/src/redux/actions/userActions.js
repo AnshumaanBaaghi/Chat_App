@@ -128,6 +128,6 @@ export const updateSelectedChat = (payload) => {
   return { type: UPDATESELECTEDCHAT, payload };
 };
 
-export const updateUnreadMessages = (payload) => {
+export const updateUnreadMessages = (payload = {}) => {
   return { type: UPDATEUNREADMESSAGES, payload };
 };

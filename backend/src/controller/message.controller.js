@@ -131,19 +131,10 @@ const sendMessage = async (req, res) => {
       if (!user.unreadMessages) {
         user.unreadMessages = {};
       }
-      if (user.unreadMessages[chatId]) {
-        console.log("phele se h bhai");
-        console.log(
-          "user.unreadMessages[chatId]:",
-          user.unreadMessages[chatId]
-        );
-        user.unreadMessages[chatId] += 1;
-      } else {
-        console.log("nhi h bhai");
-        user.unreadMessages[chatId] = 1;
-      }
-      user.markModified("unreadMessages");
-      await user.save();
+      const obj = { ...user.unreadMessages };
+      obj[chatId] = (+obj[chatId] || 0) + 1;
+
+      await User.findByIdAndUpdate(user._id, { unreadMessages: obj });
       emitSocketEvent(
         req,
         participant.toString(),

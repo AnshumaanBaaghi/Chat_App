@@ -50,6 +50,10 @@ export const sentRequests = () => {
   return api.get("/user/get-sent-requests");
 };
 
+export const removeUnreadMessage_api = (chatId) => {
+  return api.delete(`/user/unreadMessages/${chatId}`);
+};
+
 //<-------------------------------------------------Chats------------------------------------------------->
 export const getOrCreateChat_api = (receiverId) => {
   return api.post("/chat/chat", { receiverId });

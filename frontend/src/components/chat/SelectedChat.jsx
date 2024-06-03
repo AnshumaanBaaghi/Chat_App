@@ -6,8 +6,12 @@ import {
   getOppositeUserDetails,
   rearangeParticipants,
 } from "@/utils/functions";
-import { getAllMessages, sendMessage } from "@/api";
-import { updateChats, updateSelectedChat } from "@/redux/actions/userActions";
+import { getAllMessages, removeUnreadMessage_api, sendMessage } from "@/api";
+import {
+  updateChats,
+  updateSelectedChat,
+  updateUnreadMessages,
+} from "@/redux/actions/userActions";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ReactIcon } from "../ReactIcon";
 import { FaArrowLeft, FaCircleUser } from "react-icons/fa6";
@@ -19,6 +23,7 @@ export const SelectedChat = ({
   setMessages,
   typingUsersObject,
   handleStopTyping,
+  unreadMessages,
 }) => {
   const selectedChat = useSelector((state) => state.user.selectedChat);
   const loggedinUser = useSelector((state) => state.user.userDetail);
@@ -44,11 +49,13 @@ export const SelectedChat = ({
       const res = await sendMessage(selectedChat._id, typedMessages);
       if (!res.data?.data) return;
       setMessages((pre) => [...pre, res.data.data]);
-      const updatedChats = chats.map((el) =>
-        el._id === selectedChat._id
-          ? { ...el, latestMessage: res.data.data }
-          : el
-      );
+      const updatedChats = chats.reduce((acc, el) => {
+        if (el._id === selectedChat._id) {
+          const updatedChat = { ...el, latestMessage: res.data.data };
+          return [updatedChat, ...acc];
+        }
+        return [...acc, el];
+      }, []);
       dispatch(updateChats(updatedChats));
     } catch (error) {
       console.log("error:", error);
@@ -81,6 +88,17 @@ export const SelectedChat = ({
     document.getElementById("openChatDetailSheet").click();
   };
 
+  const removeUnreadMessage = async () => {
+    try {
+      await removeUnreadMessage_api(selectedChat._id);
+      const updatedUnreadMessages = { ...unreadMessages };
+      delete updatedUnreadMessages[selectedChat._id];
+      dispatch(updateUnreadMessages(updatedUnreadMessages));
+    } catch (error) {
+      console.log("error:", error);
+    }
+  };
+
   useEffect(() => {
     if (!selectedChat) return;
     setShowTapToInfoMessage(true);
@@ -89,6 +107,9 @@ export const SelectedChat = ({
     const timerId = setTimeout(() => {
       setShowTapToInfoMessage(false);
     }, 2000);
+    if (unreadMessages[selectedChat._id]) {
+      removeUnreadMessage();
+    }
     return () => {
       clearTimeout(timerId);
     };
