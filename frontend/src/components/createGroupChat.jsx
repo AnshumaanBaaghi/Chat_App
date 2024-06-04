@@ -47,7 +47,6 @@ export const CreateGroupChat = ({ setShowCreateGroupModal }) => {
     } catch (error) {
       console.log("error:", error);
     }
-    console.log("working");
   };
 
   const onRemoveImage = () => {

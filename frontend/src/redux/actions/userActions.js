@@ -79,7 +79,6 @@ export const getfriendRequests = () => async (dispatch) => {
 export const getChats = () => async (dispatch) => {
   try {
     const chats = await getAllChats();
-    console.log("all chats:", chats.data.data);
     dispatch({
       type: UPDATECHATS,
       payload: chats.data.data || [],
@@ -92,7 +91,6 @@ export const getChats = () => async (dispatch) => {
 export const getOrCreateChat = (receiverId) => async (dispatch) => {
   try {
     const chat = await getOrCreateChat_api(receiverId);
-    console.log("chat:", chat.data.data);
     chat.data.data &&
       dispatch({
         type: UPDATECHATS,

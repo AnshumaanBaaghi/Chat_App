@@ -30,7 +30,6 @@ export const ChatOrGroupDetails = ({ selectedChat }) => {
   const dispatch = useDispatch();
 
   const [imageUrl, setImageUrl] = useState(null);
-  console.log("imageUrl:", imageUrl);
 
   const handleRemoveImage = async () => {
     setImageUrl(null);
@@ -64,7 +63,6 @@ export const ChatOrGroupDetails = ({ selectedChat }) => {
   }, [selectedChat]);
 
   if (!selectedChat) return <></>;
-  console.log("selectedChat:", selectedChat);
   return (
     <Sheet>
       <SheetTrigger asChild>
@@ -94,7 +92,6 @@ export const ChatOrGroupDetails = ({ selectedChat }) => {
                   <AvatarImage
                     src={selectedChat.avatar}
                     className="cursor-pointer"
-                    onClick={() => console.log("workig...")}
                   />
                   <AvatarFallback>No Profile</AvatarFallback>
                 </Avatar>
@@ -154,7 +151,7 @@ export const ChatOrGroupDetails = ({ selectedChat }) => {
                 selectedChat.admin,
                 selectedChat.participants
               ).map((el) => (
-                <div>
+                <div key={el._id}>
                   <Avatar size="3.5rem">
                     <AvatarImage src={el.avatar} />
                     <AvatarFallback>
@@ -165,32 +162,7 @@ export const ChatOrGroupDetails = ({ selectedChat }) => {
                   </Avatar>
                   <div>
                     <p> {el._id === loggedinUser.userId ? "You" : el.name}</p>
-                    <p> {el._id === loggedinUser.userId ? "" : el.username}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-          {selectedChat.isGroup && (
-            <div className="w-full bg-blue-100">
-              <p>{selectedChat.participants.length} Members</p>
-              {rearangeParticipants(
-                loggedinUser,
-                selectedChat.admin,
-                selectedChat.participants
-              ).map((el) => (
-                <div>
-                  <Avatar size="3.5rem">
-                    <AvatarImage src={el.avatar} />
-                    <AvatarFallback>
-                      <ReactIcon color="gray" size="100%">
-                        <FaCircleUser />
-                      </ReactIcon>
-                    </AvatarFallback>
-                  </Avatar>
-                  <div>
-                    <p> {el._id === loggedinUser.userId ? "You" : el.name}</p>
-                    <p> {el._id === loggedinUser.userId ? "" : el.username}</p>
+                    <p>{el._id === loggedinUser.userId ? "" : el.username}</p>
                   </div>
                 </div>
               ))}

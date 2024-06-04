@@ -80,7 +80,6 @@ export const Register = () => {
     setIsLoading(true);
     try {
       const res = await registerUser(data);
-      console.log("register:", res);
       const { name, email, username, avatar, _id } = res.data.user;
       dispatch(
         updateUserDetail({ name, email, username, avatar, userId: _id })

@@ -159,9 +159,9 @@ export const ChatApp = () => {
       }
     }
   };
-  const handleStopTyping = () => {
+  const handleStopTyping = (currentChat) => {
     socket.emit("stop typing", {
-      chat: selectedChatRef.current,
+      chat: currentChat,
       typer: loggedinUserRef.current,
     });
     setSelfTyping(false);
@@ -179,9 +179,9 @@ export const ChatApp = () => {
     if (typingTimeoutRef.current) {
       clearTimeout(typingTimeoutRef.current);
     }
-
+    const currentChat = selectedChatRef.current;
     typingTimeoutRef.current = setTimeout(() => {
-      handleStopTyping();
+      handleStopTyping(currentChat);
     }, 3000);
   };
 
@@ -215,7 +215,6 @@ export const ChatApp = () => {
       });
     });
     socket.on("chat created", (group) => {
-      console.log("chat created:", group);
       const updatedChats = [group, ...(chatsRef.current || [])];
       dispatch(updateChats(updatedChats));
     });

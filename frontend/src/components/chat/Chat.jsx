@@ -2,10 +2,7 @@ import React from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ReactIcon } from "../ReactIcon";
 import { FaCircleUser } from "react-icons/fa6";
-import { RiGroupLine } from "react-icons/ri";
 import { getOppositeUserDetails } from "@/utils/functions";
-import { useDispatch, useSelector } from "react-redux";
-import { updateSelectedChat } from "@/redux/actions/userActions";
 
 export const Chat = ({
   chat,
@@ -13,11 +10,8 @@ export const Chat = ({
   isSomeOneTyping,
   handleSelectChat,
   isAnyUnreadMessages,
+  time,
 }) => {
-  const dispatch = useDispatch();
-  const selectedChat = useSelector((state) => state.user.selectedChat);
-  console.log("chat.isGroup.avatar:", chat);
-
   const getTwoLetters = () => {
     const name = getOppositeUserDetails(
       loggedinUser,
@@ -62,26 +56,34 @@ export const Chat = ({
                 ? chat.name
                 : getOppositeUserDetails(loggedinUser, chat.participants).name}
             </h4>
-            <p className="text-xs text-white flex justify-end">1:20 PM</p>
+            {time && (
+              <p className="text-xs text-white flex justify-end">{time}</p>
+            )}
           </div>
           <div
             className="grid justify-between w-full  items-center box-border"
             style={{ gridTemplateColumns: "88% 10%" }}
           >
             <p className="text-sm text-[#9a9cae] overflow-hidden text-ellipsis whitespace-nowrap">
-              {isSomeOneTyping
-                ? chat.isGroup
-                  ? `${isSomeOneTyping.name} is typing...`
-                  : "typing..."
-                : chat?.latestMessage?.content
-                ? chat.isGroup
-                  ? `${
-                      chat.latestMessage.sender._id === loggedinUser.userId
-                        ? "You"
-                        : chat.latestMessage.sender.name
-                    }: ${chat.latestMessage.content}`
-                  : chat.latestMessage.content
-                : "Tap to Chat"}
+              {isSomeOneTyping ? (
+                <span className="text-[#00a261] text-[13px]">
+                  {chat.isGroup
+                    ? `${isSomeOneTyping.name} is typing...`
+                    : "typing..."}
+                </span>
+              ) : chat?.latestMessage?.content ? (
+                chat.isGroup ? (
+                  `${
+                    chat.latestMessage.sender._id === loggedinUser.userId
+                      ? "You"
+                      : chat.latestMessage.sender.name
+                  }: ${chat.latestMessage.content}`
+                ) : (
+                  chat.latestMessage.content
+                )
+              ) : (
+                "Tap to Chat"
+              )}
             </p>
             <div className="flex justify-end">
               {isAnyUnreadMessages && (

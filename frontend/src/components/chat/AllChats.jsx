@@ -13,6 +13,7 @@ import { CreateGroupChat } from "../createGroupChat";
 import { UserProfileSidebar } from "../UserProfileSidebar";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { updateSelectedChat } from "@/redux/actions/userActions";
+import { timeConverter } from "@/utils/functions";
 
 export const AllChats = ({
   typingUsersObject,
@@ -87,6 +88,9 @@ export const AllChats = ({
                 handleSelectChat={handleSelectChat}
                 isSomeOneTyping={typingUsersObject[el._id]}
                 isAnyUnreadMessages={unreadMessages[el._id]}
+                time={
+                  el.latestMessage && timeConverter(el.latestMessage.updatedAt)
+                }
               />
             ))}
         </div>

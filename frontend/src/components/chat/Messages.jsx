@@ -3,8 +3,7 @@ import { MessageCard } from "../card/messageCard";
 import { useSelector } from "react-redux";
 import { dateConverter, timeConverter } from "@/utils/functions";
 
-export const Messages = ({ messages, isGroup }) => {
-  console.log("messages:", messages);
+export const Messages = ({ messages, isGroup, noOfUnreadMessage }) => {
   const { userDetail } = useSelector((state) => state.user);
   return (
     <div className="flex flex-col gap-[1px] bg-red-400 ">
@@ -25,6 +24,10 @@ export const Messages = ({ messages, isGroup }) => {
               dateConverter(messages[index - 1]?.updatedAt)
             }
             day={dateConverter(el.updatedAt)}
+            showUnreadMessageTag={
+              noOfUnreadMessage && messages.length - noOfUnreadMessage === index
+            }
+            noOfUnreadMessage={noOfUnreadMessage}
           />
         ))}
     </div>

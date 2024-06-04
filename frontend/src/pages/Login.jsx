@@ -64,7 +64,6 @@ export const Login = () => {
       const res = await loginUser(data);
       const { name, email, username, avatar, _id, unreadMessages } =
         res.data.user;
-      console.log("avatar login:", avatar);
       dispatch(
         updateUserDetail({
           name,
@@ -123,7 +122,6 @@ export const Login = () => {
           if (user?.data?.user) {
             const { name, email, username, avatar, _id, unreadMessages } =
               user.data.user;
-            console.log("avatar login2:", avatar);
             dispatch(
               updateUserDetail({
                 name,

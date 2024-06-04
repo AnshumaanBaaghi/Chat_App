@@ -35,7 +35,9 @@ export const rearangeParticipants = (loggedinUser, adminId, participants) => {
     }
   });
   const youAndAdmin =
-    loggedinUser?.userId == admin?._id ? [admin] : [loggedinUser, admin];
+    loggedinUser?.userId == admin?._id
+      ? [admin]
+      : [{ ...loggedinUser, _id: loggedinUser.userId }, admin];
   return [...youAndAdmin, ...remainingParticipants];
 };
 

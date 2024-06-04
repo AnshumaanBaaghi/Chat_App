@@ -35,6 +35,7 @@ export const SelectedChat = ({
   const [typedMessages, setTypedMessages] = useState("");
   const [someoneTyping, setSomeoneTyping] = useState(null);
   const [showTapToInfoMessage, setShowTapToInfoMessage] = useState(false);
+  const [noOfUnreadMessage, setNoOfUnreadMessage] = useState(null);
 
   const handleChange = (e) => {
     setTypedMessages(e.target.value);
@@ -44,7 +45,7 @@ export const SelectedChat = ({
   const handleSubmit = async (e) => {
     e.preventDefault();
     setTypedMessages("");
-    handleStopTyping();
+    handleStopTyping(selectedChat);
     try {
       const res = await sendMessage(selectedChat._id, typedMessages);
       if (!res.data?.data) return;
@@ -102,12 +103,14 @@ export const SelectedChat = ({
   useEffect(() => {
     if (!selectedChat) return;
     setShowTapToInfoMessage(true);
+    setNoOfUnreadMessage(null);
     getMessages();
     inputRef.current.focus();
     const timerId = setTimeout(() => {
       setShowTapToInfoMessage(false);
-    }, 2000);
+    }, 3000);
     if (unreadMessages[selectedChat._id]) {
+      setNoOfUnreadMessage(unreadMessages[selectedChat._id]);
       removeUnreadMessage();
     }
     return () => {
@@ -185,7 +188,7 @@ export const SelectedChat = ({
                         selectedChat.admin,
                         selectedChat.participants
                       )
-                        .map((el) => el.name)
+                        .map((el, index) => (index === 0 ? "You" : el.name))
                         .join(", ")}
                     </div>
                   )
@@ -199,7 +202,11 @@ export const SelectedChat = ({
             className="py-4 px-9 bg-[#212728] flex items-end"
             style={{ height: "calc(100vh - 128px)" }}
           >
-            <Messages messages={messages} isGroup={selectedChat?.isGroup} />
+            <Messages
+              messages={messages}
+              isGroup={selectedChat?.isGroup}
+              noOfUnreadMessage={noOfUnreadMessage}
+            />
           </ScrollArea>
           <div className="h-16 bg-gray flex px-3 gap-3 items-center">
             <ReactIcon color="gray" size="2.3rem">

@@ -73,6 +73,7 @@ const initializeSocketIO = (io) => {
     });
 
     socket.on("stop typing", async ({ chat, typer }) => {
+      if (!chat || !typer) return;
       chat.participants?.forEach((participant) => {
         if (participant._id.toString() === typer.userId.toString()) return;
         socket

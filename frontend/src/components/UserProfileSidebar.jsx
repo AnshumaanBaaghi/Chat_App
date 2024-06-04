@@ -10,7 +10,6 @@ export const UserProfileSidebar = ({ setShowUserProfileSidebar }) => {
   const { userId, avatar, name, username } = useSelector(
     (state) => state.user.userDetail
   );
-  console.log("avatar:", avatar);
   const dispatch = useDispatch();
 
   const [imageUrl, setImageUrl] = useState(null);

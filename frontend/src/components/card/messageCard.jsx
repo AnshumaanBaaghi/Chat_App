@@ -12,11 +12,16 @@ export const MessageCard = ({
   time,
   isMessageDateIsSameAsPreviousMessageDate,
   day,
+  showUnreadMessageTag,
+  noOfUnreadMessage,
 }) => {
   return (
     <>
       {!isMessageDateIsSameAsPreviousMessageDate && (
         <div className="text-center">{day}</div>
+      )}
+      {showUnreadMessageTag && (
+        <div className="text-center">Unread Messages {noOfUnreadMessage}</div>
       )}
       <div className={`flex gap-1 ${isOwnMessage ? "justify-end" : ""}`}>
         {isGroup &&
