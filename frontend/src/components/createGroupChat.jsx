@@ -6,7 +6,6 @@ import { FaArrowLeft } from "react-icons/fa6";
 import { createGroup } from "@/api";
 import { getChats } from "@/redux/actions/userActions";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { motion } from "framer-motion";
 import { ImageUploadInputBox } from "./card/imageUploadInputBox";
 import { v4 } from "uuid";
 import { Button } from "./ui/button";

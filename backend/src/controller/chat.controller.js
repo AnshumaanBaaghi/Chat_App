@@ -532,9 +532,14 @@ const removeParticipantFromGroup = async (req, res) => {
     if (!group[0]) {
       return res.status(400).json({ message: "Group doesn't exist" });
     }
-
-    if (group[0].admin?.toString() !== req.user._id?.toString()) {
-      return res.status(400).json({ message: "You are not an admin" });
+    const isAdmin = group[0].admin?.toString() === req.user._id?.toString();
+    const isSameUser = participantId.toString() === req.user._id?.toString();
+    if (!isAdmin && !isSameUser) {
+      return res.status(400).json({
+        message: !isSameUser
+          ? "You don't have an access to remove other participants"
+          : "You are not an admin",
+      });
     }
 
     let isParticipantPresent = false;

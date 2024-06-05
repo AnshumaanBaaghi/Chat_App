@@ -19,10 +19,11 @@ import {
 } from "@/utils/functions";
 import { useDispatch, useSelector } from "react-redux";
 import { ImageUploadInputBox } from "./card/imageUploadInputBox";
-import { updateGroup } from "@/api";
+import { removeParticipantFromGroup, updateGroup } from "@/api";
 import { updateChats, updateSelectedChat } from "@/redux/actions/userActions";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { AddParticipantsToGroup } from "./AddParticipantsToGroup";
 
 export const ChatOrGroupDetails = ({ selectedChat }) => {
   const loggedinUser = useSelector((state) => state.user.userDetail);
@@ -52,6 +53,18 @@ export const ChatOrGroupDetails = ({ selectedChat }) => {
     );
     dispatch(updateChats(updatedChats));
     dispatch(updateSelectedChat({ ...selectedChat, avatar: url }));
+  };
+
+  const removeParticipant = async (participant) => {
+    try {
+      const res = await removeParticipantFromGroup(
+        selectedChat._id,
+        participant._id
+      );
+      console.log("res:", res);
+    } catch (error) {
+      console.log("error:", error);
+    }
   };
 
   useEffect(() => {
@@ -146,12 +159,20 @@ export const ChatOrGroupDetails = ({ selectedChat }) => {
           {selectedChat.isGroup && (
             <div className="w-full bg-blue-100">
               <p>{selectedChat.participants.length} Members</p>
+              <Dialog>
+                <DialogTrigger>
+                  <Button>Add Participants</Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <AddParticipantsToGroup selectedChat={selectedChat} />
+                </DialogContent>
+              </Dialog>
               {rearangeParticipants(
                 loggedinUser,
                 selectedChat.admin,
                 selectedChat.participants
               ).map((el) => (
-                <div key={el._id}>
+                <div key={el._id} className="flex bg-red-200 gap-3 relative">
                   <Avatar size="3.5rem">
                     <AvatarImage src={el.avatar} />
                     <AvatarFallback>
@@ -160,10 +181,22 @@ export const ChatOrGroupDetails = ({ selectedChat }) => {
                       </ReactIcon>
                     </AvatarFallback>
                   </Avatar>
-                  <div>
+                  <div className="flex flex-col">
                     <p> {el._id === loggedinUser.userId ? "You" : el.name}</p>
                     <p>{el._id === loggedinUser.userId ? "" : el.username}</p>
                   </div>
+                  {selectedChat.admin === el._id && (
+                    <div className="absolute right-1 top-1">Admin</div>
+                  )}
+                  {selectedChat.admin === loggedinUser.userId &&
+                    loggedinUser.userId !== el._id && (
+                      <Button
+                        onClick={() => removeParticipant(el)}
+                        className="absolute right-1 bottom-1"
+                      >
+                        remove
+                      </Button>
+                    )}
                 </div>
               ))}
             </div>
