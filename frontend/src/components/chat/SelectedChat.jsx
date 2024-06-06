@@ -206,6 +206,7 @@ export const SelectedChat = ({
               messages={messages}
               isGroup={selectedChat?.isGroup}
               noOfUnreadMessage={noOfUnreadMessage}
+              selectedChat={selectedChat}
             />
           </ScrollArea>
           <div className="h-16 bg-gray flex px-3 gap-3 items-center">

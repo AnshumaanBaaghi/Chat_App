@@ -1,10 +1,38 @@
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { MessageCard } from "../card/messageCard";
 import { useSelector } from "react-redux";
 import { dateConverter, timeConverter } from "@/utils/functions";
-
-export const Messages = ({ messages, isGroup, noOfUnreadMessage }) => {
+export const Messages = ({
+  messages,
+  isGroup,
+  noOfUnreadMessage,
+  selectedChat,
+}) => {
   const { userDetail } = useSelector((state) => state.user);
+
+  const scrollToBottomRef = useRef(null);
+  const scrollToUnreadMessageRef = useRef(null);
+
+  const [firstTime, setFirstTime] = useState(false);
+
+  useEffect(() => {
+    if (noOfUnreadMessage && firstTime) {
+      scrollToUnreadMessageRef.current?.scrollIntoView();
+    } else {
+      scrollToBottomRef.current?.scrollIntoView();
+    }
+  }, [messages]);
+
+  useEffect(() => {
+    setFirstTime(true);
+    const timerId = setTimeout(() => {
+      setFirstTime(false);
+    }, 500);
+    return () => {
+      timerId && clearTimeout(timerId);
+    };
+  }, [selectedChat]);
+
   return (
     <div className="flex flex-col gap-[1px] bg-red-400 ">
       {messages.length > 0 &&
@@ -28,8 +56,10 @@ export const Messages = ({ messages, isGroup, noOfUnreadMessage }) => {
               noOfUnreadMessage && messages.length - noOfUnreadMessage === index
             }
             noOfUnreadMessage={noOfUnreadMessage}
+            scrollToUnreadMessageRef={scrollToUnreadMessageRef}
           />
         ))}
+      <div ref={scrollToBottomRef} />
     </div>
   );
 };

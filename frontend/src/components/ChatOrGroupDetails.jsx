@@ -61,6 +61,7 @@ export const ChatOrGroupDetails = ({ selectedChat }) => {
         selectedChat._id,
         participant._id
       );
+
       console.log("res:", res);
     } catch (error) {
       console.log("error:", error);
