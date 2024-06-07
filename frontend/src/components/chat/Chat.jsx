@@ -57,7 +57,7 @@ export const Chat = ({
                 : getOppositeUserDetails(loggedinUser, chat.participants).name}
             </h4>
             {time && (
-              <p className="text-xs text-white flex justify-end">{time}</p>
+              <p className="text-xs flex justify-end text-[#9a9cae]">{time}</p>
             )}
           </div>
           <div

@@ -16,6 +16,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ReactIcon } from "../ReactIcon";
 import { FaArrowLeft, FaCircleUser } from "react-icons/fa6";
 import { MdOutlineEmojiEmotions } from "react-icons/md";
+import { Button } from "../ui/button";
 
 export const SelectedChat = ({
   handleTypingMessageChange,
@@ -105,7 +106,7 @@ export const SelectedChat = ({
     setShowTapToInfoMessage(true);
     setNoOfUnreadMessage(null);
     getMessages();
-    inputRef.current.focus();
+    inputRef.current?.focus();
     const timerId = setTimeout(() => {
       setShowTapToInfoMessage(false);
     }, 3000);
@@ -134,7 +135,7 @@ export const SelectedChat = ({
 
           <div
             onClick={openChatDetailSheet}
-            className="w-full h-16 bg-[#0d0e12] flex justify-between items-center p-3 cursor-pointer"
+            className="w-full h-16 bg-[#0d0e12] flex justify-between items-center p-3 cursor-pointer no-select"
           >
             <div className="flex gap-5 items-center text-white">
               <div
@@ -160,12 +161,12 @@ export const SelectedChat = ({
                 </AvatarFallback>
               </Avatar>
               <span
-                className="grid pr-3  transition-opacity transition-transform duration-300 cursor-pointer"
+                className="grid pr-3 pappu cursor-pointer bg-green-300 "
                 style={{
                   gridTemplateColumns: "100%",
                 }}
               >
-                <h4 className="overflow-hidden text-ellipsis whitespace-nowrap">
+                <h4 className="overflow-hidden text-ellipsis whitespace-nowrap bg-red-400">
                   {selectedChat?.isGroup
                     ? selectedChat.name
                     : getOppositeUserDetails(
@@ -176,7 +177,7 @@ export const SelectedChat = ({
                 {someoneTyping ? (
                   <div className="text-[#00a261] text-[13px]">typing...</div>
                 ) : showTapToInfoMessage ? (
-                  <div className="text-[13px]">
+                  <div className="text-[13px] bg-blue-700">
                     Click here for {selectedChat.isGroup ? "Group" : "Contact"}{" "}
                     info
                   </div>
@@ -195,11 +196,10 @@ export const SelectedChat = ({
                 )}
               </span>
             </div>
-            <div className=""></div>
           </div>
           {/* Chats */}
           <ScrollArea
-            className="py-4 px-9 bg-[#212728] flex items-end"
+            className="py-4 px-9 bg-[#15171c] flex items-end"
             style={{ height: "calc(100vh - 128px)" }}
           >
             <Messages
@@ -222,9 +222,9 @@ export const SelectedChat = ({
                 onChange={handleChange}
                 ref={inputRef}
               />
-              <button type="submit" className="bg-red-500">
+              <Button type="submit" variant="secondary">
                 send
-              </button>
+              </Button>
             </form>
           </div>
         </div>

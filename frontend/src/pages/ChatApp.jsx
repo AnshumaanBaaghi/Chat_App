@@ -159,6 +159,7 @@ export const ChatApp = () => {
       }
     }
   };
+
   const handleStopTyping = (currentChat) => {
     socket.emit("stop typing", {
       chat: currentChat,
@@ -182,7 +183,7 @@ export const ChatApp = () => {
     const currentChat = selectedChatRef.current;
     typingTimeoutRef.current = setTimeout(() => {
       handleStopTyping(currentChat);
-    }, 3000);
+    }, 1000);
   };
 
   useEffect(() => {
@@ -220,6 +221,9 @@ export const ChatApp = () => {
     });
 
     return () => {
+      if (selfTyping) {
+        handleStopTyping(selectedChat._id);
+      }
       socket.off("new-friend-request");
       socket.off("request-sent");
       socket.off("request-accepted");

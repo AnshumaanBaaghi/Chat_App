@@ -34,7 +34,7 @@ export const Messages = ({
   }, [selectedChat]);
 
   return (
-    <div className="flex flex-col gap-[1px] bg-red-400 ">
+    <div className="flex flex-col gap-[5px] ">
       {messages.length > 0 &&
         messages.map((el, index) => (
           <MessageCard

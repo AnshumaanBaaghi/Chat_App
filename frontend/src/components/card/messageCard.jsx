@@ -19,10 +19,13 @@ export const MessageCard = ({
   return (
     <>
       {!isMessageDateIsSameAsPreviousMessageDate && (
-        <div className="text-center">{day}</div>
+        <div className="text-center text-white no-select">{day}</div>
       )}
       {showUnreadMessageTag && (
-        <div className="text-center" ref={scrollToUnreadMessageRef}>
+        <div
+          className="text-center text-white no-select"
+          ref={scrollToUnreadMessageRef}
+        >
           Unread Messages {noOfUnreadMessage}
         </div>
       )}
@@ -41,7 +44,9 @@ export const MessageCard = ({
             </Avatar>
           )}
         <p
-          className={`relative max-w-[60%] bg-blue-300 py-2 pl-2 pr-[4.5rem] rounded-xl ${
+          className={`relative max-w-[60%] ${
+            isOwnMessage ? "bg-[#172331]" : "bg-[#272134]"
+          } text-white py-2 pl-4 pr-[4.5rem] rounded-xl ${
             isGroup &&
             !isOwnMessage &&
             isSenderSameAsLastSender &&
@@ -51,7 +56,9 @@ export const MessageCard = ({
           }`}
         >
           <span>{message}</span>
-          <span className="absolute right-2 text-xs bottom-1">{time}</span>
+          <span className="absolute text-[#9a9cae] right-2 text-[11px] bottom-1 no-select">
+            {time}
+          </span>
         </p>
       </div>
     </>

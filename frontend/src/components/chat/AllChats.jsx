@@ -14,6 +14,7 @@ import { UserProfileSidebar } from "../UserProfileSidebar";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { updateSelectedChat } from "@/redux/actions/userActions";
 import { timeConverter } from "@/utils/functions";
+import Tooltip from "../ui/tooltip";
 
 export const AllChats = ({
   typingUsersObject,
@@ -33,35 +34,40 @@ export const AllChats = ({
   };
   return (
     <div
-      className={`w-full md:w-2/6 md:flex ${
+      className={`w-full md:w-2/6 md:flex no-select ${
         selectedChat ? "hidden" : "flex"
       }  h-screen bg-[#0d0e12] border-[#1f212a] box-border flex-col flex-w gap-4 relative`}
     >
       <div className="px-3 mt-3 flex justify-between">
         <div>
-          <Avatar
-            className="bg-black"
-            size="2.5rem"
-            onClick={() => setShowUserProfileSidebar(true)}
-          >
-            <AvatarImage src={loggedinUser.avatar} />
-            <AvatarFallback className="bg-black">
-              <ReactIcon className="bg-transparent" color="white" size="100%">
-                <FaCircleUser />
-              </ReactIcon>
-            </AvatarFallback>
-          </Avatar>
+          <Tooltip content="Profile">
+            <Avatar
+              className="bg-black"
+              size="2.5rem"
+              onClick={() => setShowUserProfileSidebar(true)}
+            >
+              <AvatarImage src={loggedinUser.avatar} />
+              <AvatarFallback className="bg-black">
+                <ReactIcon className="bg-transparent" color="white" size="100%">
+                  <FaCircleUser />
+                </ReactIcon>
+              </AvatarFallback>
+            </Avatar>
+          </Tooltip>
         </div>
         <div className="flex justify-between items-center gap-3">
-          <ReactIcon color="white" size="36px">
-            <GoPlus onClick={() => setShowCreateGroupModal(true)} />
-          </ReactIcon>
-
+          <Tooltip content="Create Group">
+            <ReactIcon color="white" size="36px">
+              <GoPlus onClick={() => setShowCreateGroupModal(true)} />
+            </ReactIcon>
+          </Tooltip>
           <Dialog>
             <DialogTrigger>
-              <ReactIcon size="36px" color="white">
-                <HiUserGroup />
-              </ReactIcon>
+              <Tooltip content="Explore">
+                <ReactIcon size="36px" color="white">
+                  <HiUserGroup />
+                </ReactIcon>
+              </Tooltip>
             </DialogTrigger>
             <DialogContent>
               <Popup />

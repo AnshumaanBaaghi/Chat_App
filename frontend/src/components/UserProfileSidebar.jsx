@@ -36,7 +36,7 @@ export const UserProfileSidebar = ({ setShowUserProfileSidebar }) => {
   }, []);
   return (
     <div className="w-full overflow-hidden bg-gray-500 h-full">
-      <div className="w-[100%] bg-red-400 ">
+      <div className="w-[100%] bg-[#00a261] ">
         <div className="flex">
           <button onClick={() => setShowUserProfileSidebar(false)}>
             <FaArrowLeft />
