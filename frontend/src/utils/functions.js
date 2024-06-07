@@ -57,6 +57,7 @@ export const timeConverter = (inputTime) => {
 };
 
 export const dateConverter = (inputTime) => {
+  // This function converts "2024-05-30T19:59:33.206Z" (UTC) to IST date
   const dateObj = new Date(inputTime);
 
   const options = {
@@ -75,6 +76,23 @@ export const dateConverter = (inputTime) => {
   yesterday.setDate(yesterday.getDate() - 1);
   const formattedYesterday = yesterday.toLocaleDateString("en-GB", options);
   if (formattedDate === formattedYesterday) return "Yesterday";
+
+  // Check if the date is within the last 7 days
+  const oneWeekAgo = new Date();
+  oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+  if (dateObj >= oneWeekAgo) {
+    // Return the day of the week
+    const days = [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
+    ];
+    return days[dateObj.getDay()];
+  }
 
   return formattedDate;
 };
