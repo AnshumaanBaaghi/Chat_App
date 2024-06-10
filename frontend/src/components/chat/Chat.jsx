@@ -57,14 +57,24 @@ export const Chat = ({
                 : getOppositeUserDetails(loggedinUser, chat.participants).name}
             </h4>
             {time && (
-              <p className="text-xs flex justify-end text-[#9a9cae]">{time}</p>
+              <p
+                className={`text-xs flex justify-end ${
+                  isAnyUnreadMessages ? "text-green-500" : "text-[#9a9cae]"
+                } `}
+              >
+                {time}
+              </p>
             )}
           </div>
           <div
             className="grid justify-between w-full  items-center box-border"
             style={{ gridTemplateColumns: "88% 10%" }}
           >
-            <p className="text-sm text-[#9a9cae] overflow-hidden text-ellipsis whitespace-nowrap">
+            <p
+              className={`text-sm ${
+                isAnyUnreadMessages ? "text-white" : "text-[#9a9cae]"
+              } overflow-hidden text-ellipsis whitespace-nowrap`}
+            >
               {isSomeOneTyping ? (
                 <span className="text-[#00a261] text-[13px]">
                   {chat.isGroup

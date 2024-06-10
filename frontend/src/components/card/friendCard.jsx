@@ -5,7 +5,7 @@ export const FriendCard = ({ user }) => {
   return (
     <div className="flex gap-5 items-center border border-red-300 py-2 px-3">
       <Avatar size="3.5rem">
-        <AvatarImage src="https:encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ4ZLEEDaC7_8qJqkthsik-Q0rr7TSzGfU6XA&usqp=CAU" />
+        <AvatarImage src={user.avatar} />
         <AvatarFallback>CN</AvatarFallback>
       </Avatar>
       <div className="flex flex-col">

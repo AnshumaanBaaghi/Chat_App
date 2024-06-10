@@ -1,11 +1,31 @@
 // Only for name or username query
-export const getFilteredArray = (query, arr) => {
+export const getFilteredUsersArray = (query, arr) => {
+  console.log("arr:", arr);
   if (!query) return arr;
   const pattern = query.split("").join(".*");
   const regex = new RegExp(pattern, "i");
   const filteredArray = arr.filter(
     (el) => regex.test(el.name) || regex.test(el.username)
   );
+  return filteredArray;
+};
+
+export const getFilteredChatArray = (query, chats, loggedinUser) => {
+  console.log("chats:", chats);
+  if (!query) return chats;
+  const pattern = query.split("").join(".*");
+  const regex = new RegExp(pattern, "i");
+  const filteredArray = chats.filter((el) => {
+    if (el.isGroup) {
+      return regex.test(el.name);
+    } else {
+      const oppositeUser = getOppositeUserDetails(
+        loggedinUser,
+        el.participants
+      );
+      return regex.test(oppositeUser.name) || regex.test(oppositeUser.username);
+    }
+  });
   return filteredArray;
 };
 
@@ -79,7 +99,7 @@ export const dateConverter = (inputTime) => {
 
   // Check if the date is within the last 7 days
   const oneWeekAgo = new Date();
-  oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+  oneWeekAgo.setDate(oneWeekAgo.getDate() - 6);
   if (dateObj >= oneWeekAgo) {
     // Return the day of the week
     const days = [

@@ -19,7 +19,9 @@ export const MessageCard = ({
   return (
     <>
       {!isMessageDateIsSameAsPreviousMessageDate && (
-        <div className="text-center text-white no-select">{day}</div>
+        <div className="text-center text-white no-select my-3 border border-white rounded-xl py-2 px-5 mx-auto">
+          {day}
+        </div>
       )}
       {showUnreadMessageTag && (
         <div
@@ -29,12 +31,16 @@ export const MessageCard = ({
           Unread Messages {noOfUnreadMessage}
         </div>
       )}
-      <div className={`flex gap-1 ${isOwnMessage ? "justify-end" : ""}`}>
+      <div
+        className={`flex gap-1 ${isOwnMessage ? "justify-end" : ""} ${
+          !isSenderSameAsLastSender ? "mt-4" : ""
+        }`}
+      >
         {isGroup &&
           !isOwnMessage &&
           (!isSenderSameAsLastSender ||
             !isMessageDateIsSameAsPreviousMessageDate) && (
-            <Avatar size="2.5rem">
+            <Avatar size="2.5rem" className="h-[2.5rem]">
               <AvatarImage src={sender.avatar} />
               <AvatarFallback className="h-[2.5rem]">
                 <ReactIcon color="gray" className="bg-green-500" size="100%">
@@ -55,6 +61,9 @@ export const MessageCard = ({
               : ""
           }`}
         >
+          {!isOwnMessage && (
+            <div className="text-yellow-500">{sender.name}</div>
+          )}
           <span>{message}</span>
           <span className="absolute text-[#9a9cae] right-2 text-[11px] bottom-1 no-select">
             {time}

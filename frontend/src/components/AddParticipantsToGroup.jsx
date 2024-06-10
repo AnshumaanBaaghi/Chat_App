@@ -1,4 +1,4 @@
-import { getFilteredArray } from "@/utils/functions";
+import { getFilteredUsersArray } from "@/utils/functions";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { FriendCard } from "./card/friendCard";
@@ -13,7 +13,7 @@ export const AddParticipantsToGroup = ({ selectedChat }) => {
   const [selectedParticipants, setSelectedParticipants] = useState([]);
   const [nonparticipant, setNonparticipant] = useState([]);
 
-  const filteredOptions = getFilteredArray(query, nonparticipant).filter(
+  const filteredOptions = getFilteredUsersArray(query, nonparticipant).filter(
     (friend) => {
       for (let i = 0; i < selectedParticipants.length; i++) {
         if (selectedParticipants[i].userId === friend.userId) return false;

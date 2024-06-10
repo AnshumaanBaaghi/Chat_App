@@ -161,12 +161,12 @@ export const SelectedChat = ({
                 </AvatarFallback>
               </Avatar>
               <span
-                className="grid pr-3 pappu cursor-pointer bg-green-300 "
+                className="grid pr-3 cursor-pointer"
                 style={{
                   gridTemplateColumns: "100%",
                 }}
               >
-                <h4 className="overflow-hidden text-ellipsis whitespace-nowrap bg-red-400">
+                <h4 className="overflow-hidden text-ellipsis whitespace-nowrap ">
                   {selectedChat?.isGroup
                     ? selectedChat.name
                     : getOppositeUserDetails(
@@ -175,9 +175,9 @@ export const SelectedChat = ({
                       ).name}
                 </h4>
                 {someoneTyping ? (
-                  <div className="text-[#00a261] text-[13px]">typing...</div>
+                  <div className="text-green-500 text-[13px]">typing...</div>
                 ) : showTapToInfoMessage ? (
-                  <div className="text-[13px] bg-blue-700">
+                  <div className="text-[13px] ">
                     Click here for {selectedChat.isGroup ? "Group" : "Contact"}{" "}
                     info
                   </div>

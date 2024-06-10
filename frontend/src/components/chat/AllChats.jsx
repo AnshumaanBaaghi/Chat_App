@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { IoSearchOutline } from "react-icons/io5";
 import { Chat } from "./Chat";
 import { HiUserGroup } from "react-icons/hi2";
@@ -13,7 +13,11 @@ import { CreateGroupChat } from "../createGroupChat";
 import { UserProfileSidebar } from "../UserProfileSidebar";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { updateSelectedChat } from "@/redux/actions/userActions";
-import { timeConverter } from "@/utils/functions";
+import {
+  dateConverter,
+  getFilteredChatArray,
+  timeConverter,
+} from "@/utils/functions";
 import Tooltip from "../ui/tooltip";
 
 export const AllChats = ({
@@ -24,6 +28,8 @@ export const AllChats = ({
   const chats = useSelector((state) => state.user.chats);
   const loggedinUser = useSelector((state) => state.user.userDetail);
 
+  const [query, setQuery] = useState("");
+  const [chatsArray, setChatsArray] = useState([]);
   const [showCreateGroupModal, setShowCreateGroupModal] = useState(false);
   const [showUserProfileSidebar, setShowUserProfileSidebar] = useState(false);
   const dispatch = useDispatch();
@@ -32,6 +38,11 @@ export const AllChats = ({
     if (selectedChat && selectedChat._id === chat._id) return; // Avoid Selecting Same Chat
     dispatch(updateSelectedChat(chat));
   };
+
+  useEffect(() => {
+    setChatsArray(getFilteredChatArray(query, chats, loggedinUser));
+  }, [query, chats]);
+
   return (
     <div
       className={`w-full md:w-2/6 md:flex no-select ${
@@ -81,24 +92,31 @@ export const AllChats = ({
           className="w-full h-5  outline-none"
           type="text"
           placeholder="Search..."
+          onChange={(e) => setQuery(e.target.value)}
         />
       </div>
       <ScrollArea>
         <div className="bg-[#0d0e12]  mx-3 py-3  rounded-xl flex-grow">
           {chats.length > 0 &&
-            chats.map((el) => (
-              <Chat
-                key={el._id}
-                chat={el}
-                loggedinUser={loggedinUser}
-                handleSelectChat={handleSelectChat}
-                isSomeOneTyping={typingUsersObject[el._id]}
-                isAnyUnreadMessages={unreadMessages[el._id]}
-                time={
-                  el.latestMessage && timeConverter(el.latestMessage.updatedAt)
-                }
-              />
-            ))}
+            chatsArray.map((el) => {
+              const day =
+                el.latestMessage && dateConverter(el.latestMessage.updatedAt);
+              return (
+                <Chat
+                  key={el._id}
+                  chat={el}
+                  loggedinUser={loggedinUser}
+                  handleSelectChat={handleSelectChat}
+                  isSomeOneTyping={typingUsersObject[el._id]}
+                  isAnyUnreadMessages={unreadMessages[el._id]}
+                  time={
+                    day && day === "Today"
+                      ? timeConverter(el.latestMessage.updatedAt)
+                      : day
+                  }
+                />
+              );
+            })}
         </div>
       </ScrollArea>
       <div

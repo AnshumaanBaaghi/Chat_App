@@ -1,4 +1,4 @@
-import { getFilteredArray } from "@/utils/functions";
+import { getFilteredUsersArray } from "@/utils/functions";
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { FriendCard } from "./card/friendCard";
@@ -19,12 +19,14 @@ export const CreateGroupChat = ({ setShowCreateGroupModal }) => {
   const [showSecondStep, setShowSecondStep] = useState(false);
   const [imageUrl, setImageUrl] = useState(null);
 
-  const filteredOptions = getFilteredArray(query, friends).filter((friend) => {
-    for (let i = 0; i < selectedParticipants.length; i++) {
-      if (selectedParticipants[i].userId === friend.userId) return false;
+  const filteredOptions = getFilteredUsersArray(query, friends).filter(
+    (friend) => {
+      for (let i = 0; i < selectedParticipants.length; i++) {
+        if (selectedParticipants[i].userId === friend.userId) return false;
+      }
+      return true;
     }
-    return true;
-  });
+  );
 
   const selectUser = (friend) => {
     setSelectedParticipants((prev) => [...prev, friend]);

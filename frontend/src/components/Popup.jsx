@@ -6,7 +6,7 @@ import { Explore } from "@/components/Explore";
 import { Friends } from "@/components/Friends";
 import { Input } from "@/components/ui/input";
 import { useSelector } from "react-redux";
-import { getFilteredArray } from "@/utils/functions";
+import { getFilteredUsersArray } from "@/utils/functions";
 
 export const Popup = () => {
   const newUsers = useSelector((state) => state.user.newUsers);
@@ -22,10 +22,10 @@ export const Popup = () => {
   const [friendRequestsArray, setFriendRequestsArray] = useState([]);
 
   useEffect(() => {
-    setNewUsersArray(getFilteredArray(query, newUsers));
-    setSentRequestsArray(getFilteredArray(query, sentRequests));
-    setFriendsArray(getFilteredArray(query, friends));
-    setFriendRequestsArray(getFilteredArray(query, friendRequests));
+    setNewUsersArray(getFilteredUsersArray(query, newUsers));
+    setSentRequestsArray(getFilteredUsersArray(query, sentRequests));
+    setFriendsArray(getFilteredUsersArray(query, friends));
+    setFriendRequestsArray(getFilteredUsersArray(query, friendRequests));
   }, [query, newUsers, sentRequests, friends, friendRequests]);
 
   return (
