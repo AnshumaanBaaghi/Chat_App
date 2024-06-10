@@ -151,7 +151,7 @@ export const Register = () => {
   return (
     <>
       <div className="flex h-screen items-center">
-        <div className="w-1/3 m-auto min-h-[50vh] flex flex-col justify-center border border-red-500 rounded-xl">
+        <div className=" w-[95%] md:w-1/3 m-auto min-h-[50vh] flex flex-col justify-center border border-red-500 rounded-xl">
           <AnimatePresence mode="wait">
             <motion.div
               key={currentStep ? currentStep : "empty"}
