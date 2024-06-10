@@ -5,6 +5,7 @@ import {
   friends,
   getAllChats,
   getOrCreateChat_api,
+  logout_api,
   newFriends,
   sentRequests,
 } from "@/api";
@@ -22,7 +23,15 @@ export const login = () => {
 };
 
 export const logout = () => {
-  return { type: LOGOUT };
+  return async (dispatch) => {
+    try {
+      const a = await logout_api();
+      console.log("a:", a);
+      dispatch({ type: LOGOUT });
+    } catch (error) {
+      console.log("error:", error);
+    }
+  };
 };
 
 // <--------------------------------Users---------------------------------------->

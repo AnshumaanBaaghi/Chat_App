@@ -106,6 +106,13 @@ const login = async (req, res) => {
   }
 };
 
+const logout = async (req, res) => {
+  await res
+    .status(200)
+    .clearCookie(TOKEN_NAME)
+    .json({ message: "Logout Successful!" });
+};
+
 const sendOtp = async (req, res) => {
   const { email } = req.body;
 
@@ -427,6 +434,7 @@ const deleteUnreadMessages = async (req, res) => {
 
 module.exports = {
   login,
+  logout,
   register,
   sendOtp,
   verifyOtp,

@@ -18,6 +18,10 @@ export const loginUser = (data) => {
   return api.post("/user/login", data);
 };
 
+export const logout_api = () => {
+  return api.post("/user/logout");
+};
+
 export const sendOtp = (email) => {
   return api.post("/user/send-otp", { email });
 };

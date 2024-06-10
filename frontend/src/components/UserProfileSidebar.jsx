@@ -4,7 +4,8 @@ import { FaArrowLeft } from "react-icons/fa6";
 import { v4 } from "uuid";
 import { useDispatch, useSelector } from "react-redux";
 import { updateUserDetails } from "@/api";
-import { updateUserDetail } from "@/redux/actions/userActions";
+import { logout, updateUserDetail } from "@/redux/actions/userActions";
+import { Button } from "./ui/button";
 
 export const UserProfileSidebar = ({ setShowUserProfileSidebar }) => {
   const { userId, avatar, name, username } = useSelector(
@@ -29,14 +30,18 @@ export const UserProfileSidebar = ({ setShowUserProfileSidebar }) => {
     dispatch(updateUserDetail({ avatar: url }));
   };
 
+  const handleLogout = () => {
+    dispatch(logout());
+  };
+
   useEffect(() => {
     setTimeout(() => {
       setImageUrl(avatar);
     }, 250);
   }, []);
   return (
-    <div className="w-full overflow-hidden bg-gray-500 h-full">
-      <div className="w-[100%] bg-[#00a261] ">
+    <div className="w-full overflow-hidden bg-gray-500 h-full flex flex-col p-2 justify-between">
+      <div className="w-[100%] bg-[#00a261] flex flex-col">
         <div className="flex">
           <button onClick={() => setShowUserProfileSidebar(false)}>
             <FaArrowLeft />
@@ -57,6 +62,9 @@ export const UserProfileSidebar = ({ setShowUserProfileSidebar }) => {
         <div>Name: {name}</div>
         <div>Username: {username}</div>
       </div>
+      <Button className="w-[50%]" variant="destructive" onClick={handleLogout}>
+        LOGOUT
+      </Button>
     </div>
   );
 };
