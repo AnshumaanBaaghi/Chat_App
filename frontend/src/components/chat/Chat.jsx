@@ -11,6 +11,7 @@ export const Chat = ({
   handleSelectChat,
   isAnyUnreadMessages,
   time,
+  isOnline,
 }) => {
   const getTwoLetters = () => {
     const name = getOppositeUserDetails(
@@ -23,29 +24,39 @@ export const Chat = ({
   };
 
   return (
-    <div className="px-3 box-border w-full">
+    <div
+      className={`px-6 box-border w-full ${
+        true ? "selectedChat" : ""
+      } relative`}
+    >
       <div
         className="flex gap-3 cursor-pointer border-b border-b-[#959cb647] py-3 box-border overflow-hidden"
         onClick={() => handleSelectChat(chat)}
       >
-        <Avatar size="3.5rem">
-          <AvatarImage
-            src={
-              chat.isGroup
-                ? chat.avatar
-                : getOppositeUserDetails(loggedinUser, chat.participants).avatar
-            }
-          />
-          <AvatarFallback>
-            {chat.isGroup ? (
-              <ReactIcon color="gray" size="100%">
-                <FaCircleUser />
-              </ReactIcon>
-            ) : (
-              getTwoLetters()
-            )}
-          </AvatarFallback>
-        </Avatar>
+        <div className="relative">
+          <Avatar size="3.5rem" className="relative">
+            <AvatarImage
+              src={
+                chat.isGroup
+                  ? chat.avatar
+                  : getOppositeUserDetails(loggedinUser, chat.participants)
+                      .avatar
+              }
+            />
+            <AvatarFallback>
+              {chat.isGroup ? (
+                <ReactIcon color="gray" size="100%">
+                  <FaCircleUser />
+                </ReactIcon>
+              ) : (
+                getTwoLetters()
+              )}
+            </AvatarFallback>
+          </Avatar>
+          {isOnline && (
+            <div className="w-[10px] h-[10px] bg-green-600 rounded-full absolute bottom-1 right-1 border border-white"></div>
+          )}
+        </div>
         <div className="box-border flex flex-col w-full justify-between ">
           <div
             className="grid justify-between  items-center"

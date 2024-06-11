@@ -62,7 +62,9 @@ export const MessageCard = ({
           }`}
         >
           {!isOwnMessage && (
-            <div className="text-yellow-500">{sender.name}</div>
+            <div className="text-yellow-500 text-sm no-select">
+              {sender.name}
+            </div>
           )}
           <span>{message}</span>
           <span className="absolute text-[#9a9cae] right-2 text-[11px] bottom-1 no-select">

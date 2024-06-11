@@ -25,6 +25,7 @@ export const SelectedChat = ({
   typingUsersObject,
   handleStopTyping,
   unreadMessages,
+  onlineUsers,
 }) => {
   const selectedChat = useSelector((state) => state.user.selectedChat);
   const loggedinUser = useSelector((state) => state.user.userDetail);
@@ -181,16 +182,26 @@ export const SelectedChat = ({
                     Click here for {selectedChat.isGroup ? "Group" : "Contact"}{" "}
                     info
                   </div>
+                ) : selectedChat.isGroup ? (
+                  <div className="text-[13px] overflow-hidden text-ellipsis whitespace-nowrap">
+                    {rearangeParticipants(
+                      loggedinUser,
+                      selectedChat.admin,
+                      selectedChat.participants
+                    )
+                      .map((el, index) => (index === 0 ? "You" : el.name))
+                      .join(", ")}
+                  </div>
                 ) : (
-                  selectedChat.isGroup && (
-                    <div className="text-[13px] overflow-hidden text-ellipsis whitespace-nowrap">
-                      {rearangeParticipants(
-                        loggedinUser,
-                        selectedChat.admin,
-                        selectedChat.participants
-                      )
-                        .map((el, index) => (index === 0 ? "You" : el.name))
-                        .join(", ")}
+                  onlineUsers &&
+                  onlineUsers[
+                    getOppositeUserDetails(
+                      loggedinUser,
+                      selectedChat.participants
+                    )._id
+                  ] && (
+                    <div className="text-[13px] overflow-hidden text-ellipsis whitespace-nowrap text-green-500">
+                      online
                     </div>
                   )
                 )}

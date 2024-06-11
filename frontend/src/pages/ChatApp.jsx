@@ -57,6 +57,10 @@ export const ChatApp = () => {
   const [messages, setMessages] = useState([]);
   const [selfTyping, setSelfTyping] = useState(false);
   const [typingUsersObject, setTypingUsersObject] = useState({}); // it's an nested object which contains the key as chatID and value as typer detail
+  const [onlineUsers, setOnlineUsers] = useState({});
+
+  const typingUsersObjectRef = useRef(null);
+  typingUsersObjectRef.current = typingUsersObject;
 
   const onRequestSent = (data) => {
     const updatedNewFriendsArray = [];
@@ -199,8 +203,8 @@ export const ChatApp = () => {
     if (!socket) {
       return;
     }
-    socket.on("connected", (data) => {
-      console.log("connected...", data);
+    socket.on("userConnected", (connectedUsers) => {
+      setOnlineUsers(connectedUsers);
     });
     socket.on(NEWFRIENDREQUEST, onReceivedNewRequest);
     socket.on(REQUESTSENT, onRequestSent);
@@ -220,6 +224,24 @@ export const ChatApp = () => {
       dispatch(updateChats(updatedChats));
     });
 
+    socket.on("userDisconnected", ({ connectedUsers, userId }) => {
+      setOnlineUsers(connectedUsers);
+      let wasTypingInChat;
+      if (!typingUsersObjectRef.current) return;
+
+      for (let chatId in typingUsersObjectRef.current) {
+        if (typingUsersObjectRef.current[chatId].userId === userId) {
+          wasTypingInChat = chatId;
+        }
+      }
+      if (wasTypingInChat) {
+        setTypingUsersObject((prev) => {
+          const { [wasTypingInChat]: _, ...restTypingData } = prev;
+          return restTypingData;
+        });
+      }
+    });
+
     return () => {
       if (selfTyping) {
         handleStopTyping(selectedChat._id);
@@ -231,6 +253,7 @@ export const ChatApp = () => {
       socket.off("someone typing");
       socket.off("someone stoped typing");
       socket.off("chat created");
+      socket.off("userDisconnected");
     };
   }, [socket]);
 
@@ -240,6 +263,7 @@ export const ChatApp = () => {
         typingUsersObject={typingUsersObject}
         selectedChat={selectedChat}
         unreadMessages={unreadMessages}
+        onlineUsers={onlineUsers}
       />
       <SelectedChat
         handleStopTyping={handleStopTyping}
@@ -248,6 +272,7 @@ export const ChatApp = () => {
         handleTypingMessageChange={handleTypingMessageChange}
         typingUsersObject={typingUsersObject}
         unreadMessages={unreadMessages}
+        onlineUsers={onlineUsers}
       />
       <ChatOrGroupDetails selectedChat={selectedChat} />
     </div>

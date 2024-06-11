@@ -80,3 +80,16 @@
   -ms-user-select: none;
   user-select: none;
 }
+
+.selectedChat::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 20px; /* Adjust this to control the size of the curve */
+  height: 100%;
+  background-color: #15171c; /* Same as the parent background to "hide" part of it */
+  border-top-left-radius: 500px; /* Adjust the radius as needed */
+  border-bottom-left-radius: 500px; /* Adjust the radius as needed */
+  /* border-left: red solid 1px; */
+}

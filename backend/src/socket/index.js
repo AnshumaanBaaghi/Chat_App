@@ -3,6 +3,7 @@ const { TOKEN_NAME } = require("../constants");
 const { User } = require("../models/user.model");
 const { FriendRequest } = require("../models/friendRequest.model");
 const jwt = require("jsonwebtoken");
+const connectedUsers = {};
 
 const initializeSocketIO = (io) => {
   return io.on("connection", async (socket) => {
@@ -13,7 +14,10 @@ const initializeSocketIO = (io) => {
     if (!loggedInUser) return; // Have to Add error here
 
     socket.join(loggedInUser._id.toString());
-    console.log("User Connected", loggedInUser._id);
+
+    // io.emit("userConnected", { userId: loggedInUser._id.toString() });
+    connectedUsers[loggedInUser._id.toString()] = true;
+    io.emit("userConnected", connectedUsers);
 
     socket.on("friend_request", async (data) => {
       // data.to contains userID;
@@ -85,6 +89,15 @@ const initializeSocketIO = (io) => {
     socket.on("end", () => {
       console.log("diconnecting...");
       socket.disconnect(0);
+    });
+
+    socket.on("disconnect", () => {
+      console.log("User disconnected:", socket.id);
+      delete connectedUsers[loggedInUser._id.toString()];
+      socket.broadcast.emit("userDisconnected", {
+        connectedUsers,
+        userId: loggedInUser._id.toString(),
+      });
     });
   });
 };

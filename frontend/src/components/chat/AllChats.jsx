@@ -16,6 +16,7 @@ import { updateSelectedChat } from "@/redux/actions/userActions";
 import {
   dateConverter,
   getFilteredChatArray,
+  getOppositeUserDetails,
   timeConverter,
 } from "@/utils/functions";
 import Tooltip from "../ui/tooltip";
@@ -24,6 +25,7 @@ export const AllChats = ({
   typingUsersObject,
   selectedChat,
   unreadMessages,
+  onlineUsers,
 }) => {
   const chats = useSelector((state) => state.user.chats);
   const loggedinUser = useSelector((state) => state.user.userDetail);
@@ -47,9 +49,10 @@ export const AllChats = ({
     <div
       className={`w-full md:w-2/6 md:flex no-select ${
         selectedChat ? "hidden" : "flex"
-      }  h-screen bg-[#0d0e12] border-[#1f212a] box-border flex-col flex-w gap-4 relative`}
+      }  h-screen border-[#1f212a] box-border flex-col relative`}
     >
-      <div className="px-3 mt-3 flex justify-between">
+      {/* bg-[#0d0e12] */}
+      <div className="p-3 flex justify-between bg-[#0d0e12]">
         <div>
           <Tooltip content="Profile">
             <Avatar
@@ -86,19 +89,22 @@ export const AllChats = ({
           </Dialog>
         </div>
       </div>
-      <div className="flex bg-white px-3 py-2 mx-3 rounded-xl items-center gap-2">
-        <IoSearchOutline className="text-xl" />
-        <input
-          className="w-full h-5  outline-none"
-          type="text"
-          placeholder="Search..."
-          onChange={(e) => setQuery(e.target.value)}
-        />
+      <div className="bg-[#0d0e12] px-3 py-2 ">
+        <div className="flex bg-white px-3 py-2  rounded-xl items-center gap-2">
+          <IoSearchOutline className="text-xl" />
+          <input
+            className="w-full h-5  outline-none"
+            type="text"
+            placeholder="Search..."
+            onChange={(e) => setQuery(e.target.value)}
+          />
+        </div>
       </div>
-      <ScrollArea>
-        <div className="bg-[#0d0e12]  mx-3 py-3  rounded-xl flex-grow">
+
+      <ScrollArea className=" bg-[#0d0e12] flex-grow">
+        <div className="bg-[#0d0e12] h-full py-3">
           {chats.length > 0 &&
-            chatsArray.map((el) => {
+            chatsArray.map((el, index) => {
               const day =
                 el.latestMessage && dateConverter(el.latestMessage.updatedAt);
               return (
@@ -114,13 +120,22 @@ export const AllChats = ({
                       ? timeConverter(el.latestMessage.updatedAt)
                       : day
                   }
+                  isOnline={
+                    !el.isGroup &&
+                    onlineUsers &&
+                    onlineUsers[
+                      getOppositeUserDetails(loggedinUser, el.participants)._id
+                    ]
+                  }
                 />
               );
             })}
         </div>
       </ScrollArea>
+      {/* <div className="flex-grow bg-red-200">
+      </div> */}
       <div
-        className={`w-full bg-blue-600 absolute h-screen  duration-500 ${
+        className={`w-full bg-gray-600 absolute h-screen  duration-500 ${
           showCreateGroupModal || showUserProfileSidebar
             ? "left-0"
             : "-left-full"

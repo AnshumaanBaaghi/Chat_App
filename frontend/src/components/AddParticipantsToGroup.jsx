@@ -33,7 +33,6 @@ export const AddParticipantsToGroup = ({ selectedChat }) => {
   };
 
   const addParticipant = async () => {
-    console.log("selectedParticipants:", selectedParticipants);
     try {
       for (let i of selectedParticipants) {
         await addParticipantInGroup(selectedChat._id, i.userId);
@@ -51,7 +50,6 @@ export const AddParticipantsToGroup = ({ selectedChat }) => {
       return true;
     });
     setNonparticipant(findNonparticipants);
-    console.log("findNonparticipants:", findNonparticipants);
   }, []);
 
   return (

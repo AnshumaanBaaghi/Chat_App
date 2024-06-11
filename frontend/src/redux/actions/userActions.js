@@ -26,7 +26,6 @@ export const logout = () => {
   return async (dispatch) => {
     try {
       const a = await logout_api();
-      console.log("a:", a);
       dispatch({ type: LOGOUT });
     } catch (error) {
       console.log("error:", error);

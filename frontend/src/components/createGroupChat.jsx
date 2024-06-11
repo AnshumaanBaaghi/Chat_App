@@ -45,6 +45,7 @@ export const CreateGroupChat = ({ setShowCreateGroupModal }) => {
       await createGroup(groupName, participants, imageUrl);
       setShowCreateGroupModal(false);
       dispatch(getChats());
+      // TODO: Have to connect socket.io for informing the participants
     } catch (error) {
       console.log("error:", error);
     }
@@ -127,9 +128,12 @@ export const CreateGroupChat = ({ setShowCreateGroupModal }) => {
               <p className="py-2 px-3 text-gray-500">No User found</p>
             )}
           </div>
-          {selectedParticipants.length >= 2 && (
-            <button onClick={() => setShowSecondStep(true)}>Next</button>
-          )}
+          <Button
+            disabled={selectedParticipants.length < 2}
+            onClick={() => setShowSecondStep(true)}
+          >
+            Next
+          </Button>
         </div>
         {showSecondStep && (
           <div className="w-[100%]">

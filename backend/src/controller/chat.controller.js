@@ -251,7 +251,6 @@ const createGroupChat = async (req, res) => {
   ]);
   createGroupChat.participants?.forEach((participant) => {
     if (req.user._id.toString() === participant._id.toString()) return;
-    console.log("chat created");
     emitSocketEvent(
       req,
       participant._id.toString(),
@@ -260,6 +259,7 @@ const createGroupChat = async (req, res) => {
     );
   });
   return res.status(201).json({ message: "Group Created", data: createdGroup });
+  // TODO: Have to sent message to the participants through web socket
 };
 
 const getGroupDetails = async (req, res) => {
@@ -309,7 +309,6 @@ const getGroupDetails = async (req, res) => {
       },
     },
   ]);
-  console.log("chat[0]:", chat[0]);
   if (!chat[0]) {
     return res.status(400).json({ message: "Group chat does not exist" });
   }
