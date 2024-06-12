@@ -6,9 +6,17 @@ import { Explore } from "@/components/Explore";
 import { Friends } from "@/components/Friends";
 import { Input } from "@/components/ui/input";
 import { useSelector } from "react-redux";
-import { getFilteredUsersArray } from "@/utils/functions";
+import {
+  getFilteredUsersArray,
+  getOppositeUserDetails,
+} from "@/utils/functions";
 
-export const Popup = () => {
+export const Popup = ({
+  closePopup,
+  chats,
+  loggedinUser,
+  handleSelectChat,
+}) => {
   const newUsers = useSelector((state) => state.user.newUsers);
   const sentRequests = useSelector((state) => state.user.sentRequests);
   const friends = useSelector((state) => state.user.friends);
@@ -20,6 +28,21 @@ export const Popup = () => {
   const [sentRequestsArray, setSentRequestsArray] = useState([]);
   const [friendsArray, setFriendsArray] = useState([]);
   const [friendRequestsArray, setFriendRequestsArray] = useState([]);
+
+  const onClickOnFriend = (friendId) => {
+    for (let i = 0; i < chats.length; i++) {
+      if (
+        !chats[i].isGroup &&
+        getOppositeUserDetails(loggedinUser, chats[i].participants)._id ===
+          friendId
+      ) {
+        handleSelectChat(chats[i]);
+        closePopup();
+        return;
+      }
+    }
+    closePopup();
+  };
 
   useEffect(() => {
     setNewUsersArray(getFilteredUsersArray(query, newUsers));
@@ -98,11 +121,12 @@ export const Popup = () => {
                   friends={friendsArray}
                   sentRequests={sentRequestsArray}
                   friendRequests={friendRequestsArray}
+                  onClickOnFriend={onClickOnFriend}
                 />
               ) : selectedTab === "Requests" ? (
                 <FriendRequests arr={friendRequestsArray} />
               ) : selectedTab === "Friends" ? (
-                <Friends arr={friendsArray} />
+                <Friends arr={friendsArray} onClickOnFriend={onClickOnFriend} />
               ) : (
                 "😋"
               )}

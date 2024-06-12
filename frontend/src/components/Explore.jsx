@@ -10,6 +10,7 @@ export const Explore = ({
   friends,
   sentRequests,
   friendRequests,
+  onClickOnFriend,
 }) => {
   const socket = useSelector((state) => state.socket.socket);
   const user = useSelector((state) => state.user.userDetail);
@@ -37,7 +38,14 @@ export const Explore = ({
             acceptFriendRequest={acceptFriendRequest}
           />
         ))}
-      {friends && friends.map((el) => <FriendCard key={el.userId} user={el} />)}
+      {friends &&
+        friends.map((el) => (
+          <FriendCard
+            key={el.userId}
+            user={el}
+            onClickCallbackFunction={onClickOnFriend}
+          />
+        ))}
       {newUsers?.length == 0 &&
         sentRequests?.length == 0 &&
         friendRequests?.length == 0 &&

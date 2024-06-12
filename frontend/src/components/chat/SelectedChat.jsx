@@ -126,7 +126,7 @@ export const SelectedChat = ({
 
   return (
     <div
-      className={`bg-[#15171c] w-full  ${
+      className={`bg-[#414256] w-full  ${
         selectedChat ? "block" : "hidden"
       } md:w-4/6 md:block border-l border-l-[#1f212a]`}
     >
@@ -176,7 +176,7 @@ export const SelectedChat = ({
                       ).name}
                 </h4>
                 {someoneTyping ? (
-                  <div className="text-green-500 text-[13px]">typing...</div>
+                  <div className="text-green-400 text-[13px]">typing...</div>
                 ) : showTapToInfoMessage ? (
                   <div className="text-[13px] ">
                     Click here for {selectedChat.isGroup ? "Group" : "Contact"}{" "}
@@ -200,7 +200,7 @@ export const SelectedChat = ({
                       selectedChat.participants
                     )._id
                   ] && (
-                    <div className="text-[13px] overflow-hidden text-ellipsis whitespace-nowrap text-green-500">
+                    <div className="text-[13px] overflow-hidden text-ellipsis whitespace-nowrap text-green-400">
                       online
                     </div>
                   )

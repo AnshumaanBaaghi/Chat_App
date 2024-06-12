@@ -5,7 +5,12 @@ import { HiUserGroup } from "react-icons/hi2";
 import { FaCircleUser } from "react-icons/fa6";
 import { GoPlus } from "react-icons/go";
 import { ReactIcon } from "../ReactIcon";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Popup } from "../Popup";
 import { useDispatch, useSelector } from "react-redux";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -20,6 +25,7 @@ import {
   timeConverter,
 } from "@/utils/functions";
 import Tooltip from "../ui/tooltip";
+import { Button } from "../ui/button";
 
 export const AllChats = ({
   typingUsersObject,
@@ -39,6 +45,10 @@ export const AllChats = ({
   const handleSelectChat = (chat) => {
     if (selectedChat && selectedChat._id === chat._id) return; // Avoid Selecting Same Chat
     dispatch(updateSelectedChat(chat));
+  };
+
+  const closePopup = () => {
+    document.getElementById("popupCloseButton").click();
   };
 
   useEffect(() => {
@@ -84,7 +94,15 @@ export const AllChats = ({
               </Tooltip>
             </DialogTrigger>
             <DialogContent>
-              <Popup />
+              <Popup
+                closePopup={closePopup}
+                chats={chats}
+                loggedinUser={loggedinUser}
+                handleSelectChat={handleSelectChat}
+              />
+              <DialogClose asChild>
+                <span className="hidden" id="popupCloseButton"></span>
+              </DialogClose>
             </DialogContent>
           </Dialog>
         </div>

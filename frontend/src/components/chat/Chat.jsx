@@ -19,7 +19,7 @@ export const Chat = ({
       chat.participants
     ).name.split(" ");
     const l1 = name[0][0];
-    const l2 = (name[1] && name[1][0]) || name[0][1];
+    const l2 = (name[1] && name[1][0]) || name[0][1] || "";
     return (l1 + l2).toUpperCase();
   };
 
@@ -33,6 +33,14 @@ export const Chat = ({
         className="flex gap-3 cursor-pointer border-b border-b-[#959cb647] py-3 box-border overflow-hidden"
         onClick={() => handleSelectChat(chat)}
       >
+        {/* <svg width="100%" height="100%" className="border border-red-500">
+          <path
+            d="M 0 20 C 20 0, 40 20, 60 0, 80 20, 100 0, 120 20"
+            stroke="#aaa"
+            stroke-width="2"
+            fill="none"
+          />
+        </svg> */}
         <div className="relative">
           <Avatar size="3.5rem" className="relative">
             <AvatarImage
@@ -54,7 +62,7 @@ export const Chat = ({
             </AvatarFallback>
           </Avatar>
           {isOnline && (
-            <div className="w-[10px] h-[10px] bg-green-600 rounded-full absolute bottom-1 right-1 border border-white"></div>
+            <div className="onlineStatusIndicator absolute bottom-1 right-1"></div>
           )}
         </div>
         <div className="box-border flex flex-col w-full justify-between ">
@@ -70,7 +78,7 @@ export const Chat = ({
             {time && (
               <p
                 className={`text-xs flex justify-end ${
-                  isAnyUnreadMessages ? "text-green-500" : "text-[#9a9cae]"
+                  isAnyUnreadMessages ? "text-green-400" : "text-[#9a9cae]"
                 } `}
               >
                 {time}
@@ -108,7 +116,7 @@ export const Chat = ({
             </p>
             <div className="flex justify-end">
               {isAnyUnreadMessages && (
-                <p className="w-6 h-6 rounded-full text-white bg-[#00a261] text-xs flex items-center justify-center">
+                <p className="w-6 h-6 rounded-full text-white bg-green-500 text-xs flex items-center justify-center">
                   {isAnyUnreadMessages}
                 </p>
               )}

@@ -19,16 +19,16 @@ export const MessageCard = ({
   return (
     <>
       {!isMessageDateIsSameAsPreviousMessageDate && (
-        <div className="text-center text-white no-select my-3 border border-white rounded-xl py-2 px-5 mx-auto">
+        <div className="text-center text-white no-select my-3 border border-[#bcbaba61] rounded-lg py-1 px-4 mx-auto text-sm">
           {day}
         </div>
       )}
       {showUnreadMessageTag && (
         <div
-          className="text-center text-white no-select"
+          className="text-center text-white no-select my-3 border border-[#bcbaba61] bg-[#27282987] rounded-lg py-1 px-4 mx-auto text-sm"
           ref={scrollToUnreadMessageRef}
         >
-          Unread Messages {noOfUnreadMessage}
+          Unread Messages: {noOfUnreadMessage}
         </div>
       )}
       <div
@@ -51,8 +51,8 @@ export const MessageCard = ({
           )}
         <p
           className={`relative max-w-[60%] ${
-            isOwnMessage ? "bg-[#172331]" : "bg-[#272134]"
-          } text-white py-2 pl-4 pr-[4.5rem] rounded-xl ${
+            isOwnMessage ? "bg-[#5a65ca]" : "bg-[#343546]"
+          } text-white py-2 px-4 rounded-xl ${
             isGroup &&
             !isOwnMessage &&
             isSenderSameAsLastSender &&
@@ -66,8 +66,15 @@ export const MessageCard = ({
               {sender.name}
             </div>
           )}
-          <span>{message}</span>
-          <span className="absolute text-[#9a9cae] right-2 text-[11px] bottom-1 no-select">
+          <span>
+            {message}
+            <p className="w-[3.5rem] inline-block"></p>
+          </span>
+          <span
+            className={`absolute ${
+              isOwnMessage ? "text-[#c9c9e8]" : "text-[#9a9cae]"
+            }  right-2 text-[11px] bottom-1 no-select`}
+          >
             {time}
           </span>
         </p>

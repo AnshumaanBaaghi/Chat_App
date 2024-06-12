@@ -258,7 +258,7 @@ export const ChatApp = () => {
   }, [socket]);
 
   return (
-    <div className="flex ">
+    <div className="flex">
       <AllChats
         typingUsersObject={typingUsersObject}
         selectedChat={selectedChat}
