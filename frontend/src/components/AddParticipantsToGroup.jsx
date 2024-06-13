@@ -39,6 +39,8 @@ export const AddParticipantsToGroup = ({ selectedChat }) => {
       }
     } catch (error) {
       console.log("error:", error);
+    } finally {
+      document.getElementById("addParticipantPopupCloseButton").click();
     }
   };
 

@@ -13,6 +13,7 @@ import {
   updateFriendRequests,
   updateFriends,
   updateNewFriends,
+  updateSelectedChat,
   updateSentRequests,
   updateUnreadMessages,
 } from "@/redux/actions/userActions";
@@ -190,6 +191,46 @@ export const ChatApp = () => {
     }, 1000);
   };
 
+  const removeGroupFromChats = (group) => {
+    const updatedChats = chatsRef.current?.filter(
+      (chat) => chat._id !== group._id
+    );
+    dispatch(updateChats(updatedChats || []));
+    if (selectedChatRef.current?._id === group._id) {
+      dispatch(updateSelectedChat(null));
+    }
+  };
+
+  const onRemovedBySomeone = (group) => {
+    console.log("Someone Removed you");
+    removeGroupFromChats(group);
+  };
+
+  const onGroupDelete = (group) => {
+    console.log("Group Deleted");
+    removeGroupFromChats(group);
+  };
+
+  const replaceGroupWithNewGroup = (group) => {
+    const updatedChats = chatsRef.current?.map((chat) =>
+      chat._id === group._id ? group : chat
+    );
+    dispatch(updateChats(updatedChats || []));
+    if (selectedChatRef.current?._id === group._id) {
+      dispatch(updateSelectedChat(group));
+    }
+  };
+
+  const onUserAdded = (group) => {
+    console.log("New User Added:", group);
+    replaceGroupWithNewGroup(group);
+  };
+
+  const onSomeoneLeaveOrRemoved = (group) => {
+    console.log("Someone Leave or Removed:", group);
+    replaceGroupWithNewGroup(group);
+  };
+
   useEffect(() => {
     dispatch(connectSocket());
     dispatch(getNewFriends());
@@ -219,11 +260,19 @@ export const ChatApp = () => {
         return restTypingData;
       });
     });
+
     socket.on("chat created", (group) => {
+      console.log("group:", group);
       const updatedChats = [group, ...(chatsRef.current || [])];
       dispatch(updateChats(updatedChats));
     });
 
+    socket.on("Someone Removed you", onRemovedBySomeone);
+
+    socket.on("Someone Leave or Removed", onSomeoneLeaveOrRemoved);
+
+    socket.on("Group Deleted", onGroupDelete);
+    socket.on("User Added to Group", onUserAdded);
     socket.on("userDisconnected", ({ connectedUsers, userId }) => {
       setOnlineUsers(connectedUsers);
       let wasTypingInChat;
@@ -253,6 +302,10 @@ export const ChatApp = () => {
       socket.off("someone typing");
       socket.off("someone stoped typing");
       socket.off("chat created");
+      socket.off("Someone Removed you");
+      socket.off("Someone Leave or Removed");
+      socket.off("User Added to Group");
+      socket.off("Group Deleted");
       socket.off("userDisconnected");
     };
   }, [socket]);

@@ -160,7 +160,10 @@ export const AllChats = ({
         }`}
       >
         {showCreateGroupModal ? (
-          <CreateGroupChat setShowCreateGroupModal={setShowCreateGroupModal} />
+          <CreateGroupChat
+            setShowCreateGroupModal={setShowCreateGroupModal}
+            chats={chats}
+          />
         ) : (
           showUserProfileSidebar && (
             <UserProfileSidebar

@@ -220,45 +220,19 @@ const createGroupChat = async (req, res) => {
         ],
       },
     },
-    {
-      $lookup: {
-        from: "messages",
-        localField: "latestMessage",
-        foreignField: "_id",
-        as: "latestMessage",
-        pipeline: [
-          {
-            $lookup: {
-              from: "users",
-              localField: "sender",
-              foreignField: "_id",
-              as: "sender",
-              pipeline: [
-                {
-                  $project: { _id: 1, username: 1, name: 1, avatar: 1 },
-                },
-              ],
-            },
-          },
-          {
-            $addFields: {
-              sender: { $first: "$sender" },
-            },
-          },
-        ],
-      },
-    },
   ]);
-  createGroupChat.participants?.forEach((participant) => {
+  createdGroup[0]?.participants?.forEach((participant) => {
     if (req.user._id.toString() === participant._id.toString()) return;
     emitSocketEvent(
       req,
       participant._id.toString(),
       "chat created",
-      createdGroup
+      createdGroup[0]
     );
   });
-  return res.status(201).json({ message: "Group Created", data: createdGroup });
+  return res
+    .status(201)
+    .json({ message: "Group Created", data: createdGroup[0] });
   // TODO: Have to sent message to the participants through web socket
 };
 
@@ -351,47 +325,6 @@ const deleteGroupChat = async (req, res) => {
         isGroup: true,
       },
     },
-    {
-      $lookup: {
-        from: "users",
-        localField: "participants",
-        foreignField: "_id",
-        as: "participants",
-        pipeline: [
-          {
-            $project: { _id: 1, name: 1, username: 1, avatar: 1 },
-          },
-        ],
-      },
-    },
-    {
-      $lookup: {
-        from: "messages",
-        localField: "latestMessage",
-        foreignField: "_id",
-        as: "latestMessage",
-        pipeline: [
-          {
-            $lookup: {
-              from: "users",
-              localField: "sender",
-              foreignField: "_id",
-              as: "sender",
-              pipeline: [
-                {
-                  $project: { _id: 1, username: 1, name: 1, avatar: 1 },
-                },
-              ],
-            },
-          },
-          {
-            $addFields: {
-              sender: { $first: "$sender" },
-            },
-          },
-        ],
-      },
-    },
   ]);
 
   const chat = groupChat[0];
@@ -406,6 +339,9 @@ const deleteGroupChat = async (req, res) => {
   }
 
   await Chat.findByIdAndDelete(chatId);
+  chat.participants.forEach((participant) => {
+    emitSocketEvent(req, participant.toString(), "Group Deleted", chat);
+  });
   // TODO: Have to Remove Messages of that group
   return res.status(200).json({ message: "Group Deleted successfully" });
 };
@@ -460,7 +396,7 @@ const addParticipantInGroup = async (req, res) => {
     const chat = await Chat.aggregate([
       {
         $match: {
-          _id: chatId,
+          _id: new mongoose.Types.ObjectId(chatId),
         },
       },
       {
@@ -504,11 +440,25 @@ const addParticipantInGroup = async (req, res) => {
           ],
         },
       },
+      {
+        $addFields: {
+          latestMessage: { $arrayElemAt: ["$latestMessage", 0] },
+        },
+      },
     ]);
-
+    chat[0]?.participants?.forEach((participant) => {
+      console.log("participant:", participant);
+      emitSocketEvent(
+        req,
+        participant._id.toString(),
+        "User Added to Group",
+        chat[0]
+      );
+    });
+    emitSocketEvent(req, participantId.toString(), "chat created", chat[0]);
     res.status(200).json({ message: "User added to the group", data: chat[0] });
   } catch (error) {
-    res.status(400).json({ message: "error ", error });
+    res.status(400).json({ message: "error 2", error });
   }
 };
 
@@ -531,7 +481,10 @@ const removeParticipantFromGroup = async (req, res) => {
     if (!group[0]) {
       return res.status(400).json({ message: "Group doesn't exist" });
     }
+    // If Admin Removing Someone
     const isAdmin = group[0].admin?.toString() === req.user._id?.toString();
+
+    // If User Leaving the Group
     const isSameUser = participantId.toString() === req.user._id?.toString();
     if (!isAdmin && !isSameUser) {
       return res.status(400).json({
@@ -560,7 +513,7 @@ const removeParticipantFromGroup = async (req, res) => {
     const chat = await Chat.aggregate([
       {
         $match: {
-          _id: chatId,
+          _id: new mongoose.Types.ObjectId(chatId),
         },
       },
       {
@@ -604,7 +557,30 @@ const removeParticipantFromGroup = async (req, res) => {
           ],
         },
       },
+      {
+        $addFields: {
+          latestMessage: { $arrayElemAt: ["$latestMessage", 0] },
+        },
+      },
     ]);
+
+    group[0].participants.forEach((participant) => {
+      if (participant.toString() === participantId.toString()) {
+        emitSocketEvent(
+          req,
+          participant.toString(),
+          "Someone Removed you",
+          chat[0]
+        );
+      } else {
+        emitSocketEvent(
+          req,
+          participant.toString(),
+          "Someone Leave or Removed",
+          chat[0]
+        );
+      }
+    });
 
     res.status(200).json({
       message: "User Removed successfully from the group",
