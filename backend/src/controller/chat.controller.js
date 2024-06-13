@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const { Chat } = require("../models/chat/chat.model");
 const { User } = require("../models/user.model");
 const { emitSocketEvent } = require("../socket");
+const { Message } = require("../models/chat/message.model");
 
 const getAllChats = async (req, res) => {
   try {
@@ -339,6 +340,7 @@ const deleteGroupChat = async (req, res) => {
   }
 
   await Chat.findByIdAndDelete(chatId);
+  await Message.deleteMany({ chatId: new mongoose.Types.ObjectId(chatId) });
   chat.participants.forEach((participant) => {
     emitSocketEvent(req, participant.toString(), "Group Deleted", chat);
   });
@@ -522,6 +524,9 @@ const removeParticipantFromGroup = async (req, res) => {
       } else {
         // delete group
         await Chat.findByIdAndDelete(chatId);
+        await Message.deleteMany({
+          chatId: new mongoose.Types.ObjectId(chatId),
+        });
         group[0].participants.forEach((participant) => {
           emitSocketEvent(
             req,
