@@ -19,10 +19,19 @@ import {
 } from "@/utils/functions";
 import { useDispatch, useSelector } from "react-redux";
 import { ImageUploadInputBox } from "./card/imageUploadInputBox";
-import { removeParticipantFromGroup, updateGroup } from "@/api";
+import {
+  deleteGroup_api,
+  removeParticipantFromGroup,
+  updateGroup,
+} from "@/api";
 import { updateChats, updateSelectedChat } from "@/redux/actions/userActions";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogTrigger,
+  DialogClose,
+} from "@/components/ui/dialog";
 import { AddParticipantsToGroup } from "./AddParticipantsToGroup";
 
 export const ChatOrGroupDetails = ({ selectedChat }) => {
@@ -61,8 +70,15 @@ export const ChatOrGroupDetails = ({ selectedChat }) => {
         selectedChat._id,
         participant._id
       );
-
       console.log("res:", res);
+    } catch (error) {
+      console.log("error:", error);
+    }
+  };
+
+  const deleteGroup = async (groupId) => {
+    try {
+      await deleteGroup_api(groupId);
     } catch (error) {
       console.log("error:", error);
     }
@@ -124,7 +140,10 @@ export const ChatOrGroupDetails = ({ selectedChat }) => {
                       className="cursor-pointer"
                     />
                   </DialogTrigger>
-                  <DialogContent className="max-w-[50vw] max-h-[100vh] h-fit flex justify-center bg-transparent border-none">
+                  <DialogContent
+                    id="content-hai"
+                    className="max-w-[50vw] max-h-[100vh] h-fit flex justify-center bg-transparent border-none"
+                  >
                     <ScrollArea>
                       <Avatar size="40rem">
                         <AvatarImage
@@ -140,7 +159,6 @@ export const ChatOrGroupDetails = ({ selectedChat }) => {
                     </ScrollArea>
                   </DialogContent>
                 </Dialog>
-
                 <AvatarFallback>No Profile</AvatarFallback>
               </Avatar>
             )}
@@ -166,6 +184,14 @@ export const ChatOrGroupDetails = ({ selectedChat }) => {
                 </DialogTrigger>
                 <DialogContent>
                   <AddParticipantsToGroup selectedChat={selectedChat} />
+                  <DialogClose asChild>
+                    <span
+                      className="hidden"
+                      id="addParticipantPopupCloseButton"
+                    >
+                      close
+                    </span>
+                  </DialogClose>
                 </DialogContent>
               </Dialog>
               {rearangeParticipants(
@@ -200,6 +226,19 @@ export const ChatOrGroupDetails = ({ selectedChat }) => {
                     )}
                 </div>
               ))}
+              <Button
+                onClick={() =>
+                  removeParticipant({
+                    _id: loggedinUser.userId,
+                    ...loggedinUser,
+                  })
+                }
+              >
+                Leave Group
+              </Button>
+              <Button onClick={() => deleteGroup(selectedChat._id)}>
+                Delete Group
+              </Button>
             </div>
           )}
         </ScrollArea>

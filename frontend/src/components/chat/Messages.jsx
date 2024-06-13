@@ -1,7 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
 import { MessageCard } from "../card/messageCard";
 import { useSelector } from "react-redux";
-import { dateConverter, timeConverter } from "@/utils/functions";
+import {
+  dateConverter,
+  generateColors,
+  timeConverter,
+} from "@/utils/functions";
 export const Messages = ({
   messages,
   isGroup,
@@ -12,7 +16,7 @@ export const Messages = ({
 
   const scrollToBottomRef = useRef(null);
   const scrollToUnreadMessageRef = useRef(null);
-
+  const [colors, setColors] = useState([]);
   const [firstTime, setFirstTime] = useState(false);
 
   useEffect(() => {
@@ -21,6 +25,7 @@ export const Messages = ({
     } else {
       scrollToBottomRef.current?.scrollIntoView();
     }
+    messages?.length && setColors(generateColors(messages.length));
   }, [messages]);
 
   useEffect(() => {

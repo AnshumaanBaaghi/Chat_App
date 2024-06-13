@@ -4,13 +4,13 @@ import { useDispatch, useSelector } from "react-redux";
 import { FriendCard } from "./card/friendCard";
 import { FaArrowLeft } from "react-icons/fa6";
 import { createGroup } from "@/api";
-import { getChats } from "@/redux/actions/userActions";
+import { getChats, updateChats } from "@/redux/actions/userActions";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ImageUploadInputBox } from "./card/imageUploadInputBox";
 import { v4 } from "uuid";
 import { Button } from "./ui/button";
 
-export const CreateGroupChat = ({ setShowCreateGroupModal }) => {
+export const CreateGroupChat = ({ setShowCreateGroupModal, chats }) => {
   const friends = useSelector((state) => state.user.friends);
   const dispatch = useDispatch();
   const [query, setQuery] = useState("");
@@ -42,9 +42,11 @@ export const CreateGroupChat = ({ setShowCreateGroupModal }) => {
     if (selectedParticipants.length < 2) return; // TODO: add toast here
     const participants = selectedParticipants.map((el) => el.userId);
     try {
-      await createGroup(groupName, participants, imageUrl);
+      const res = await createGroup(groupName, participants, imageUrl);
+      console.log("res group created:", res);
       setShowCreateGroupModal(false);
-      dispatch(getChats());
+      const updatedChat = [res.data.data, ...chats];
+      dispatch(updateChats(updatedChat));
       // TODO: Have to connect socket.io for informing the participants
     } catch (error) {
       console.log("error:", error);

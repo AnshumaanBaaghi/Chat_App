@@ -75,7 +75,7 @@ export const updateGroup = (obj, chatId) => {
   return api.patch(`/chat/group/${chatId}`, obj);
 };
 
-export const deleteGroup = (chatId) => {
+export const deleteGroup_api = (chatId) => {
   return api.delete(`/chat/group/${chatId}`);
 };
 

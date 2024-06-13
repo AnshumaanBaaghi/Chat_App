@@ -15,6 +15,7 @@ export const MessageCard = ({
   showUnreadMessageTag,
   noOfUnreadMessage,
   scrollToUnreadMessageRef,
+  color,
 }) => {
   return (
     <>
@@ -62,7 +63,7 @@ export const MessageCard = ({
           }`}
         >
           {!isOwnMessage && (
-            <div className="text-yellow-500 text-sm no-select">
+            <div className={`text-[#ecf56b] text-sm no-select`}>
               {sender.name}
             </div>
           )}
