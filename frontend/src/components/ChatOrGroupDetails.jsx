@@ -178,22 +178,24 @@ export const ChatOrGroupDetails = ({ selectedChat }) => {
           {selectedChat.isGroup && (
             <div className="w-full bg-blue-100">
               <p>{selectedChat.participants.length} Members</p>
-              <Dialog>
-                <DialogTrigger>
-                  <Button>Add Participants</Button>
-                </DialogTrigger>
-                <DialogContent>
-                  <AddParticipantsToGroup selectedChat={selectedChat} />
-                  <DialogClose asChild>
-                    <span
-                      className="hidden"
-                      id="addParticipantPopupCloseButton"
-                    >
-                      close
-                    </span>
-                  </DialogClose>
-                </DialogContent>
-              </Dialog>
+              {selectedChat.admin === loggedinUser.userId && (
+                <Dialog>
+                  <DialogTrigger>
+                    <Button>Add Participants</Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <AddParticipantsToGroup selectedChat={selectedChat} />
+                    <DialogClose asChild>
+                      <span
+                        className="hidden"
+                        id="addParticipantPopupCloseButton"
+                      >
+                        close
+                      </span>
+                    </DialogClose>
+                  </DialogContent>
+                </Dialog>
+              )}
               {rearangeParticipants(
                 loggedinUser,
                 selectedChat.admin,
@@ -236,9 +238,11 @@ export const ChatOrGroupDetails = ({ selectedChat }) => {
               >
                 Leave Group
               </Button>
-              <Button onClick={() => deleteGroup(selectedChat._id)}>
-                Delete Group
-              </Button>
+              {selectedChat.admin === loggedinUser.userId && (
+                <Button onClick={() => deleteGroup(selectedChat._id)}>
+                  Delete Group
+                </Button>
+              )}
             </div>
           )}
         </ScrollArea>
