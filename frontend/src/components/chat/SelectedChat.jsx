@@ -17,6 +17,13 @@ import { ReactIcon } from "../ReactIcon";
 import { FaArrowLeft, FaCircleUser } from "react-icons/fa6";
 import { MdOutlineEmojiEmotions } from "react-icons/md";
 import { Button } from "../ui/button";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import data from "@emoji-mart/data";
+import Picker from "@emoji-mart/react";
 
 export const SelectedChat = ({
   handleTypingMessageChange,
@@ -41,6 +48,11 @@ export const SelectedChat = ({
 
   const handleChange = (e) => {
     setTypedMessages(e.target.value);
+    handleTypingMessageChange();
+  };
+
+  const onEmojiSelect = (e) => {
+    setTypedMessages((pre) => pre + e.native);
     handleTypingMessageChange();
   };
 
@@ -221,9 +233,17 @@ export const SelectedChat = ({
             />
           </ScrollArea>
           <div className="h-16 bg-gray flex px-3 gap-3 items-center">
-            <ReactIcon color="gray" size="2.3rem">
-              <MdOutlineEmojiEmotions />
-            </ReactIcon>
+            <Popover>
+              <PopoverTrigger>
+                <ReactIcon color="gray" size="2.3rem">
+                  <MdOutlineEmojiEmotions />
+                </ReactIcon>
+              </PopoverTrigger>
+              <PopoverContent className="bg-transparent border-0">
+                <Picker data={data} onEmojiSelect={onEmojiSelect} />
+              </PopoverContent>
+            </Popover>
+
             <form onSubmit={handleSubmit} className="flex w-full gap-3">
               <input
                 type="text"
