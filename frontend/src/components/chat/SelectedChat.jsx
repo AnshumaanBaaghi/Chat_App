@@ -138,7 +138,7 @@ export const SelectedChat = ({
 
   return (
     <div
-      className={`bg-[#414256] w-full  ${
+      className={`bg-[#15171c] w-full  ${
         selectedChat ? "block" : "hidden"
       } md:w-4/6 md:block border-l border-l-[#1f212a]`}
     >
@@ -148,7 +148,7 @@ export const SelectedChat = ({
 
           <div
             onClick={openChatDetailSheet}
-            className="w-full h-16 bg-[#0d0e12] flex justify-between items-center p-3 cursor-pointer no-select"
+            className="w-full h-16 bg-[#0d0e12] flex justify-between items-center p-3 cursor-pointer no-select border-b border-b-[#1f212a]"
           >
             <div className="flex gap-5 items-center text-white">
               <div
@@ -232,7 +232,7 @@ export const SelectedChat = ({
               selectedChat={selectedChat}
             />
           </ScrollArea>
-          <div className="h-16 bg-gray flex px-3 gap-3 items-center">
+          <div className="h-16 bg-[#0d0e12] border-t border-t-[#1f212a] flex px-3 gap-3 items-center">
             <Popover>
               <PopoverTrigger>
                 <ReactIcon color="gray" size="2.3rem">

@@ -5,6 +5,7 @@ import { FriendCard } from "./card/friendCard";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { addParticipantInGroup } from "@/api";
+import { ScrollArea } from "./ui/scroll-area";
 
 export const AddParticipantsToGroup = ({ selectedChat }) => {
   const friends = useSelector((state) => state.user.friends);
@@ -55,18 +56,16 @@ export const AddParticipantsToGroup = ({ selectedChat }) => {
   }, []);
 
   return (
-    <div className="w-[100%] bg-red-400 h-[50vh]">
-      <div className="flex">
-        <h2>Add Participants</h2>
-      </div>
+    <div className="w-[100%] bg-[#15171c] h-[60vh] p-4">
+      <p className="text-[#ffffffb6] text-lg text-center p-4">Add Members</p>
       <div className="mt-2">
         {selectedParticipants.map((friend) => (
           <div
             key={friend.userId}
-            className="inline-flex items-center px-3 py-1 mr-2 mb-2 rounded-full bg-blue-100 text-blue-800"
+            className="inline-flex items-center px-2 py-1 mr-2 mb-2 rounded-full bg-[#bcbbbb]"
           >
-            <Avatar size="2rem" className="mr-2">
-              <AvatarImage src="https:encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ4ZLEEDaC7_8qJqkthsik-Q0rr7TSzGfU6XA&usqp=CAU" />
+            <Avatar size="2.5rem" className="mr-2">
+              <AvatarImage src={friend.avatar} />
               <AvatarFallback>CN</AvatarFallback>
             </Avatar>
             <span>{friend.name}</span>
@@ -98,26 +97,36 @@ export const AddParticipantsToGroup = ({ selectedChat }) => {
         placeholder={
           selectedParticipants.length > 0 ? "" : "Select Participants"
         }
-        className="w-full bg-white border border-gray-300 rounded-md shadow-sm pl-3 pr-10 py-2 text-left focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+        className="w-full px-3 py-2 bg-[#15171c] outline-none text-[#b8b3b3] border border-[#85818173] rounded-md shadow-sm  focus:border-[#dbd6d673]"
       />
-      <div className="mt-1 w-full rounded-md bg-white shadow-lg z-10">
+      <div className="mt-1 w-full rounded-md shadow-lg z-10">
         {filteredOptions.length > 0 ? (
-          <ul
-            tabIndex="-1"
-            role="listbox"
-            className="max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm"
-          >
-            {filteredOptions.map((friend) => (
-              <li key={friend.userId} onClick={() => selectUser(friend)}>
-                <FriendCard user={friend} />
-              </li>
-            ))}
-          </ul>
+          <ScrollArea>
+            <ul
+              tabIndex="-1"
+              role="listbox"
+              className="max-h-[30vh] rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm"
+            >
+              {filteredOptions.map((friend) => (
+                <li
+                  key={friend.userId}
+                  onClick={() => selectUser(friend)}
+                  className="bg-[#bcbbbb] rounded-sm m-1"
+                >
+                  <FriendCard user={friend} />
+                </li>
+              ))}
+            </ul>
+          </ScrollArea>
         ) : (
-          <p className="py-2 px-3 text-gray-500">No User found</p>
+          <p className="py-2 px-3 text-[#ffffffe1]">No User found</p>
         )}
       </div>
-      <Button onClick={addParticipant} disabled={!selectedParticipants.length}>
+      <Button
+        onClick={addParticipant}
+        disabled={!selectedParticipants.length}
+        className="mt-3 bg-[#0a0a0ac9] border border-[#85818173] w-1/3 mx-auto text-[#ffffffd7] hover:bg-[#292928c9]"
+      >
         Add
       </Button>
     </div>

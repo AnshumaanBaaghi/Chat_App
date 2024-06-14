@@ -108,10 +108,10 @@ export const AllChats = ({
         </div>
       </div>
       <div className="bg-[#0d0e12] px-3 py-2 ">
-        <div className="flex bg-white px-3 py-2  rounded-xl items-center gap-2">
-          <IoSearchOutline className="text-xl" />
+        <div className="flex bg-[#15171c] px-3 py-2  rounded-xl items-center gap-2 border border-[#85818173]">
+          <IoSearchOutline className="text-xl text-[#b8b3b3]" />
           <input
-            className="w-full h-5  outline-none"
+            className="w-full h-5 outline-none bg-transparent text-[#b8b3b3] bottom-0"
             type="text"
             placeholder="Search..."
             onChange={(e) => setQuery(e.target.value)}

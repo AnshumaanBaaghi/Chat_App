@@ -4,7 +4,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 export const FriendCard = ({ user, onClickCallbackFunction }) => {
   return (
     <div
-      className="flex gap-5 items-center border border-red-300 py-2 px-3 cursor-pointer"
+      className="flex gap-5 items-center py-2 px-3 cursor-pointer"
       onClick={() =>
         onClickCallbackFunction && onClickCallbackFunction(user.userId)
       }

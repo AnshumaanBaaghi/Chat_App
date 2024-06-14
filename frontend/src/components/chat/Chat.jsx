@@ -24,23 +24,16 @@ export const Chat = ({
   };
 
   return (
+    // TODO: Add Stling to selected Chat
     <div
       className={`px-6 box-border w-full ${
-        true ? "selectedChat" : ""
+        !true ? "selectedChat" : ""
       } relative`}
     >
       <div
         className="flex gap-3 cursor-pointer border-b border-b-[#959cb647] py-3 box-border overflow-hidden"
         onClick={() => handleSelectChat(chat)}
       >
-        {/* <svg width="100%" height="100%" className="border border-red-500">
-          <path
-            d="M 0 20 C 20 0, 40 20, 60 0, 80 20, 100 0, 120 20"
-            stroke="#aaa"
-            stroke-width="2"
-            fill="none"
-          />
-        </svg> */}
         <div className="relative">
           <Avatar size="3.5rem" className="relative">
             <AvatarImage
