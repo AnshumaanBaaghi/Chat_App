@@ -10,6 +10,7 @@ export const Chat = ({
   isSomeOneTyping,
   handleSelectChat,
   isAnyUnreadMessages,
+  isChatSelected,
   time,
   isOnline,
 }) => {
@@ -24,14 +25,12 @@ export const Chat = ({
   };
 
   return (
-    // TODO: Add Stling to selected Chat
-    <div
-      className={`px-6 box-border w-full ${
-        !true ? "selectedChat" : ""
-      } relative`}
-    >
+    // TODO: Add Styling to selected Chat
+    <div className={`px-3 box-border w-full  relative`}>
       <div
-        className="flex gap-3 cursor-pointer border-b border-b-[#959cb647] py-3 box-border overflow-hidden"
+        className={`flex gap-3 cursor-pointer border-b border-b-[#959cb647] py-3 box-border overflow-hidden px-3 ${
+          isChatSelected ? "bg-[#222020]" : "hover:bg-[#1b1b1b]"
+        }`}
         onClick={() => handleSelectChat(chat)}
       >
         <div className="relative">

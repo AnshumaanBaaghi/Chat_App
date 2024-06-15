@@ -16,40 +16,52 @@ export const Explore = ({
   const user = useSelector((state) => state.user.userDetail);
 
   return (
-    <div>
+    <div className="flex flex-col gap-1">
       {newUsers &&
         newUsers.map((el) => (
-          <NewUserCard
-            key={el.userId}
-            socket={socket}
-            user={el}
-            loggedInUser_id={user.userId}
-            sendFriendRequest={sendFriendRequest}
-          />
+          <div className="text-[#ffffffed] hover:bg-[#1b1b1b] rounded-md">
+            <NewUserCard
+              key={el.userId}
+              socket={socket}
+              user={el}
+              loggedInUser_id={user.userId}
+              sendFriendRequest={sendFriendRequest}
+            />
+          </div>
         ))}
       {sentRequests &&
-        sentRequests.map((el) => <SentRequestCard key={el.userId} user={el} />)}
+        sentRequests.map((el) => (
+          <div className="text-[#ffffffed] hover:bg-[#1b1b1b] rounded-md">
+            <SentRequestCard key={el.userId} user={el} />
+          </div>
+        ))}
       {friendRequests &&
         friendRequests.map((el) => (
-          <FriendRequestCard
-            key={el.userId}
-            user={el}
-            socket={socket}
-            acceptFriendRequest={acceptFriendRequest}
-          />
+          <div className="text-[#ffffffed] hover:bg-[#1b1b1b] rounded-md">
+            <FriendRequestCard
+              key={el.userId}
+              user={el}
+              socket={socket}
+              acceptFriendRequest={acceptFriendRequest}
+            />
+          </div>
         ))}
       {friends &&
         friends.map((el) => (
-          <FriendCard
-            key={el.userId}
-            user={el}
-            onClickCallbackFunction={onClickOnFriend}
-          />
+          <div className="text-[#ffffffed] hover:bg-[#1b1b1b] rounded-md">
+            <FriendCard
+              key={el.userId}
+              user={el}
+              onClickCallbackFunction={onClickOnFriend}
+            />
+          </div>
         ))}
       {newUsers?.length == 0 &&
         sentRequests?.length == 0 &&
         friendRequests?.length == 0 &&
-        friends?.length == 0 && <>Nothing to Explore</>}
+        friends?.length == 0 && (
+          <p className="text-center text-[#ffffffd6]">Nothing to Explore</p>
+        )}
     </div>
   );
 };

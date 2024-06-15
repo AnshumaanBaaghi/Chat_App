@@ -25,7 +25,6 @@ import {
   timeConverter,
 } from "@/utils/functions";
 import Tooltip from "../ui/tooltip";
-import { Button } from "../ui/button";
 
 export const AllChats = ({
   typingUsersObject,
@@ -93,7 +92,7 @@ export const AllChats = ({
                 </ReactIcon>
               </Tooltip>
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent className="bg-[#0d0e12] border-[#b7b6b65c]">
               <Popup
                 closePopup={closePopup}
                 chats={chats}
@@ -133,6 +132,7 @@ export const AllChats = ({
                   handleSelectChat={handleSelectChat}
                   isSomeOneTyping={typingUsersObject[el._id]}
                   isAnyUnreadMessages={unreadMessages[el._id]}
+                  isChatSelected={selectedChat?._id === el._id}
                   time={
                     day && day === "Today"
                       ? timeConverter(el.latestMessage.updatedAt)

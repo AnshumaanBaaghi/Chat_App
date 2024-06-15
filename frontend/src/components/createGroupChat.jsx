@@ -9,6 +9,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ImageUploadInputBox } from "./card/imageUploadInputBox";
 import { v4 } from "uuid";
 import { Button } from "./ui/button";
+import { ScrollArea } from "./ui/scroll-area";
 
 export const CreateGroupChat = ({ setShowCreateGroupModal, chats }) => {
   const friends = useSelector((state) => state.user.friends);
@@ -47,7 +48,6 @@ export const CreateGroupChat = ({ setShowCreateGroupModal, chats }) => {
       setShowCreateGroupModal(false);
       const updatedChat = [res.data.data, ...chats];
       dispatch(updateChats(updatedChat));
-      // TODO: Have to connect socket.io for informing the participants
     } catch (error) {
       console.log("error:", error);
     }
@@ -58,108 +58,142 @@ export const CreateGroupChat = ({ setShowCreateGroupModal, chats }) => {
   };
 
   return (
-    <div className="w-full overflow-hidden bg-gray-500 h-full">
+    <div className="w-full  bg-[#0d0e12] h-screen">
       <div
-        className={`grid grid-cols-2 border box-border border-green-600 transition-transform duration-500 ${
+        className={`grid grid-cols-2 box-border  transition-transform duration-500 ${
           showSecondStep && "-translate-x-1/2"
         }`}
         style={{ width: "200%" }}
       >
-        <div className="w-[100%] bg-red-400 h-[50vh]">
-          <div className="flex">
-            <button onClick={() => setShowCreateGroupModal(false)}>
+        <div className="w-[100%] flex flex-col justify-between ">
+          <div className="w-[100%] flex flex-col relative">
+            <button
+              onClick={() => setShowCreateGroupModal(false)}
+              className="text-[#ffffffa2] absolute left-5 top-5 text-2xl"
+            >
               <FaArrowLeft />
             </button>
-            <h2>Add Participants</h2>
+            <p className="text-[#ffffffb6] bg-[#15171c] text-xl text-center p-5 capitalize">
+              Add Participants
+            </p>
           </div>
-          <div className="mt-2">
-            {selectedParticipants.map((friend) => (
-              <div
-                key={friend.userId}
-                className="inline-flex items-center px-3 py-1 mr-2 mb-2 rounded-full bg-blue-100 text-blue-800"
-              >
-                <Avatar size="2rem" className="mr-2">
-                  <AvatarImage src="https:encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ4ZLEEDaC7_8qJqkthsik-Q0rr7TSzGfU6XA&usqp=CAU" />
-                  <AvatarFallback>CN</AvatarFallback>
-                </Avatar>
-                <span>{friend.name}</span>
-                <button
-                  type="button"
-                  className="ml-2 text-blue-600 hover:text-blue-900 focus:outline-none"
-                  onClick={() => unselectUser(friend)}
-                >
-                  <svg
-                    className="w-4 h-4"
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
+
+          <ScrollArea>
+            <div className="max-h-[75vh]">
+              <div className=" mt-2 bg-[#15171c] px-2 py-5">
+                {selectedParticipants.map((friend) => (
+                  <div
+                    key={friend.userId}
+                    className="inline-flex items-center px-2 py-1 mr-2 mb-2 rounded-full bg-[#bcbbbb]"
                   >
-                    <path
-                      fillRule="evenodd"
-                      d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                </button>
-              </div>
-            ))}
-          </div>
-          <input
-            type="text"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder={
-              selectedParticipants.length > 0 ? "" : "Select Participants"
-            }
-            className="w-full bg-white border border-gray-300 rounded-md shadow-sm pl-3 pr-10 py-2 text-left focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-          />
-          <div className="mt-1 w-full rounded-md bg-white shadow-lg z-10">
-            {filteredOptions.length > 0 ? (
-              <ul
-                tabIndex="-1"
-                role="listbox"
-                className="max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm"
-              >
-                {filteredOptions.map((friend) => (
-                  <li key={friend.userId} onClick={() => selectUser(friend)}>
-                    <FriendCard user={friend} />
-                  </li>
+                    <Avatar size="2.5rem" className="mr-2">
+                      <AvatarImage src={friend.avatar} />
+                      <AvatarFallback>CN</AvatarFallback>
+                    </Avatar>
+                    <span>{friend.name}</span>
+                    <button
+                      type="button"
+                      className="ml-2 text-blue-600 hover:text-blue-900 focus:outline-none"
+                      onClick={() => unselectUser(friend)}
+                    >
+                      <svg
+                        className="w-4 h-4"
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                    </button>
+                  </div>
                 ))}
-              </ul>
-            ) : (
-              <p className="py-2 px-3 text-gray-500">No User found</p>
-            )}
-          </div>
+              </div>
+              <div className="p-2">
+                <input
+                  type="text"
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  placeholder={
+                    selectedParticipants.length > 0 ? "" : "Select Participants"
+                  }
+                  className="w-full px-3 py-2 bg-[#15171c] outline-none text-[#b8b3b3] border border-[#85818173] rounded-md shadow-sm  focus:border-[#dbd6d673]"
+                />
+              </div>
+
+              <div className="mt-3 w-full rounded-md shadow-lg z-10 p-2 bg-[#15171c]">
+                {filteredOptions.length > 0 ? (
+                  <ul
+                    tabIndex="-1"
+                    role="listbox"
+                    className=" rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm"
+                  >
+                    {filteredOptions.map((friend) => (
+                      <li
+                        key={friend.userId}
+                        onClick={() => selectUser(friend)}
+                        className="bg-[#bcbbbb] rounded-sm m-1"
+                      >
+                        <FriendCard user={friend} />
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="py-2 text-center text-[#ffffffe1]">
+                    No User found
+                  </p>
+                )}
+              </div>
+            </div>
+          </ScrollArea>
           <Button
             disabled={selectedParticipants.length < 2}
             onClick={() => setShowSecondStep(true)}
+            className="mt-3 bg-[#0a0a0ac9] border border-[#85818173] w-1/3 mx-auto text-[#ffffffd7] hover:bg-[#292928c9]"
           >
             Next
           </Button>
         </div>
         {showSecondStep && (
-          <div className="w-[100%]">
-            <button onClick={() => setShowSecondStep(false)}>
+          <div className="w-[100%] flex flex-col relative">
+            <button
+              onClick={() => setShowSecondStep(false)}
+              className="text-[#ffffffa2] absolute left-3 top-3 text-2xl"
+            >
               <FaArrowLeft />
             </button>
-            <ImageUploadInputBox
-              imageUrl={imageUrl}
-              setImageUrl={setImageUrl}
-              firebasePath={`groupImages/${v4()}`}
-              onRemoveImage={onRemoveImage}
-              placeholder="Add Group Picture"
-              size="12rem"
-            />
-            <input
-              type="text"
-              value={groupName}
-              onChange={(e) => setGroupName(e.target.value)}
-              placeholder="Group Name"
-              className="w-full bg-white border border-gray-300 rounded-md shadow-sm pl-3 pr-10 py-2 text-left focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-            />
-            <Button disabled={!groupName.trim()} onClick={handleSubmit}>
-              create
-            </Button>
+            <p className="text-[#ffffffb6] bg-[#15171c] text-xl text-center p-4 capitalize">
+              Add Group Icon
+            </p>
+            <div className="flex justify-center pt-5 bg-[#15171c]">
+              <ImageUploadInputBox
+                imageUrl={imageUrl}
+                setImageUrl={setImageUrl}
+                firebasePath={`groupImages/${v4()}`}
+                onRemoveImage={onRemoveImage}
+                placeholder="Add Group Picture"
+                size="12rem"
+              />
+            </div>
+            <div className="bg-[#15171c] mt-2 p-3">
+              <input
+                type="text"
+                value={groupName}
+                onChange={(e) => setGroupName(e.target.value)}
+                placeholder="Group Name"
+                className="w-full px-3 py-2 bg-[#15171c] outline-none text-[#b8b3b3] border border-[#85818173] rounded-md shadow-sm  focus:border-[#dbd6d673]"
+              />
+              <Button
+                disabled={!groupName.trim()}
+                onClick={handleSubmit}
+                className="mt-3 bg-[#0a0a0ac9] border border-[#85818173] w-1/3 mx-auto text-[#ffffffd7] hover:bg-[#292928c9]"
+              >
+                create
+              </Button>
+            </div>
           </div>
         )}
       </div>

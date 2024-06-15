@@ -11,11 +11,11 @@ export const FriendCard = ({ user, onClickCallbackFunction }) => {
     >
       <Avatar size="3.5rem">
         <AvatarImage src={user.avatar} />
-        <AvatarFallback>CN</AvatarFallback>
+        <AvatarFallback className="text-black">CN</AvatarFallback>
       </Avatar>
       <div className="flex flex-col">
         <span className="font-semibold">{user.name}</span>
-        <span className="text-sm text-gray-700">{user.username}</span>
+        <span className="text-sm ">{user.username}</span>
       </div>
     </div>
   );

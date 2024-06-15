@@ -2,17 +2,19 @@ import { FriendCard } from "@/components/card/friendCard";
 
 export const Friends = ({ arr, onClickOnFriend }) => {
   return (
-    <div>
+    <div className="flex flex-col gap-1">
       {arr?.length > 0 ? (
         arr.map((el) => (
-          <FriendCard
-            key={el.userId}
-            user={el}
-            onClickCallbackFunction={onClickOnFriend}
-          />
+          <div className="text-[#ffffffed] hover:bg-[#1b1b1b] rounded-md">
+            <FriendCard
+              key={el.userId}
+              user={el}
+              onClickCallbackFunction={onClickOnFriend}
+            />
+          </div>
         ))
       ) : (
-        <>No Friends </>
+        <p className="text-center text-[#ffffffd6]">No Friends</p>
       )}
     </div>
   );

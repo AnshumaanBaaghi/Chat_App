@@ -54,12 +54,12 @@ export const Popup = ({
   return (
     <>
       <div className="h-[55vh] flex flex-col">
-        <nav className="px-1 pt-1 pb-[2px] border-b border-b-[#eeeeee]">
-          <ul className="list-none p-0 m-0  font-semibold text-base flex">
+        <nav className="px-1 pt-1 pb-[2px] ">
+          <ul className="list-none p-0 m-0 mb-1   font-semibold  text-base flex text-[#ffffffe2]">
             <li
               className={`${
-                "Explore" === selectedTab ? "bg-[#eee]" : ""
-              } list-none font-sans text-[14px] rounded border-b-0 border-r-0 border-l-0 border-gray-300 w-full py-2 px-3 relative bg-white cursor-pointer flex justify-center items-center flex-1 min-w-0 user-select-none`}
+                "Explore" === selectedTab ? "bg-[#25272f]" : "bg-[#15171c]"
+              } list-none font-sans text-[14px] rounded border-b-0 border-r-0 border-l-0 border-gray-300 w-full py-2 px-3 relative  cursor-pointer flex justify-center items-center flex-1 min-w-0 user-select-none`}
               onClick={() => setSelectedTab("Explore")}
             >
               Explore
@@ -72,8 +72,8 @@ export const Popup = ({
             </li>
             <li
               className={`${
-                "Requests" === selectedTab ? "bg-[#eee]" : ""
-              } list-none font-sans text-[14px] rounded border-b-0 border-r-0 border-l-0 border-gray-300 w-full py-2 px-3 relative bg-white cursor-pointer flex justify-center items-center flex-1 min-w-0 user-select-none`}
+                "Requests" === selectedTab ? "bg-[#25272f]" : "bg-[#15171c]"
+              } list-none font-sans text-[14px] rounded border-b-0 border-r-0 border-l-0 border-gray-300 w-full py-2 px-3 relative  cursor-pointer flex justify-center items-center flex-1 min-w-0 user-select-none`}
               onClick={() => setSelectedTab("Requests")}
             >
               Requests
@@ -86,8 +86,8 @@ export const Popup = ({
             </li>
             <li
               className={`${
-                "Friends" === selectedTab ? "bg-[#eee]" : ""
-              } list-none font-sans text-[14px] rounded border-b-0 border-r-0 border-l-0 border-gray-300 w-full py-2 px-3 relative bg-white cursor-pointer flex justify-center items-center flex-1 min-w-0 user-select-none`}
+                "Friends" === selectedTab ? "bg-[#25272f]" : "bg-[#15171c]"
+              } list-none font-sans text-[14px] rounded border-b-0 border-r-0 border-l-0  w-full py-2 px-3 relative  cursor-pointer flex justify-center items-center flex-1 min-w-0 user-select-none`}
               onClick={() => setSelectedTab("Friends")}
             >
               Friends
@@ -104,6 +104,7 @@ export const Popup = ({
           <Input
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search..."
+            className="w-full px-3 py-2 bg-[#15171c] outline-none text-[#b8b3b3] border border-[#85818173] rounded-md shadow-sm  focus:border-[#dbd6d673]"
           />
         </div>
         <ScrollArea className="flex flex-grow py-2 px-3">
