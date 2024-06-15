@@ -19,6 +19,7 @@ export const ImageUploadInputBox = ({
   placeholder = "Upload Image",
   size,
   options = [],
+  className = "",
 }) => {
   const [isLoading, setIsLoading] = useState(false);
 
@@ -50,7 +51,9 @@ export const ImageUploadInputBox = ({
 
   return (
     <DropdownMenu>
-      <div className="profile-picture-uploader size-fit group relative">
+      <div
+        className={`profile-picture-uploader size-fit group relative ${className}`}
+      >
         <input
           type="file"
           id="profileImageInput"

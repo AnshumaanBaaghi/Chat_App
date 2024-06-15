@@ -19,10 +19,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { login, updateUserDetail } from "@/redux/actions/userActions";
 import { Loading } from "@/components/loading";
 import { useToast } from "@/components/ui/use-toast";
-import { Navigate, useNavigate } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { ImageUploadInputBox } from "@/components/card/imageUploadInputBox";
 import { v4 } from "uuid";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 const FormSchema = z.object({
   name: z.string().min(5, {
@@ -150,8 +151,8 @@ export const Register = () => {
 
   return (
     <>
-      <div className="flex h-screen items-center">
-        <div className=" w-[95%] md:w-1/3 m-auto min-h-[50vh] flex flex-col justify-center border border-red-500 rounded-xl">
+      <div className="flex h-screen items-center bg-[#15171c]">
+        <div className="text-[#ffffffe0] w-[95%] md:w-1/3 m-auto min-h-[50vh]  flex flex-col justify-center border border-[#1f212a] bg-[#0d0e12] rounded-xl">
           <AnimatePresence mode="wait">
             <motion.div
               key={currentStep ? currentStep : "empty"}
@@ -161,106 +162,128 @@ export const Register = () => {
               transition={{ duration: 0.2 }}
             >
               {currentStep === "login" ? (
-                <div
-                  className="py-10 flex justify-center items-center"
-                  style={{ width: "100%" }}
-                >
-                  <Form {...form}>
-                    <form
-                      onSubmit={form.handleSubmit(onSubmit)}
-                      className="w-4/5 space-y-6"
-                    >
-                      <FormField
-                        control={form.control}
-                        name="name"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Name</FormLabel>
-                            <FormControl>
-                              <Input placeholder="Enter Your Name" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name="username"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Username</FormLabel>
-                            <FormControl>
-                              <Input
-                                placeholder="Enter Your Username"
-                                {...field}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
+                <ScrollArea className="h-[90vh]">
+                  <div
+                    className="py-10 flex justify-center items-center flex-col"
+                    style={{ width: "100%" }}
+                  >
+                    <p className="text-2xl mb-5">Register</p>
+                    <Form {...form}>
+                      <form
+                        onSubmit={form.handleSubmit(onSubmit)}
+                        className="w-4/5 space-y-6"
+                      >
+                        <FormField
+                          control={form.control}
+                          name="name"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Name</FormLabel>
+                              <FormControl>
+                                <Input
+                                  placeholder="Enter Your Name"
+                                  {...field}
+                                  className="h-9 w-full rounded-md bg-transparent px-3 py-1 text-sm shadow-sm outline-stone-800 border border-[#1f212a] text-white"
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={form.control}
+                          name="username"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Username</FormLabel>
+                              <FormControl>
+                                <Input
+                                  placeholder="Enter Your Username"
+                                  className="h-9 w-full rounded-md bg-transparent px-3 py-1 text-sm shadow-sm outline-stone-800 border border-[#1f212a] text-white"
+                                  {...field}
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
 
-                      <FormField
-                        control={form.control}
-                        name="email"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Email</FormLabel>
-                            <FormControl>
-                              <Input
-                                placeholder="example@example.com"
-                                {...field}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
+                        <FormField
+                          control={form.control}
+                          name="email"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Email</FormLabel>
+                              <FormControl>
+                                <Input
+                                  placeholder="example@example.com"
+                                  className="h-9 w-full rounded-md bg-transparent px-3 py-1 text-sm shadow-sm outline-stone-800 border border-[#1f212a] text-white"
+                                  {...field}
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
 
-                      <FormField
-                        control={form.control}
-                        name="password"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Password</FormLabel>
-                            <FormControl>
-                              <Input
-                                type="password"
-                                placeholder="Enter Password"
-                                {...field}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
+                        <FormField
+                          control={form.control}
+                          name="password"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Password</FormLabel>
+                              <FormControl>
+                                <Input
+                                  type="password"
+                                  placeholder="Enter Password"
+                                  className="h-9 w-full rounded-md bg-transparent px-3 py-1 text-sm shadow-sm outline-stone-800 border border-[#1f212a] text-white"
+                                  {...field}
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormError message={errorMessage} />
+                        {!isLoading ? (
+                          <Button type="submit" className="w-full">
+                            Submit
+                          </Button>
+                        ) : (
+                          <Button className="w-full">
+                            <Loading />
+                          </Button>
                         )}
-                      />
-                      <FormError message={errorMessage} />
-                      {!isLoading ? (
-                        <Button type="submit" className="w-full">
-                          Submit
-                        </Button>
-                      ) : (
-                        <Button className="w-full">
-                          <Loading />
-                        </Button>
-                      )}
-                    </form>
-                  </Form>
-                </div>
+                      </form>
+                    </Form>
+                    <div className="w-4/5 my-4 text-sm">
+                      <span>Already have an Account? </span>
+                      <Link to="/login" className="text-[#976cf3]">
+                        Signin
+                      </Link>
+                    </div>
+                  </div>
+                </ScrollArea>
               ) : currentStep === "otp" ? (
                 <Otp setCurrentStep={setCurrentStep} />
               ) : currentStep === "addProfilePart" ? (
                 <div className=" flex flex-col items-center m-6">
+                  <p className="text-xl mb-5">Add Profile Picture</p>
                   <ImageUploadInputBox
                     imageUrl={imageUrl}
                     setImageUrl={setImageUrl}
                     firebasePath={`profileImages/${userId || v4()}`}
                     uploadImageToDB={uploadImageToDB}
-                    placeholder="Add Profile Picture"
+                    placeholder="Click here to upload"
                     size="12rem"
+                    className="text-black"
                   />
                   <div className=" w-full flex justify-around mt-6">
-                    <Button variant="outline" onClick={skipProfileImage}>
+                    <Button
+                      variant="outline"
+                      onClick={skipProfileImage}
+                      className="text-black"
+                    >
                       Skip
                     </Button>
                     <Button disabled={!imageUrl} onClick={uploadImageToDB}>

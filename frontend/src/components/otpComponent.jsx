@@ -63,21 +63,23 @@ export const OtpComponent = ({
     }
   }, []);
   return (
-    <div className="py-10 w-full box-border min-h-[50vh]">
-      <h2 className="px-4">OTP Verification</h2>
-      <p className="px-4">Enter the OTP sent to {email}</p>
-      <div className="border border-red-800 px-4 flex gap-5">
-        {otp.map((el, index) => (
-          <Input
-            key={index}
-            className="w-10 text-center"
-            value={el}
-            ref={(input) => (inputRefs[index] = input)}
-            onChange={(e) => handleChange(e, index)}
-            onClick={(e) => handleClick(index)}
-            onKeyDown={(e) => handleKeyDown(e, index)}
-          />
-        ))}
+    <div className="py-10 w-full box-border min-h-[50vh] flex flex-col justify-between">
+      <div>
+        <p className="text-2xl mb-7 text-center">OTP Verification</p>
+        <p className="px-4 text-center">Enter the OTP sent to {email}</p>
+        <div className="px-4 flex gap-5 my-5 justify-center">
+          {otp.map((el, index) => (
+            <Input
+              key={index}
+              className="w-10 text-center bg-[#15171c]"
+              value={el}
+              ref={(input) => (inputRefs[index] = input)}
+              onChange={(e) => handleChange(e, index)}
+              onClick={(e) => handleClick(index)}
+              onKeyDown={(e) => handleKeyDown(e, index)}
+            />
+          ))}
+        </div>
       </div>
       <p className="px-4">
         Didn't receive the OTP?
