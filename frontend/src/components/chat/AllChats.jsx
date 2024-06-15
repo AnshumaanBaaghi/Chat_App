@@ -51,7 +51,10 @@ export const AllChats = ({
   };
 
   useEffect(() => {
-    setChatsArray(getFilteredChatArray(query, chats, loggedinUser));
+    console.log("chats:", chats);
+    const a = getFilteredChatArray(query, chats, loggedinUser);
+    console.log("a:", a);
+    setChatsArray(a);
   }, [query, chats]);
 
   return (
@@ -118,10 +121,10 @@ export const AllChats = ({
         </div>
       </div>
 
-      <ScrollArea className=" bg-[#0d0e12] flex-grow">
-        <div className="bg-[#0d0e12] h-full py-3">
-          {chats.length > 0 &&
-            chatsArray.map((el, index) => {
+      <ScrollArea className={`bg-[#0d0e12] flex-grow`}>
+        {chats.length > 0 ? (
+          <div className="h-full py-3">
+            {chatsArray.map((el, index) => {
               const day =
                 el.latestMessage && dateConverter(el.latestMessage.updatedAt);
               return (
@@ -148,10 +151,13 @@ export const AllChats = ({
                 />
               );
             })}
-        </div>
+          </div>
+        ) : (
+          <div className="text-white text-center mt-[30vh]">
+            Explore Friends
+          </div>
+        )}
       </ScrollArea>
-      {/* <div className="flex-grow bg-red-200">
-      </div> */}
       <div
         className={`w-full bg-gray-600 absolute h-screen  duration-500 ${
           showCreateGroupModal || showUserProfileSidebar

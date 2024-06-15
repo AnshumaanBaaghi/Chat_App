@@ -96,19 +96,6 @@ export const getChats = () => async (dispatch) => {
   }
 };
 
-export const getOrCreateChat = (receiverId) => async (dispatch) => {
-  try {
-    const chat = await getOrCreateChat_api(receiverId);
-    chat.data.data &&
-      dispatch({
-        type: UPDATECHATS,
-        payload: chat.data.data || {},
-      });
-  } catch (error) {
-    console.log("error:", error);
-  }
-};
-
 // To avoid unneccessary requests
 export const updateNewFriends = (payload) => {
   return { type: UPDATENEWFRIENDS, payload };

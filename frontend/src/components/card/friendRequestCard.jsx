@@ -1,14 +1,17 @@
 import React from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { useDispatch } from "react-redux";
-import { getOrCreateChat } from "@/redux/actions/userActions";
+
 import { Button } from "../ui/button";
+import { getOrCreateChat_api } from "@/api";
 
 export const FriendRequestCard = ({ socket, user, acceptFriendRequest }) => {
-  const dispatch = useDispatch();
-  const handleClick = () => {
-    acceptFriendRequest(socket, user.requestId);
-    dispatch(getOrCreateChat(user.userId));
+  const handleClick = async () => {
+    try {
+      await getOrCreateChat_api(user.userId);
+      acceptFriendRequest(socket, user.requestId);
+    } catch (error) {
+      console.log("error:", error);
+    }
   };
   return (
     <div className="flex justify-between items-center py-2 px-3">
