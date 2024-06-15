@@ -18,6 +18,7 @@ export const ImageUploadInputBox = ({
   onChangeImage,
   placeholder = "Upload Image",
   size,
+  options = [],
 }) => {
   const [isLoading, setIsLoading] = useState(false);
 
@@ -92,6 +93,12 @@ export const ImageUploadInputBox = ({
           <DropdownMenuItem onClick={onRemoveImage}>
             Remove Image
           </DropdownMenuItem>
+          {options.length &&
+            options.map((el) => (
+              <DropdownMenuItem onClick={el.callback || null}>
+                {el.option}
+              </DropdownMenuItem>
+            ))}
         </DropdownMenuContent>
       </div>
     </DropdownMenu>
