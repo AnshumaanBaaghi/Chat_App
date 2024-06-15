@@ -121,8 +121,9 @@ export const ChatOrGroupDetails = ({ selectedChat }) => {
                   ]}
                 />
               ) : (
-                <Avatar size="17rem" onClick={viewProfileOrGroupImage}>
+                <Avatar size="17rem">
                   <AvatarImage
+                    onClick={viewProfileOrGroupImage}
                     src={selectedChat.avatar}
                     className="cursor-pointer"
                   />
@@ -130,8 +131,9 @@ export const ChatOrGroupDetails = ({ selectedChat }) => {
                 </Avatar>
               )
             ) : (
-              <Avatar size="17rem" onClick={viewProfileOrGroupImage}>
+              <Avatar size="17rem">
                 <AvatarImage
+                  onClick={viewProfileOrGroupImage}
                   src={
                     getOppositeUserDetails(
                       loggedinUser,
@@ -244,12 +246,12 @@ export const ChatOrGroupDetails = ({ selectedChat }) => {
         <DialogTrigger>
           <button id="openProfileOrGroupImage" className="hidden"></button>
         </DialogTrigger>
-        <DialogContent
-          id="content-hai"
-          className="max-w-[50vw] max-h-[100vh] h-fit flex justify-center bg-transparent border-none"
-        >
+        <DialogContent className="max-w-[100vw] md:max-w-[50vw] max-h-[100vh] flex justify-center  border-none bg-[#ffffff1c]">
           <ScrollArea>
-            <Avatar size="40rem">
+            <Avatar
+              size={window.innerWidth > 720 ? "40vw" : "90vw"}
+              className="rounded-none"
+            >
               <AvatarImage
                 src={
                   selectedChat.isGroup

@@ -161,15 +161,25 @@ export const SelectedChat = ({
               </div>
               <Avatar size="2.5rem" className="cursor-pointer">
                 <AvatarImage
-                  src={selectedChat.isGroup ? selectedChat.avatar : ""}
+                  src={
+                    selectedChat.isGroup
+                      ? selectedChat.avatar
+                      : getOppositeUserDetails(
+                          loggedinUser,
+                          selectedChat.participants
+                        ).avatar
+                  }
                 />
                 <AvatarFallback>
                   {selectedChat.isGroup ? (
+                    // TODO: Change Fallback for Group Chat
                     <ReactIcon color="gray" size="100%">
                       <FaCircleUser />
                     </ReactIcon>
                   ) : (
-                    "Group"
+                    <ReactIcon color="gray" size="100%">
+                      <FaCircleUser />
+                    </ReactIcon>
                   )}
                 </AvatarFallback>
               </Avatar>
