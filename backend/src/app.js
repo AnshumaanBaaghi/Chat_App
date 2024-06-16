@@ -11,7 +11,8 @@ const { Server } = require("socket.io");
 const { initializeSocketIO } = require("./socket");
 const dotenv = require("dotenv");
 
-dotenv.config();
+const env = process.env.NODE_ENV || "development";
+dotenv.config({ path: `.env.${env}` });
 const app = express();
 const httpServer = createServer(app);
 const frontend_url = process.env.FRONTEND_URL;

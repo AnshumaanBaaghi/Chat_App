@@ -1,7 +1,7 @@
 import io from "socket.io-client";
 
 const getSocket = () => {
-  return io("http://localhost:8080", {
+  return io(import.meta.env.VITE_SERVER_URL, {
     withCredentials: true,
   });
 };

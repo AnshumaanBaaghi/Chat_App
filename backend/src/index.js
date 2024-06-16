@@ -1,8 +1,8 @@
 const { httpServer } = require("./app");
-const dotenv = require("dotenv");
+// const dotenv = require("dotenv");
 const { connectDB } = require("./db");
 
-dotenv.config();
+// dotenv.config();
 const PORT = process.env.PORT || 8080;
 
 process.on("uncaughtException", (err) => {
