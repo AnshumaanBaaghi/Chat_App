@@ -9,12 +9,15 @@ const chatRouter = require("./routes/chat.routes");
 const messsageRouter = require("./routes/message.routes");
 const { Server } = require("socket.io");
 const { initializeSocketIO } = require("./socket");
+const dotenv = require("dotenv");
 
+dotenv.config();
 const app = express();
 const httpServer = createServer(app);
+const frontend_url = process.env.FRONTEND_URL;
 const io = new Server(httpServer, {
   cors: {
-    origin: "http://localhost:5173", // Have to change it
+    origin: frontend_url, // Have to change it
     methods: ["GET", "POST"],
     credentials: true,
   },
@@ -36,7 +39,7 @@ app.use(limiter);
 app.use(mongoSanitize());
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: frontend_url,
     credentials: true,
   })
 );
