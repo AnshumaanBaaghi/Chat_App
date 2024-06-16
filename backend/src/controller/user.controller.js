@@ -95,12 +95,20 @@ const login = async (req, res) => {
     );
 
     const token = user.generateAccessToken();
-    return res.status(200).cookie(TOKEN_NAME, token).json({
-      status: "success",
-      user: loggedInUser,
-      isEmailVerified: user.isEmailVerified,
-      message: "login success",
-    });
+    return res
+      .status(200)
+      .cookie(TOKEN_NAME, token, {
+        httpOnly: true,
+        secure: true,
+        sameSite: "None",
+        path: "/",
+      })
+      .json({
+        status: "success",
+        user: loggedInUser,
+        isEmailVerified: user.isEmailVerified,
+        message: "login success",
+      });
   } catch (error) {
     res.send(error);
   }
@@ -196,7 +204,12 @@ const verifyOtp = async (req, res) => {
     const token = user.generateAccessToken();
     res
       .status(200)
-      .cookie(TOKEN_NAME, token)
+      .cookie(TOKEN_NAME, token, {
+        httpOnly: true,
+        secure: true,
+        sameSite: "None",
+        path: "/",
+      })
       .json({
         status: "success",
         message: "OTP verified successfully!",
