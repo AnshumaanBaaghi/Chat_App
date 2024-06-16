@@ -26,14 +26,14 @@ const io = new Server(httpServer, {
 
 const limiter = rateLimit({
   windowMs: 60 * 60 * 1000,
-  limit: 1000,
+  limit: 100,
   standardHeaders: "draft-7",
   legacyHeaders: false,
   message: "Rate Limit Exceed",
 });
 
 app.set("io", io);
-app.set("trust proxy", true);
+app.set("trust proxy", false);
 
 app.use(express.json({ limit: "16kb" }));
 app.use(express.urlencoded({ extended: true }));
