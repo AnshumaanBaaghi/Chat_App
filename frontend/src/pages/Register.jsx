@@ -151,7 +151,7 @@ export const Register = () => {
 
   return (
     <>
-      <div className="flex h-screen items-center bg-[#15171c]">
+      <div className="flex fullHeight items-center bg-[#15171c]">
         <div className="text-[#ffffffe0] w-[95%] md:w-1/3 m-auto min-h-[50vh]  flex flex-col justify-center border border-[#1f212a] bg-[#0d0e12] rounded-xl">
           <AnimatePresence mode="wait">
             <motion.div

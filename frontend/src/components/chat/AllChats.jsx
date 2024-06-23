@@ -61,7 +61,7 @@ export const AllChats = ({
     <div
       className={`w-full md:w-2/6 md:flex no-select ${
         selectedChat ? "hidden" : "flex"
-      }  h-screen border-[#1f212a] box-border flex-col relative`}
+      }  fullHeight border-[#1f212a] box-border flex-col relative`}
     >
       {/* bg-[#0d0e12] */}
       <div className="p-3 flex justify-between bg-[#0d0e12]">
@@ -159,7 +159,7 @@ export const AllChats = ({
         )}
       </ScrollArea>
       <div
-        className={`w-full bg-gray-600 absolute h-screen  duration-500 ${
+        className={`w-full bg-gray-600 absolute fullHeight  duration-500 ${
           showCreateGroupModal || showUserProfileSidebar
             ? "left-0"
             : "-left-full"

@@ -56,6 +56,7 @@ export const ChatApp = () => {
   unreadMessagesRef.current = unreadMessages;
 
   const [messages, setMessages] = useState([]);
+  console.log("messages:", messages);
   const [selfTyping, setSelfTyping] = useState(false);
   const [typingUsersObject, setTypingUsersObject] = useState({}); // it's an nested object which contains the key as chatID and value as typer detail
   const [onlineUsers, setOnlineUsers] = useState({});

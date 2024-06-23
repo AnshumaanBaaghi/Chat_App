@@ -105,6 +105,11 @@
   border: white solid 1px;
 }
 
+.fullHeight {
+  height: 100vh; /*for browser which doesn't support svh*/
+  height: 100svh;
+}
+
 @keyframes pulse {
   0% {
     box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.7);

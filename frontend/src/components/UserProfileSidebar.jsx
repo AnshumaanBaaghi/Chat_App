@@ -42,8 +42,8 @@ export const UserProfileSidebar = ({ setShowUserProfileSidebar }) => {
   }, []);
   return (
     <div className="bg-[#0d0e12]">
-      <ScrollArea className="h-screen">
-        <div className="w-full flex flex-col p-2 justify-between h-screen gap-4">
+      <ScrollArea className="fullHeight">
+        <div className="w-full flex flex-col p-2 justify-between fullHeight gap-4">
           <div className="w-[100%] flex flex-col relative">
             <button
               onClick={() => setShowUserProfileSidebar(false)}

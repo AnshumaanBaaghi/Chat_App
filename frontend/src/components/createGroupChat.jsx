@@ -58,7 +58,7 @@ export const CreateGroupChat = ({ setShowCreateGroupModal, chats }) => {
   };
 
   return (
-    <div className="w-full  bg-[#0d0e12] h-screen">
+    <div className="w-full  bg-[#0d0e12] fullHeight">
       <div
         className={`grid grid-cols-2 box-border  transition-transform duration-500 ${
           showSecondStep && "-translate-x-1/2"
