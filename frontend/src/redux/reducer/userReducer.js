@@ -18,7 +18,7 @@ const initialVal = {
     email: "",
     username: "",
     avatar: "",
-    userId: "",
+    _id: "",
   },
   friends: [],
   newUsers: [],

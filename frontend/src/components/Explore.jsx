@@ -21,10 +21,10 @@ export const Explore = ({
         newUsers.map((el) => (
           <div className="text-[#ffffffed] hover:bg-[#1b1b1b] rounded-md">
             <NewUserCard
-              key={el.userId}
+              key={el._id}
               socket={socket}
               user={el}
-              loggedInUser_id={user.userId}
+              loggedInUser_id={user._id}
               sendFriendRequest={sendFriendRequest}
             />
           </div>
@@ -32,14 +32,14 @@ export const Explore = ({
       {sentRequests &&
         sentRequests.map((el) => (
           <div className="text-[#ffffffed] hover:bg-[#1b1b1b] rounded-md">
-            <SentRequestCard key={el.userId} user={el} />
+            <SentRequestCard key={el._id} user={el} />
           </div>
         ))}
       {friendRequests &&
         friendRequests.map((el) => (
           <div className="text-[#ffffffed] hover:bg-[#1b1b1b] rounded-md">
             <FriendRequestCard
-              key={el.userId}
+              key={el._id}
               user={el}
               socket={socket}
               acceptFriendRequest={acceptFriendRequest}
@@ -50,7 +50,7 @@ export const Explore = ({
         friends.map((el) => (
           <div className="text-[#ffffffed] hover:bg-[#1b1b1b] rounded-md">
             <FriendCard
-              key={el.userId}
+              key={el._id}
               user={el}
               onClickCallbackFunction={onClickOnFriend}
             />

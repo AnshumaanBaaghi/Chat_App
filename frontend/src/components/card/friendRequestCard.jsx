@@ -7,7 +7,7 @@ import { getOrCreateChat_api } from "@/api";
 export const FriendRequestCard = ({ socket, user, acceptFriendRequest }) => {
   const handleClick = async () => {
     try {
-      await getOrCreateChat_api(user.userId);
+      await getOrCreateChat_api(user._id);
       acceptFriendRequest(socket, user.requestId);
     } catch (error) {
       console.log("error:", error);

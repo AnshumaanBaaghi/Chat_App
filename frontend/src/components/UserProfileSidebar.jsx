@@ -9,7 +9,7 @@ import { Button } from "./ui/button";
 import { ScrollArea } from "./ui/scroll-area";
 
 export const UserProfileSidebar = ({ setShowUserProfileSidebar }) => {
-  const { userId, avatar, name, username, email } = useSelector(
+  const { _id, avatar, name, username, email } = useSelector(
     (state) => state.user.userDetail
   );
   const dispatch = useDispatch();
@@ -58,7 +58,7 @@ export const UserProfileSidebar = ({ setShowUserProfileSidebar }) => {
               <ImageUploadInputBox
                 imageUrl={imageUrl}
                 setImageUrl={setImageUrl}
-                firebasePath={`profileImages/${userId || v4()}`}
+                firebasePath={`profileImages/${_id || v4()}`}
                 onRemoveImage={handleRemoveImage}
                 onChangeImage={onChangeImage}
                 placeholder="Add Group Picture"

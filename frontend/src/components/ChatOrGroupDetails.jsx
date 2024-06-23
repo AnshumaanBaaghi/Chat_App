@@ -108,7 +108,7 @@ export const ChatOrGroupDetails = ({ selectedChat }) => {
             </p>
             <div className="py-4 flex justify-center">
               {selectedChat.isGroup ? (
-                loggedinUser.userId === selectedChat.admin ? (
+                loggedinUser._id === selectedChat.admin ? (
                   <ImageUploadInputBox
                     imageUrl={imageUrl}
                     setImageUrl={setImageUrl}
@@ -169,7 +169,7 @@ export const ChatOrGroupDetails = ({ selectedChat }) => {
             </p>
             {selectedChat.isGroup && (
               <div className="w-full mt-6 bg-[#0d0e12] border-t border-t-[#5c5d61] py-3">
-                {selectedChat.admin === loggedinUser.userId && (
+                {selectedChat.admin === loggedinUser._id && (
                   <Dialog>
                     <DialogTrigger className="w-full">
                       <div className="w-full p-3 text-[#ffffffed] hover:bg-[#1b1b1b] bg-[#131212] mb-1 capitalize">
@@ -207,16 +207,16 @@ export const ChatOrGroupDetails = ({ selectedChat }) => {
                       </AvatarFallback>
                     </Avatar>
                     <div className="flex flex-col">
-                      <p> {el._id === loggedinUser.userId ? "You" : el.name}</p>
-                      <p>{el._id === loggedinUser.userId ? "" : el.username}</p>
+                      <p> {el._id === loggedinUser._id ? "You" : el.name}</p>
+                      <p>{el._id === loggedinUser._id ? "" : el.username}</p>
                     </div>
                     {selectedChat.admin === el._id && (
                       <div className="absolute right-3 top-2 text-xs bg-[#6260604f] rounded-lg px-2 py-1">
                         Admin
                       </div>
                     )}
-                    {selectedChat.admin === loggedinUser.userId &&
-                      loggedinUser.userId !== el._id && (
+                    {selectedChat.admin === loggedinUser._id &&
+                      loggedinUser._id !== el._id && (
                         <Button
                           onClick={() => removeParticipant(el)}
                           className="absolute right-1 bottom-1 text-red-500"
@@ -230,7 +230,7 @@ export const ChatOrGroupDetails = ({ selectedChat }) => {
                 <Button
                   onClick={() =>
                     removeParticipant({
-                      _id: loggedinUser.userId,
+                      _id: loggedinUser._id,
                       ...loggedinUser,
                     })
                   }
@@ -238,7 +238,7 @@ export const ChatOrGroupDetails = ({ selectedChat }) => {
                 >
                   Leave Group
                 </Button>
-                {selectedChat.admin === loggedinUser.userId && (
+                {selectedChat.admin === loggedinUser._id && (
                   <Button
                     onClick={() => deleteGroup(selectedChat._id)}
                     className="w-full mt-1 py-6 hover:bg-[#1b1b1b] bg-[#131212] text-red-500 capitalize"

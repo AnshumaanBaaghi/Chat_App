@@ -95,7 +95,7 @@ export const Chat = ({
               ) : chat?.latestMessage?.content ? (
                 chat.isGroup ? (
                   `${
-                    chat.latestMessage.sender._id === loggedinUser.userId
+                    chat.latestMessage.sender._id === loggedinUser._id
                       ? "You"
                       : chat.latestMessage.sender.name
                   }: ${chat.latestMessage.content}`

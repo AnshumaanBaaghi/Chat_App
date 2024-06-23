@@ -22,7 +22,7 @@ export const NewUserCard = ({
       </div>
       <Button
         className="border border-[#ffffff3a]"
-        onClick={() => sendFriendRequest(socket, user.userId, loggedInUser_id)}
+        onClick={() => sendFriendRequest(socket, user._id, loggedInUser_id)}
       >
         Add
       </Button>

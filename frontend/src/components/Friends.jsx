@@ -7,7 +7,7 @@ export const Friends = ({ arr, onClickOnFriend }) => {
         arr.map((el) => (
           <div className="text-[#ffffffed] hover:bg-[#1b1b1b] rounded-md">
             <FriendCard
-              key={el.userId}
+              key={el._id}
               user={el}
               onClickCallbackFunction={onClickOnFriend}
             />

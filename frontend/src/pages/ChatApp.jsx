@@ -69,7 +69,7 @@ export const ChatApp = () => {
     const updatedSentRequests = sentRequestsRef.current || [];
     newUsersRef.current &&
       newUsersRef.current.forEach((el) =>
-        el.userId !== data.sentTo
+        el._id !== data.sentTo
           ? updatedNewFriendsArray.push(el)
           : updatedSentRequests.push(el)
       );
@@ -82,7 +82,7 @@ export const ChatApp = () => {
     const updatedFriendRequests = friendRequestsRef.current || [];
     newUsersRef.current &&
       newUsersRef.current.forEach((el) =>
-        el.userId !== data.sentBy
+        el._id !== data.sentBy
           ? updatedNewFriendsArray.push(el)
           : updatedFriendRequests.push({ ...el, requestId: data.requestId })
       );
@@ -97,7 +97,7 @@ export const ChatApp = () => {
       const updatedFriends = friendsRef.current || [];
       sentRequestsRef.current &&
         sentRequestsRef.current.forEach((el) =>
-          el.userId !== data.receiverId
+          el._id !== data.receiverId
             ? updatedSentRequests.push(el)
             : updatedFriends.push(el)
         );
@@ -109,7 +109,7 @@ export const ChatApp = () => {
       const updatedFriends = friendsRef.current || [];
       friendRequestsRef.current &&
         friendRequestsRef.current.forEach((el) => {
-          if (el.userId !== data.senderId) {
+          if (el._id !== data.senderId) {
             delete el.requestId;
             updatedFriendRequests.push(el);
           } else {
@@ -274,13 +274,13 @@ export const ChatApp = () => {
 
     socket.on("Group Deleted", onGroupDelete);
     socket.on("User Added to Group", onUserAdded);
-    socket.on("userDisconnected", ({ connectedUsers, userId }) => {
+    socket.on("userDisconnected", ({ connectedUsers, _id }) => {
       setOnlineUsers(connectedUsers);
       let wasTypingInChat;
       if (!typingUsersObjectRef.current) return;
 
       for (let chatId in typingUsersObjectRef.current) {
-        if (typingUsersObjectRef.current[chatId].userId === userId) {
+        if (typingUsersObjectRef.current[chatId]._id === _id) {
           wasTypingInChat = chatId;
         }
       }

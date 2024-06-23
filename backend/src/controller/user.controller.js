@@ -214,7 +214,7 @@ const verifyOtp = async (req, res) => {
         status: "success",
         message: "OTP verified successfully!",
         user: {
-          userId: user._id,
+          _id: user._id,
           name: user.name,
           username: user.username,
           email: user.email,
@@ -276,8 +276,7 @@ const searchNewFriends = async (req, res) => {
       },
       {
         $project: {
-          _id: 0,
-          userId: "$_id",
+          _id: 1,
           name: 1,
           username: 1,
           email: 1,
@@ -319,7 +318,7 @@ const getFriendRequests = async (req, res) => {
               "$sender",
               {
                 requestId: "$_id",
-                userId: "$sender._id",
+                _id: "$sender._id",
               },
             ],
           },
@@ -327,12 +326,11 @@ const getFriendRequests = async (req, res) => {
       },
       {
         $project: {
-          _id: 0,
+          _id: 1,
           name: 1,
           username: 1,
           avatar: 1,
           requestId: 1,
-          userId: 1,
         },
       },
     ]);
@@ -364,8 +362,7 @@ const getFriends = async (req, res) => {
       },
       {
         $project: {
-          _id: 0,
-          userId: "$friendDetails._id",
+          _id: "$friendDetails._id",
           name: "$friendDetails.name",
           username: "$friendDetails.username",
           email: "$friendDetails.email",
@@ -408,7 +405,7 @@ const getSentRequests = async (req, res) => {
       {
         $project: {
           _id: 0,
-          userId: "$_id",
+          _id: "$_id",
           name: 1,
           username: 1,
           avatar: 1,

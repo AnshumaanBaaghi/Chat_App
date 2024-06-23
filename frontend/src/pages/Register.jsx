@@ -60,7 +60,7 @@ export const Register = () => {
   const [imageUrl, setImageUrl] = useState(null);
 
   const isAuth = useSelector((state) => state.user.isAuth);
-  const { userId } = useSelector((state) => state.user.userDetail);
+  const { _id } = useSelector((state) => state.user.userDetail);
 
   const dispatch = useDispatch();
   const { toast } = useToast();
@@ -82,9 +82,7 @@ export const Register = () => {
     try {
       const res = await registerUser(data);
       const { name, email, username, avatar, _id } = res.data.user;
-      dispatch(
-        updateUserDetail({ name, email, username, avatar, userId: _id })
-      );
+      dispatch(updateUserDetail({ name, email, username, avatar, _id: _id }));
       setCurrentStep("otp");
     } catch (error) {
       if (error?.response?.data?.status == "error") {
@@ -130,7 +128,7 @@ export const Register = () => {
                 username,
                 avatar,
                 name,
-                userId: _id,
+                _id: _id,
               })
             );
             dispatch(updateUnreadMessages(unreadMessages));
@@ -272,7 +270,7 @@ export const Register = () => {
                   <ImageUploadInputBox
                     imageUrl={imageUrl}
                     setImageUrl={setImageUrl}
-                    firebasePath={`profileImages/${userId || v4()}`}
+                    firebasePath={`profileImages/${_id || v4()}`}
                     uploadImageToDB={uploadImageToDB}
                     placeholder="Click here to upload"
                     size="12rem"

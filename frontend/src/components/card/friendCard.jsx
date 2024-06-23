@@ -6,7 +6,7 @@ export const FriendCard = ({ user, onClickCallbackFunction }) => {
     <div
       className="flex gap-5 items-center py-2 px-3 cursor-pointer"
       onClick={() =>
-        onClickCallbackFunction && onClickCallbackFunction(user.userId)
+        onClickCallbackFunction && onClickCallbackFunction(user._id)
       }
     >
       <Avatar size="3.5rem">

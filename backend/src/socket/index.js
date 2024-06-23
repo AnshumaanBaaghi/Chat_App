@@ -17,7 +17,7 @@ const initializeSocketIO = (io) => {
 
     socket.join(loggedInUser._id.toString());
 
-    // io.emit("userConnected", { userId: loggedInUser._id.toString() });
+    // io.emit("userConnected", { _id: loggedInUser._id.toString() });
     connectedUsers[loggedInUser._id.toString()] = true;
     io.emit("userConnected", connectedUsers);
 
@@ -71,7 +71,7 @@ const initializeSocketIO = (io) => {
 
     socket.on("typing", async ({ chat, typer }) => {
       chat.participants?.forEach((participant) => {
-        if (participant._id.toString() === typer.userId.toString()) return;
+        if (participant._id.toString() === typer._id.toString()) return;
         socket
           .to(participant._id.toString())
           .emit("someone typing", { typer, chat });
@@ -81,7 +81,7 @@ const initializeSocketIO = (io) => {
     socket.on("stop typing", async ({ chat, typer }) => {
       if (!chat || !typer) return;
       chat.participants?.forEach((participant) => {
-        if (participant._id.toString() === typer.userId.toString()) return;
+        if (participant._id.toString() === typer._id.toString()) return;
         socket
           .to(participant._id.toString())
           .emit("someone stop typing", { typer, chat });
@@ -98,7 +98,7 @@ const initializeSocketIO = (io) => {
       delete connectedUsers[loggedInUser._id.toString()];
       socket.broadcast.emit("userDisconnected", {
         connectedUsers,
-        userId: loggedInUser._id.toString(),
+        _id: loggedInUser._id.toString(),
       });
     });
   });

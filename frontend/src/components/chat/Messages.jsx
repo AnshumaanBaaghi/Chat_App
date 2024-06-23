@@ -45,7 +45,7 @@ export const Messages = ({
           <MessageCard
             key={el._id}
             message={el.content}
-            isOwnMessage={el.sender._id === userDetail?.userId}
+            isOwnMessage={el.sender._id === userDetail?._id}
             isGroup={isGroup}
             sender={el.sender}
             isSenderSameAsLastSender={

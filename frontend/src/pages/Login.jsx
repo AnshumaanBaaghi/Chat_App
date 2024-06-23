@@ -44,7 +44,7 @@ export const Login = () => {
   const [errorMessage, setErrorMessage] = useState("");
 
   const isAuth = useSelector((state) => state.user.isAuth);
-  const { userId } = useSelector((state) => state.user.userDetail);
+  const { _id } = useSelector((state) => state.user.userDetail);
   const dispatch = useDispatch();
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -70,7 +70,7 @@ export const Login = () => {
           email,
           username,
           avatar,
-          userId: _id,
+          _id: _id,
         })
       );
       dispatch(updateUnreadMessages(unreadMessages));
@@ -128,7 +128,7 @@ export const Login = () => {
                 email,
                 username,
                 avatar,
-                userId: _id,
+                _id: _id,
               })
             );
             dispatch(updateUnreadMessages(unreadMessages));
@@ -232,7 +232,7 @@ export const Login = () => {
                 <ImageUploadInputBox
                   imageUrl={imageUrl}
                   setImageUrl={setImageUrl}
-                  firebasePath={`profileImages/${userId || v4()}`}
+                  firebasePath={`profileImages/${_id || v4()}`}
                   onRemoveImage={onRemoveImage}
                   placeholder="Click here to upload"
                   size="12rem"

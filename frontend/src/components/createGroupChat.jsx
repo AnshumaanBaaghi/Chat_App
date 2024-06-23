@@ -23,7 +23,7 @@ export const CreateGroupChat = ({ setShowCreateGroupModal, chats }) => {
   const filteredOptions = getFilteredUsersArray(query, friends).filter(
     (friend) => {
       for (let i = 0; i < selectedParticipants.length; i++) {
-        if (selectedParticipants[i].userId === friend.userId) return false;
+        if (selectedParticipants[i]._id === friend._id) return false;
       }
       return true;
     }
@@ -35,13 +35,13 @@ export const CreateGroupChat = ({ setShowCreateGroupModal, chats }) => {
 
   const unselectUser = (friend) => {
     setSelectedParticipants((prev) =>
-      prev.filter((el) => el.userId !== friend.userId)
+      prev.filter((el) => el._id !== friend._id)
     );
   };
 
   const handleSubmit = async () => {
     if (selectedParticipants.length < 2) return; // TODO: add toast here
-    const participants = selectedParticipants.map((el) => el.userId);
+    const participants = selectedParticipants.map((el) => el._id);
     try {
       const res = await createGroup(groupName, participants, imageUrl);
       console.log("res group created:", res);
@@ -83,7 +83,7 @@ export const CreateGroupChat = ({ setShowCreateGroupModal, chats }) => {
               <div className=" mt-2 bg-[#15171c] px-2 py-5">
                 {selectedParticipants.map((friend) => (
                   <div
-                    key={friend.userId}
+                    key={friend._id}
                     className="inline-flex items-center px-2 py-1 mr-2 mb-2 rounded-full bg-[#bcbbbb]"
                   >
                     <Avatar size="2.5rem" className="mr-2">
@@ -133,7 +133,7 @@ export const CreateGroupChat = ({ setShowCreateGroupModal, chats }) => {
                   >
                     {filteredOptions.map((friend) => (
                       <li
-                        key={friend.userId}
+                        key={friend._id}
                         onClick={() => selectUser(friend)}
                         className="bg-[#bcbbbb] rounded-sm m-1"
                       >

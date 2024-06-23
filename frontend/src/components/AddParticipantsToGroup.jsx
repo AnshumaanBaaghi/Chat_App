@@ -17,7 +17,7 @@ export const AddParticipantsToGroup = ({ selectedChat }) => {
   const filteredOptions = getFilteredUsersArray(query, nonparticipant).filter(
     (friend) => {
       for (let i = 0; i < selectedParticipants.length; i++) {
-        if (selectedParticipants[i].userId === friend.userId) return false;
+        if (selectedParticipants[i]._id === friend._id) return false;
       }
       return true;
     }
@@ -29,14 +29,14 @@ export const AddParticipantsToGroup = ({ selectedChat }) => {
 
   const unselectUser = (friend) => {
     setSelectedParticipants((prev) =>
-      prev.filter((el) => el.userId !== friend.userId)
+      prev.filter((el) => el._id !== friend._id)
     );
   };
 
   const addParticipant = async () => {
     try {
       for (let i of selectedParticipants) {
-        await addParticipantInGroup(selectedChat._id, i.userId);
+        await addParticipantInGroup(selectedChat._id, i._id);
       }
     } catch (error) {
       console.log("error:", error);
@@ -48,7 +48,7 @@ export const AddParticipantsToGroup = ({ selectedChat }) => {
   useEffect(() => {
     const findNonparticipants = friends.filter((el) => {
       for (let i = 0; i < selectedChat.participants.length; i++) {
-        if (selectedChat.participants[i]._id === el.userId) return false;
+        if (selectedChat.participants[i]._id === el._id) return false;
       }
       return true;
     });
@@ -61,7 +61,7 @@ export const AddParticipantsToGroup = ({ selectedChat }) => {
       <div className="mt-2">
         {selectedParticipants.map((friend) => (
           <div
-            key={friend.userId}
+            key={friend._id}
             className="inline-flex items-center px-2 py-1 mr-2 mb-2 rounded-full bg-[#bcbbbb]"
           >
             <Avatar size="2.5rem" className="mr-2">
@@ -109,7 +109,7 @@ export const AddParticipantsToGroup = ({ selectedChat }) => {
             >
               {filteredOptions.map((friend) => (
                 <li
-                  key={friend.userId}
+                  key={friend._id}
                   onClick={() => selectUser(friend)}
                   className="bg-[#bcbbbb] rounded-sm m-1"
                 >
