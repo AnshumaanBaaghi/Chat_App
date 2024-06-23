@@ -24,6 +24,7 @@ import {
 } from "@/components/ui/popover";
 import data from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
+import { v4 } from "uuid";
 
 export const SelectedChat = ({
   handleTypingMessageChange,
@@ -58,20 +59,29 @@ export const SelectedChat = ({
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const newMessage = {
+      chatId: selectedChat._id,
+      attachents: [], //
+      content: typedMessages,
+      createdAt: new Date().toISOString(),
+      sender: loggedinUser,
+      updatedAt: new Date().toISOString(),
+      _id: v4(), // Generate a unique ID for the message
+    };
+    setMessages((pre) => [...pre, newMessage]);
+    const updatedChats = chats.reduce((acc, el) => {
+      if (el._id === selectedChat._id) {
+        const updatedChat = { ...el, latestMessage: newMessage };
+        return [updatedChat, ...acc];
+      }
+      return [...acc, el];
+    }, []);
+    dispatch(updateChats(updatedChats));
     setTypedMessages("");
     handleStopTyping(selectedChat);
     try {
       const res = await sendMessage(selectedChat._id, typedMessages);
-      if (!res.data?.data) return;
-      setMessages((pre) => [...pre, res.data.data]); // TODO: update messages state before api request
-      const updatedChats = chats.reduce((acc, el) => {
-        if (el._id === selectedChat._id) {
-          const updatedChat = { ...el, latestMessage: res.data.data };
-          return [updatedChat, ...acc];
-        }
-        return [...acc, el];
-      }, []);
-      dispatch(updateChats(updatedChats));
+      if (!res.data?.data) return; //TODO: Add toast
     } catch (error) {
       console.log("error:", error);
     }
