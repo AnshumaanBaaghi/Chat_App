@@ -153,6 +153,7 @@ const sendOtp = async (req, res) => {
       message: "OTP sent successfully on your Email",
     });
   } catch (error) {
+    console.log("error:", error);
     res.send(error);
   }
 };
