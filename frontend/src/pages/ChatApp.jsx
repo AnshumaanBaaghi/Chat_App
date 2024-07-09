@@ -1,5 +1,6 @@
 import { removeUnreadMessage_api } from "@/api";
 import { ChatOrGroupDetails } from "@/components/ChatOrGroupDetails";
+import { OneOnOneVc } from "@/components/OneOnOneVc";
 import { AllChats } from "@/components/chat/AllChats";
 import { SelectedChat } from "@/components/chat/SelectedChat";
 import { connectSocket } from "@/redux/actions/socketActions";
@@ -59,6 +60,7 @@ export const ChatApp = () => {
   const [selfTyping, setSelfTyping] = useState(false);
   const [typingUsersObject, setTypingUsersObject] = useState({}); // it's an nested object which contains the key as chatID and value as typer detail
   const [onlineUsers, setOnlineUsers] = useState({});
+  const [isOnCall, setIsOnCall] = useState(false);
 
   const typingUsersObjectRef = useRef(null);
   typingUsersObjectRef.current = typingUsersObject;
@@ -321,8 +323,10 @@ export const ChatApp = () => {
         typingUsersObject={typingUsersObject}
         unreadMessages={unreadMessages}
         onlineUsers={onlineUsers}
+        setIsOnCall={setIsOnCall}
       />
       <ChatOrGroupDetails selectedChat={selectedChat} />
+      {isOnCall && <OneOnOneVc setIsOnCall={setIsOnCall} />}
     </div>
   );
 };
