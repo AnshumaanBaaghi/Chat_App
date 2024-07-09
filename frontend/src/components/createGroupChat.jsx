@@ -44,7 +44,6 @@ export const CreateGroupChat = ({ setShowCreateGroupModal, chats }) => {
     const participants = selectedParticipants.map((el) => el._id);
     try {
       const res = await createGroup(groupName, participants, imageUrl);
-      console.log("res group created:", res);
       setShowCreateGroupModal(false);
       const updatedChat = [res.data.data, ...chats];
       dispatch(updateChats(updatedChat));

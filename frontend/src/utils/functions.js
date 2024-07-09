@@ -10,7 +10,6 @@ export const getFilteredUsersArray = (query, arr) => {
 };
 
 export const getFilteredChatArray = (query, chats, loggedinUser) => {
-  console.log("chats:", chats);
   if (!query) return chats;
   const pattern = query.split("").join(".*");
   const regex = new RegExp(pattern, "i");

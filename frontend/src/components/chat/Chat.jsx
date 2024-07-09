@@ -60,7 +60,7 @@ export const Chat = ({
         <div className="box-border flex flex-col w-full justify-between ">
           <div
             className="grid justify-between  items-center"
-            style={{ gridTemplateColumns: "77% 20%" }}
+            style={{ gridTemplateColumns: "70% 25%" }}
           >
             <h4 className="font-semibold text-white overflow-hidden text-ellipsis whitespace-nowrap">
               {chat.isGroup

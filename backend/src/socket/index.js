@@ -10,7 +10,6 @@ const initializeSocketIO = (io) => {
   return io.on("connection", async (socket) => {
     const cookies = cookie.parse(socket.handshake.headers?.cookie || "");
     const token = cookies?.[TOKEN_NAME];
-    console.log("token yha aa rha h kya:", token);
     if (!token) return; // Have to Add error here
     const loggedInUser = jwt.verify(token, process.env.JWT_SECERETKEY);
     if (!loggedInUser) return; // Have to Add error here

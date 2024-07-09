@@ -6,7 +6,6 @@ const { User } = require("../models/user.model");
 
 const getAllMessages = async (req, res) => {
   const { chatId } = req.params;
-  console.log("chatId:", chatId);
   if (!chatId) {
     return res.status(400).json({ message: "ChatId is Required" });
   }

@@ -51,9 +51,7 @@ export const AllChats = ({
   };
 
   useEffect(() => {
-    console.log("chats:", chats);
     const a = getFilteredChatArray(query, chats, loggedinUser);
-    console.log("a:", a);
     setChatsArray(a);
   }, [query, chats]);
 

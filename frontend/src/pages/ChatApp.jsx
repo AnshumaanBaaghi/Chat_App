@@ -56,7 +56,6 @@ export const ChatApp = () => {
   unreadMessagesRef.current = unreadMessages;
 
   const [messages, setMessages] = useState([]);
-  console.log("messages:", messages);
   const [selfTyping, setSelfTyping] = useState(false);
   const [typingUsersObject, setTypingUsersObject] = useState({}); // it's an nested object which contains the key as chatID and value as typer detail
   const [onlineUsers, setOnlineUsers] = useState({});
@@ -203,12 +202,10 @@ export const ChatApp = () => {
   };
 
   const onRemovedBySomeone = (group) => {
-    console.log("Someone Removed you");
     removeGroupFromChats(group);
   };
 
   const onGroupDelete = (group) => {
-    console.log("Group Deleted");
     removeGroupFromChats(group);
   };
 
@@ -223,12 +220,10 @@ export const ChatApp = () => {
   };
 
   const onUserAdded = (group) => {
-    console.log("New User Added:", group);
     replaceGroupWithNewGroup(group);
   };
 
   const onSomeoneLeaveOrRemoved = (group) => {
-    console.log("Someone Leave or Removed:", group);
     replaceGroupWithNewGroup(group);
   };
 
@@ -263,7 +258,6 @@ export const ChatApp = () => {
     });
 
     socket.on("chat created", (group) => {
-      console.log("group:", group);
       const updatedChats = [group, ...(chatsRef.current || [])];
       dispatch(updateChats(updatedChats));
     });

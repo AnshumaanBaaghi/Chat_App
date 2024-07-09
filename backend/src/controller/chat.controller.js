@@ -449,7 +449,6 @@ const addParticipantInGroup = async (req, res) => {
       },
     ]);
     chat[0]?.participants?.forEach((participant) => {
-      console.log("participant:", participant);
       emitSocketEvent(
         req,
         participant._id.toString(),
