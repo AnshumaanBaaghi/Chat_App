@@ -155,10 +155,10 @@ export const SelectedChat = ({
       {selectedChat ? (
         <div>
           {/* Heading */}
-
+          {/* TODO: Have to Fix Header and footer */}
           <div
             onClick={openChatDetailSheet}
-            className="w-full h-16 absolute top-0 bg-[#0d0e12] flex justify-between items-center p-3 cursor-pointer no-select border-b border-b-[#1f212a]"
+            className="w-full h-16 fixed top-0 bg-[#0d0e12] flex justify-between items-center p-3 cursor-pointer no-select border-b border-b-[#1f212a]"
           >
             <div className="flex gap-5 items-center text-white">
               <div
@@ -242,7 +242,7 @@ export const SelectedChat = ({
           </div>
           {/* Chats */}
           <ScrollArea
-            className="py-4 px-9 absolute top-16 bg-[#15171c] flex items-end"
+            className="py-4 px-9 absolute top-16 bottom-16 bg-[#15171c] flex items-end"
             style={{ height: "calc(100svh - 128px)" }}
           >
             <Messages
@@ -252,7 +252,7 @@ export const SelectedChat = ({
               selectedChat={selectedChat}
             />
           </ScrollArea>
-          <div className="h-16 absolute w-full bottom-0 bg-[#0d0e12] border-t border-t-[#1f212a] flex px-3 gap-3 items-center">
+          <div className="h-16 fixed w-full bottom-0 bg-[#0d0e12] border-t border-t-[#1f212a] flex px-3 gap-3 items-center">
             <Popover>
               <PopoverTrigger>
                 <ReactIcon color="gray" size="2.3rem">

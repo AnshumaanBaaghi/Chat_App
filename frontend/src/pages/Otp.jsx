@@ -36,7 +36,7 @@ export const Otp = ({ setCurrentStep }) => {
     }
   };
   useEffect(() => {
-    // sendOrResendOtp();
+    sendOrResendOtp();
   }, []);
   return (
     <OtpComponent

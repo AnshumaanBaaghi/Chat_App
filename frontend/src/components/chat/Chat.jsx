@@ -60,7 +60,7 @@ export const Chat = ({
         <div className="box-border flex flex-col w-full justify-between ">
           <div
             className="grid justify-between  items-center"
-            style={{ gridTemplateColumns: "80% 15%" }}
+            style={{ gridTemplateColumns: "77% 20%" }}
           >
             <h4 className="font-semibold text-white overflow-hidden text-ellipsis whitespace-nowrap">
               {chat.isGroup
@@ -68,13 +68,13 @@ export const Chat = ({
                 : getOppositeUserDetails(loggedinUser, chat.participants).name}
             </h4>
             {time && (
-              <p
+              <span
                 className={`text-xs flex justify-end ${
                   isAnyUnreadMessages ? "text-green-400" : "text-[#9a9cae]"
                 } `}
               >
                 {time}
-              </p>
+              </span>
             )}
           </div>
           <div

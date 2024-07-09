@@ -29,7 +29,7 @@ export const getFilteredChatArray = (query, chats, loggedinUser) => {
 };
 
 export const getOppositeUserDetails = (loggedinUser, participants) => {
-  return participants[0]._id === loggedinUser.userId
+  return participants[0]._id === loggedinUser._id
     ? participants[1]
     : participants[0];
 };
@@ -47,16 +47,14 @@ export const rearangeParticipants = (loggedinUser, adminId, participants) => {
   let admin;
   const remainingParticipants = [];
   participants.forEach((el) => {
-    if (el._id !== adminId && el._id !== loggedinUser.userId) {
+    if (el._id !== adminId && el._id !== loggedinUser._id) {
       remainingParticipants.push(el);
     } else if (el._id === adminId) {
       admin = el;
     }
   });
   const youAndAdmin =
-    loggedinUser?.userId == admin?._id
-      ? [admin]
-      : [{ ...loggedinUser, _id: loggedinUser.userId }, admin];
+    loggedinUser?._id == admin?._id ? [admin] : [loggedinUser, admin];
   return [...youAndAdmin, ...remainingParticipants];
 };
 
@@ -114,4 +112,33 @@ export const dateConverter = (inputTime) => {
   }
 
   return formattedDate;
+};
+export const generateColors = (count) => {
+  // Seed the pseudo-random number generator with the index
+  function seededRandom(seed) {
+    let x = Math.sin(seed) * 10000;
+    return x - Math.floor(x);
+  }
+
+  // Ensure that the colors are dark
+  function generateDarkColor(seed) {
+    let r = Math.floor(seededRandom(seed) * 128); // Limit to 0-127 to keep it dark
+    let g = Math.floor(seededRandom(seed + 1) * 128);
+    let b = Math.floor(seededRandom(seed + 2) * 128);
+
+    // Ensure the color is not too dark (not black)
+    r = Math.max(r, 50);
+    g = Math.max(g, 50);
+    b = Math.max(b, 50);
+
+    return `rgb(${r}, ${g}, ${b})`;
+  }
+
+  // Generate the array of colors
+  let colors = [];
+  for (let i = 0; i < count; i++) {
+    colors.push(generateDarkColor(i));
+  }
+
+  return colors;
 };
