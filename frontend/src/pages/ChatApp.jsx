@@ -66,7 +66,7 @@ export const ChatApp = () => {
   const [remoteSocketId, setRemoteSocketId] = useState(null);
   const [myStream, setMyStream] = useState(null);
   const [remoteStream, setRemoteStream] = useState(null);
-
+  const [callingStatus, setCallingStatus] = useState(null); // null || calling || ringing || On another call
   const typingUsersObjectRef = useRef(null);
   typingUsersObjectRef.current = typingUsersObject;
   const myStreamRef = useRef(null);
@@ -237,8 +237,13 @@ export const ChatApp = () => {
   };
 
   // ----------Video Call-----------
+
+  // setIsOnCall(true);
   const onInitiliseVc = useCallback(
     ({ chatId, receiverId }) => {
+      if (isOnCall) return; // TODO: add toast here
+      setIsOnCall(true);
+      setCallingStatus("Calling");
       socket.emit("join-room", { chatId });
       socket.emit("calling-someone", { receiverId, you: loggedinUser, chatId });
     },
@@ -246,11 +251,15 @@ export const ChatApp = () => {
   );
 
   const onReceivingVideoCall = useCallback(
-    (data) => {
-      setReceivingCallDetails(data);
+    ({ sender, chatId }) => {
+      socket.emit("receiving-call-notify-user", { sender, chatId });
+      setReceivingCallDetails({ sender, chatId });
     },
     [socket]
   );
+  const onReceivedCallNotification = () => {
+    setCallingStatus("Ringing");
+  };
 
   const onCallAccepted = async ({ receiver }) => {
     setRemoteSocketId(receiver._id);
@@ -288,6 +297,7 @@ export const ChatApp = () => {
   }, [myStream]);
   const onReceivingAnswer = useCallback(
     async ({ from, ans }) => {
+      setCallingStatus(null);
       await peer.setLocalDescription(ans);
       sendStreams();
     },
@@ -385,6 +395,7 @@ export const ChatApp = () => {
     // ------video call-------------
     socket.on("initialise-vc", onInitiliseVc);
     socket.on("receiving-video-call", onReceivingVideoCall);
+    socket.on("received-call-notification", onReceivedCallNotification);
     socket.on("call-accepted", onCallAccepted);
     socket.on("receiving-offer", onReceivingOffer);
     socket.on("receiving-answer", onReceivingAnswer);
@@ -410,6 +421,7 @@ export const ChatApp = () => {
       socket.off("userDisconnected");
       socket.off("initialise-vc");
       socket.off("receiving-video-call");
+      socket.on("received-call-notification", onReceivedCallNotification);
       socket.off("call-accepted", onCallAccepted);
       socket.off("receiving-offer", onReceivingOffer);
       socket.off("receiving-answer", onReceivingAnswer);
@@ -448,6 +460,7 @@ export const ChatApp = () => {
           setRemoteStream={setRemoteStream}
           peer={peer}
           remoteSocketId={remoteSocketId}
+          callingStatus={callingStatus}
         />
       )}
       {!isOnCall && receivingCallDetails && (

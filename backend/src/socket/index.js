@@ -5,6 +5,7 @@ const { FriendRequest } = require("../models/friendRequest.model");
 const jwt = require("jsonwebtoken");
 
 const connectedUsers = {};
+const usersOnVideoCall = {};
 
 const initializeSocketIO = (io) => {
   return io.on("connection", async (socket) => {
@@ -98,6 +99,9 @@ const initializeSocketIO = (io) => {
         sender: you,
         chatId,
       });
+    });
+    socket.on("receiving-call-notify-user", ({ sender }) => {
+      io.to(sender._id).emit("received-call-notification");
     });
     socket.on("accept-call", ({ sender, you, chatId }) => {
       socket.to(chatId).emit("call-accepted", { receiver: you });

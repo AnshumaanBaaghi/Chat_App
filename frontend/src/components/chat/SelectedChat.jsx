@@ -135,7 +135,6 @@ export const SelectedChat = ({
     try {
       const res = await initialiseVc_api(selectedChat._id);
       console.log("res:", res);
-      setIsOnCall(true);
     } catch (error) {
       console.log("error:", error);
     }

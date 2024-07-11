@@ -15,6 +15,7 @@ export const OneOnOneVc = ({
   setRemoteStream,
   peer,
   remoteSocketId,
+  callingStatus,
 }) => {
   const socket = useSelector((state) => state.socket.socket);
   const loggedinUser = useSelector((state) => state.user.userDetail);
@@ -76,8 +77,13 @@ export const OneOnOneVc = ({
 
   return (
     <div className="fixed w-full fullHeight bg-red-300">
-      <div className="h-[90%] bg-blue-500 flex gap-5 p-5 items-center">
-        <div className="w-full h-full relative rounded-3xl overflow-hidden">
+      <div className="h-[90%] bg-blue-500 flex gap-5 p-5 items-center relative">
+        {callingStatus && (
+          <div className="w-full text-center absolute top-2">
+            {callingStatus}
+          </div>
+        )}
+        <div className="w-full h-[80%] relative rounded-3xl overflow-hidden bg-purple-400">
           <ReactPlayer
             playing
             muted
@@ -86,19 +92,17 @@ export const OneOnOneVc = ({
             url={myStream}
             className="outline-none"
           />
-          <span className="absolute bottom-3 left-3 text-white ">You</span>
+          <span className="absolute bottom-3 left-3 text-white">You</span>
         </div>
         {remoteStream && (
           <div className="w-full h-full relative rounded-3xl overflow-hidden">
-            <h2>Remote Stream</h2>
             <ReactPlayer
               playing
-              muted
               width="100%"
               height="100%"
               url={remoteStream}
             />
-            <span className="absolute bottom-3 left-3 text-white "></span>
+            <span className="absolute bottom-3 left-3 text-white"></span>
           </div>
         )}
       </div>

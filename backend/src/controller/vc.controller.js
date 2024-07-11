@@ -17,10 +17,6 @@ const startOneOnOneVc = async (req, res) => {
     if (error) {
       return res.status(400).json({ message: error });
     }
-    console.log(
-      "chat.participants[0].toString() === req.user._id.toString():",
-      chat.participants[0].toString() === req.user._id.toString()
-    );
     const receiverId =
       chat.participants[0].toString() === req.user._id.toString()
         ? chat.participants[1]
