@@ -13,15 +13,15 @@ const initializeSocketIO = (io) => {
     if (!token) return; // Have to Add error here
     const loggedInUser = jwt.verify(token, process.env.JWT_SECERETKEY);
     if (!loggedInUser) return; // Have to Add error here
-
     socket.join(loggedInUser._id.toString());
-
+    console.log("user joined:", loggedInUser._id.toString());
     // io.emit("userConnected", { _id: loggedInUser._id.toString() });
     connectedUsers[loggedInUser._id.toString()] = true;
     io.emit("userConnected", connectedUsers);
 
     socket.on("friend_request", async (data) => {
       // data.to contains userID;
+      console.log("friend request data:", data);
 
       const request = await FriendRequest.create({
         sender: data.from,
@@ -87,6 +87,23 @@ const initializeSocketIO = (io) => {
       });
     });
 
+    // ------------------------ Video Call Start------------------
+
+    socket.on("join-room", async ({ chatId }) => {
+      socket.join(chatId);
+      console.log(`You Entered in chat ${chatId}`);
+    });
+    socket.on("calling-someone", async ({ receiverId, you, chatId }) => {
+      io.to(receiverId).emit("receiving-video-call", {
+        sender: you,
+        chatId,
+      });
+    });
+    socket.on("accept-call", ({ sender, you, chatId }) => {
+      socket.to(chatId).emit("call-accepted", { receiver: you });
+      socket.join(chatId);
+    });
+    // ------------------------ Video Call End ------------------
     socket.on("end", () => {
       console.log("diconnecting...");
       socket.disconnect(0);
