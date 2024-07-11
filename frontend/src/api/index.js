@@ -96,3 +96,9 @@ export const getAllMessages = (chatId) => {
 export const sendMessage = (chatId, content) => {
   return api.post(`/message/${chatId}`, { content });
 };
+
+// <----------------------- Video Call ----------------------------------->
+
+export const initialiseVc_api = (chatId) => {
+  return api.post(`/one-on-one-vc/start`, { chatId });
+};

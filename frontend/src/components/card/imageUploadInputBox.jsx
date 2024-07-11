@@ -96,7 +96,7 @@ export const ImageUploadInputBox = ({
           <DropdownMenuItem onClick={onRemoveImage}>
             Remove Image
           </DropdownMenuItem>
-          {options.length &&
+          {options.length > 0 &&
             options.map((el) => (
               <DropdownMenuItem onClick={el.callback || null}>
                 {el.option}

@@ -6,7 +6,12 @@ import {
   getOppositeUserDetails,
   rearangeParticipants,
 } from "@/utils/functions";
-import { getAllMessages, removeUnreadMessage_api, sendMessage } from "@/api";
+import {
+  getAllMessages,
+  initialiseVc_api,
+  removeUnreadMessage_api,
+  sendMessage,
+} from "@/api";
 import {
   updateChats,
   updateSelectedChat,
@@ -126,8 +131,14 @@ export const SelectedChat = ({
     }
   };
 
-  const handleVC = () => {
-    setIsOnCall(true);
+  const handleVC = async () => {
+    try {
+      const res = await initialiseVc_api(selectedChat._id);
+      console.log("res:", res);
+      setIsOnCall(true);
+    } catch (error) {
+      console.log("error:", error);
+    }
   };
 
   useEffect(() => {
