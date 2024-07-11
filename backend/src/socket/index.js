@@ -103,7 +103,28 @@ const initializeSocketIO = (io) => {
       socket.to(chatId).emit("call-accepted", { receiver: you });
       socket.join(chatId);
     });
+
+    socket.on("sending-offer", ({ from, to, offer }) => {
+      io.to(to).emit("receiving-offer", { from, offer });
+    });
+
+    socket.on("sending-answer", ({ from, to, ans }) => {
+      io.to(to).emit("receiving-answer", { from, ans });
+    });
+
+    socket.on("sending-negotiation-offer", ({ from, to, offer }) => {
+      console.log("ye bhi dono me aa rha hoga");
+      io.to(to).emit("receiving-negotiation-offer", { from, offer });
+    });
+    socket.on("sending-negotiation-answer", ({ from, to, ans }) => {
+      io.to(to).emit("receiving-negotiation-answer", { from, ans });
+    });
+    socket.on("accepting-negotiation-answer", ({ from, to }) => {
+      console.log("accepting-negotiation-answer:", from, to);
+      io.to(to).emit("accepted-negotiation-answer");
+    });
     // ------------------------ Video Call End ------------------
+
     socket.on("end", () => {
       console.log("diconnecting...");
       socket.disconnect(0);
