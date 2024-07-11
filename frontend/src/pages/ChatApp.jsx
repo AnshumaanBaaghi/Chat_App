@@ -1,6 +1,6 @@
 import { removeUnreadMessage_api } from "@/api";
 import { ChatOrGroupDetails } from "@/components/ChatOrGroupDetails";
-import { OneOnOneVc } from "@/components/OneOnOneVc";
+import { OneOnOneVc } from "@/components/videocall/OneOnOneVc";
 import { AllChats } from "@/components/chat/AllChats";
 import { SelectedChat } from "@/components/chat/SelectedChat";
 import { connectSocket } from "@/redux/actions/socketActions";
@@ -19,8 +19,9 @@ import {
   updateUnreadMessages,
 } from "@/redux/actions/userActions";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { ReceivingCall } from "@/components/videocall/ReceivingCall";
 
 const NEWFRIENDREQUEST = "new-friend-request";
 const REQUESTSENT = "request-sent";
@@ -61,6 +62,9 @@ export const ChatApp = () => {
   const [typingUsersObject, setTypingUsersObject] = useState({}); // it's an nested object which contains the key as chatID and value as typer detail
   const [onlineUsers, setOnlineUsers] = useState({});
   const [isOnCall, setIsOnCall] = useState(false);
+  const [receivingCallDetails, setReceivingCallDetails] = useState(null); // {sender,chatId}
+  const [remoteSocketId, setRemoteSocketId] = useState(null);
+  console.log("remoteSocketId:", remoteSocketId);
 
   const typingUsersObjectRef = useRef(null);
   typingUsersObjectRef.current = typingUsersObject;
@@ -229,6 +233,27 @@ export const ChatApp = () => {
     replaceGroupWithNewGroup(group);
   };
 
+  // ----------Video Call-----------
+  const onInitiliseVc = useCallback(
+    ({ chatId, receiverId }) => {
+      socket.emit("join-room", { chatId });
+      socket.emit("calling-someone", { receiverId, you: loggedinUser, chatId });
+    },
+    [socket]
+  );
+
+  const onReceivingVideoCall = useCallback(
+    (data) => {
+      setReceivingCallDetails(data);
+    },
+    [socket]
+  );
+
+  const onCallAccepted = ({ receiver }) => {
+    console.log("call accepted receiver:", receiver);
+    setRemoteSocketId(receiver._id);
+  };
+
   useEffect(() => {
     dispatch(connectSocket());
     dispatch(getNewFriends());
@@ -239,9 +264,8 @@ export const ChatApp = () => {
   }, []);
 
   useEffect(() => {
-    if (!socket) {
-      return;
-    }
+    if (!socket) return;
+
     socket.on("userConnected", (connectedUsers) => {
       setOnlineUsers(connectedUsers);
     });
@@ -288,6 +312,11 @@ export const ChatApp = () => {
       }
     });
 
+    // ------video call-------------
+    socket.on("initialise-vc", onInitiliseVc);
+    socket.on("receiving-video-call", onReceivingVideoCall);
+    socket.on("call-accepted", onCallAccepted);
+
     return () => {
       if (selfTyping) {
         handleStopTyping(selectedChat._id);
@@ -304,6 +333,9 @@ export const ChatApp = () => {
       socket.off("User Added to Group");
       socket.off("Group Deleted");
       socket.off("userDisconnected");
+      socket.off("initialise-vc");
+      socket.off("receiving-video-call");
+      socket.off("call-accepted", onCallAccepted);
     };
   }, [socket]);
 
@@ -326,7 +358,17 @@ export const ChatApp = () => {
         setIsOnCall={setIsOnCall}
       />
       <ChatOrGroupDetails selectedChat={selectedChat} />
-      {isOnCall && <OneOnOneVc setIsOnCall={setIsOnCall} />}
+      {isOnCall && (
+        <OneOnOneVc setIsOnCall={setIsOnCall} selectedChat={selectedChat} />
+      )}
+      {!isOnCall && receivingCallDetails && (
+        <ReceivingCall
+          setIsOnCall={setIsOnCall}
+          details={receivingCallDetails}
+          setReceivingCallDetails={setReceivingCallDetails}
+          setRemoteSocketId={setRemoteSocketId}
+        />
+      )}
     </div>
   );
 };
