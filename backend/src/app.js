@@ -7,6 +7,8 @@ const mongoSanitize = require("express-mongo-sanitize");
 const userRoute = require("./routes/user.routes");
 const chatRouter = require("./routes/chat.routes");
 const messsageRouter = require("./routes/message.routes");
+const videoCallRouter = require("./routes/videoCall.routes");
+
 const { Server } = require("socket.io");
 const { initializeSocketIO } = require("./socket");
 const dotenv = require("dotenv");
@@ -54,6 +56,7 @@ app.get("/", (req, res) => {
 app.use("/user", userRoute);
 app.use("/chat", chatRouter);
 app.use("/message", messsageRouter);
+app.use("/one-on-one-vc", videoCallRouter);
 
 initializeSocketIO(io);
 

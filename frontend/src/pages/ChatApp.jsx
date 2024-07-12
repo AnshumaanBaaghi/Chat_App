@@ -1,8 +1,13 @@
 import { removeUnreadMessage_api } from "@/api";
 import { ChatOrGroupDetails } from "@/components/ChatOrGroupDetails";
+import { OneOnOneVc } from "@/components/videocall/OneOnOneVc";
 import { AllChats } from "@/components/chat/AllChats";
 import { SelectedChat } from "@/components/chat/SelectedChat";
 import { connectSocket } from "@/redux/actions/socketActions";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { ReceivingCall } from "@/components/videocall/ReceivingCall";
+import peer from "@/service/peer2peer";
 import {
   getChats,
   getNewFriends,
@@ -17,15 +22,15 @@ import {
   updateSentRequests,
   updateUnreadMessages,
 } from "@/redux/actions/userActions";
-
-import React, { useEffect, useRef, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useToast } from "@/components/ui/use-toast";
 
 const NEWFRIENDREQUEST = "new-friend-request";
 const REQUESTSENT = "request-sent";
 const REQUESTACCEPTED = "request-accepted";
 
 export const ChatApp = () => {
+  const { toast } = useToast();
+
   const dispatch = useDispatch();
   const socket = useSelector((state) => state.socket.socket);
   const newUsers = useSelector((state) => state.user.newUsers);
@@ -59,9 +64,17 @@ export const ChatApp = () => {
   const [selfTyping, setSelfTyping] = useState(false);
   const [typingUsersObject, setTypingUsersObject] = useState({}); // it's an nested object which contains the key as chatID and value as typer detail
   const [onlineUsers, setOnlineUsers] = useState({});
-
+  const [isOnCall, setIsOnCall] = useState(false);
+  const [onCallWithUser, setOnCallWithUser] = useState({});
+  const [isReceivingCall, setIsReceivingCall] = useState(false);
+  const [remoteSocketId, setRemoteSocketId] = useState(null);
+  const [myStream, setMyStream] = useState(null);
+  const [remoteStream, setRemoteStream] = useState(null);
+  const [callingStatus, setCallingStatus] = useState(null); // null || calling || ringing || On another call
   const typingUsersObjectRef = useRef(null);
   typingUsersObjectRef.current = typingUsersObject;
+  const myStreamRef = useRef(null);
+  myStreamRef.current = myStream;
 
   const onRequestSent = (data) => {
     const updatedNewFriendsArray = [];
@@ -227,6 +240,151 @@ export const ChatApp = () => {
     replaceGroupWithNewGroup(group);
   };
 
+  // ----------Video Call-----------
+
+  const onInitiliseVc = useCallback(
+    async ({ receiverId }) => {
+      if (isOnCall) return; // TODO: add toast here
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: true,
+          audio: true,
+        });
+        setMyStream(stream);
+        setIsOnCall(true);
+        setCallingStatus("Calling");
+        socket.emit("calling-someone", { receiverId, you: loggedinUser });
+      } catch (error) {
+        console.log("error:", error);
+        toast({
+          variant: "destructive",
+          title: "Permission Denied",
+          description: "You need to grant camera and microphone permissions",
+        });
+      }
+    },
+    [socket]
+  );
+
+  const onReceivingVideoCall = useCallback(
+    ({ sender, receiverId }) => {
+      setOnCallWithUser(sender);
+      setIsReceivingCall(true);
+      socket.emit("receiving-call-notify-user", { sender, receiverId });
+    },
+    [socket]
+  );
+  const onReceivedCallNotification = () => {
+    setCallingStatus("Ringing");
+  };
+  const onUserAlreadyOnCall = () => {
+    setCallingStatus("On Another Call");
+    setTimeout(() => {
+      handleEndVideoCall();
+    }, 10 * 1000);
+  };
+
+  const onCallAccepted = async ({ receiver }) => {
+    setOnCallWithUser(receiver);
+    setRemoteSocketId(receiver._id);
+    const offer = await peer.generateOffer();
+    socket.emit("sending-offer", {
+      from: loggedinUser._id,
+      to: receiver._id,
+      offer,
+    });
+  };
+
+  const onReceivingOffer = async ({ from, offer }) => {
+    const ans = await peer.acceptAnswer(offer);
+    socket.emit("sending-answer", { from: loggedinUser._id, to: from, ans });
+  };
+  const sendStreams = useCallback(() => {
+    const peerConnection = peer.peer;
+    // check if a track is already added
+    const isTrackAlreadyAdded = (track) => {
+      const senders = peerConnection.getSenders();
+      for (const sender of senders) {
+        if (sender.track === track) {
+          return true;
+        }
+      }
+      return false;
+    };
+
+    // Iterate through each track and add it if it's not already added
+    for (const track of myStreamRef.current.getTracks()) {
+      if (!isTrackAlreadyAdded(track)) {
+        peerConnection.addTrack(track, myStreamRef.current);
+      }
+    }
+  }, [myStream]);
+  const onReceivingAnswer = useCallback(
+    async ({ from, ans }) => {
+      setCallingStatus(null);
+      await peer.setLocalDescription(ans);
+      sendStreams();
+    },
+    [socket, sendStreams]
+  );
+  const onReceivingNegotiationOffer = useCallback(
+    async ({ from, offer }) => {
+      const ans = await peer.acceptAnswer(offer);
+      socket.emit("sending-negotiation-answer", {
+        from: loggedinUser._id,
+        to: from,
+        ans,
+      });
+    },
+    [socket]
+  );
+
+  const onReceivingNegotiationAnswer = useCallback(
+    async ({ from, ans }) => {
+      await peer.setLocalDescription(ans);
+      socket.emit("accepting-negotiation-answer", {
+        from: loggedinUser._id,
+        to: from,
+      });
+    },
+    [socket]
+  );
+
+  const onAcceptedNegotiationAnswer = () => {
+    setTimeout(() => {
+      sendStreams();
+    }, 500);
+  };
+
+  const removeMediaTracks = (stream) => {
+    if (!stream) return;
+    stream.getTracks().forEach((track) => track.stop());
+  };
+  const handleEndVideoCall = () => {
+    removeMediaTracks(myStream);
+    setMyStream(null);
+    removeMediaTracks(remoteStream);
+    setRemoteStream(null);
+    setIsOnCall(false);
+    setOnCallWithUser({});
+    setIsReceivingCall(false);
+    setCallingStatus(null);
+    setRemoteSocketId(null);
+    setTimeout(() => {
+      peer.closeRTCPeerConnection();
+    }, 500);
+  };
+  const onVideoCallEnded = () => {
+    handleEndVideoCall();
+  };
+
+  const onCallDeclined = () => {
+    setCallingStatus("Declined Call");
+    setTimeout(() => {
+      handleEndVideoCall();
+    }, 1000);
+  };
+
   useEffect(() => {
     dispatch(connectSocket());
     dispatch(getNewFriends());
@@ -237,9 +395,8 @@ export const ChatApp = () => {
   }, []);
 
   useEffect(() => {
-    if (!socket) {
-      return;
-    }
+    if (!socket) return;
+
     socket.on("userConnected", (connectedUsers) => {
       setOnlineUsers(connectedUsers);
     });
@@ -286,6 +443,20 @@ export const ChatApp = () => {
       }
     });
 
+    // ------video call-------------
+    socket.on("initialise-vc", onInitiliseVc);
+    socket.on("receiving-video-call", onReceivingVideoCall);
+    socket.on("received-call-notification", onReceivedCallNotification);
+    socket.on("user-already-on-call", onUserAlreadyOnCall);
+    socket.on("call-accepted", onCallAccepted);
+    socket.on("call-declined", onCallDeclined);
+    socket.on("receiving-offer", onReceivingOffer);
+    socket.on("receiving-answer", onReceivingAnswer);
+    socket.on("receiving-negotiation-offer", onReceivingNegotiationOffer);
+    socket.on("receiving-negotiation-answer", onReceivingNegotiationAnswer);
+    socket.on("accepted-negotiation-answer", onAcceptedNegotiationAnswer);
+    socket.on("video-call-ended", onVideoCallEnded);
+
     return () => {
       if (selfTyping) {
         handleStopTyping(selectedChat._id);
@@ -302,8 +473,20 @@ export const ChatApp = () => {
       socket.off("User Added to Group");
       socket.off("Group Deleted");
       socket.off("userDisconnected");
+      socket.off("initialise-vc");
+      socket.off("receiving-video-call");
+      socket.off("received-call-notification", onReceivedCallNotification);
+      socket.off("user-already-on-call", onUserAlreadyOnCall);
+      socket.off("call-accepted", onCallAccepted);
+      socket.off("call-declined", onCallDeclined);
+      socket.off("receiving-offer", onReceivingOffer);
+      socket.off("receiving-answer", onReceivingAnswer);
+      socket.off("receiving-negotiation-offer", onReceivingNegotiationOffer);
+      socket.off("receiving-negotiation-answer", onReceivingNegotiationAnswer);
+      socket.off("accepted-negotiation-answer", onAcceptedNegotiationAnswer);
+      socket.off("video-call-ended", onVideoCallEnded);
     };
-  }, [socket]);
+  }, [socket, onReceivingAnswer, onReceivingNegotiationOffer]);
 
   return (
     <div className="flex">
@@ -321,8 +504,36 @@ export const ChatApp = () => {
         typingUsersObject={typingUsersObject}
         unreadMessages={unreadMessages}
         onlineUsers={onlineUsers}
+        setIsOnCall={setIsOnCall}
+        isOnCall={isOnCall}
       />
       <ChatOrGroupDetails selectedChat={selectedChat} />
+      {isOnCall && (
+        <OneOnOneVc
+          setIsOnCall={setIsOnCall}
+          selectedChat={selectedChat}
+          myStream={myStream}
+          setMyStream={setMyStream}
+          remoteStream={remoteStream}
+          setRemoteStream={setRemoteStream}
+          peer={peer}
+          remoteSocketId={remoteSocketId}
+          callingStatus={callingStatus}
+          handleEndVideoCall={handleEndVideoCall}
+          onCallWithUser={onCallWithUser}
+          loggedinUser={loggedinUser}
+        />
+      )}
+      {!isOnCall && isReceivingCall && (
+        <ReceivingCall
+          setIsOnCall={setIsOnCall}
+          onCallWithUser={onCallWithUser}
+          setIsReceivingCall={setIsReceivingCall}
+          setRemoteSocketId={setRemoteSocketId}
+          handleEndVideoCall={handleEndVideoCall}
+          setMyStream={setMyStream}
+        />
+      )}
     </div>
   );
 };

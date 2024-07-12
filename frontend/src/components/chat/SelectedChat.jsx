@@ -6,7 +6,12 @@ import {
   getOppositeUserDetails,
   rearangeParticipants,
 } from "@/utils/functions";
-import { getAllMessages, removeUnreadMessage_api, sendMessage } from "@/api";
+import {
+  getAllMessages,
+  initialiseVc_api,
+  removeUnreadMessage_api,
+  sendMessage,
+} from "@/api";
 import {
   updateChats,
   updateSelectedChat,
@@ -25,6 +30,7 @@ import {
 import data from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
 import { v4 } from "uuid";
+import { IoVideocam } from "react-icons/io5";
 
 export const SelectedChat = ({
   handleTypingMessageChange,
@@ -34,6 +40,8 @@ export const SelectedChat = ({
   handleStopTyping,
   unreadMessages,
   onlineUsers,
+  setIsOnCall,
+  isOnCall,
 }) => {
   const selectedChat = useSelector((state) => state.user.selectedChat);
   const loggedinUser = useSelector((state) => state.user.userDetail);
@@ -124,6 +132,15 @@ export const SelectedChat = ({
     }
   };
 
+  const handleVC = async () => {
+    if (isOnCall) return;
+    try {
+      await initialiseVc_api(selectedChat._id);
+    } catch (error) {
+      console.log("error:", error);
+    }
+  };
+
   useEffect(() => {
     if (!selectedChat) return;
     setShowTapToInfoMessage(true);
@@ -156,11 +173,11 @@ export const SelectedChat = ({
         <div>
           {/* Heading */}
           {/* TODO: Have to Fix Header and footer */}
-          <div
-            onClick={openChatDetailSheet}
-            className="w-full h-16 fixed top-0 bg-[#0d0e12] flex justify-between items-center p-3 cursor-pointer no-select border-b border-b-[#1f212a]"
-          >
-            <div className="flex gap-5 items-center text-white">
+          <div className="w-full md:w-4/6 h-16 fixed top-0 bg-[#0d0e12] flex gap-3 justify-between items-center p-3 cursor-pointer no-select border-b border-b-[#1f212a]">
+            <div
+              className="flex gap-5 items-center w-full text-white"
+              onClick={openChatDetailSheet}
+            >
               <div
                 className={`${selectedChat ? "block" : "hidden"} md:hidden`}
                 onClick={unSelectChat}
@@ -239,6 +256,16 @@ export const SelectedChat = ({
                 )}
               </span>
             </div>
+            {!selectedChat.isGroup && (
+              <div
+                className="mr-2 p-2 rounded-full hover:bg-slate-700"
+                onClick={handleVC}
+              >
+                <ReactIcon color="white" size="28px">
+                  <IoVideocam />
+                </ReactIcon>
+              </div>
+            )}
           </div>
           {/* Chats */}
           <ScrollArea
@@ -252,7 +279,7 @@ export const SelectedChat = ({
               selectedChat={selectedChat}
             />
           </ScrollArea>
-          <div className="h-16 fixed w-full bottom-0 bg-[#0d0e12] border-t border-t-[#1f212a] flex px-3 gap-3 items-center">
+          <div className="h-16 fixed w-full md:w-4/6 bottom-0 bg-[#0d0e12] border-t border-t-[#1f212a] flex px-3 gap-3 items-center">
             <Popover>
               <PopoverTrigger>
                 <ReactIcon color="gray" size="2.3rem">
