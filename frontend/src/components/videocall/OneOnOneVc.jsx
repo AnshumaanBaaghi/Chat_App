@@ -16,6 +16,7 @@ export const OneOnOneVc = ({
   peer,
   remoteSocketId,
   callingStatus,
+  handleEndVideoCall,
 }) => {
   const socket = useSelector((state) => state.socket.socket);
   const loggedinUser = useSelector((state) => state.user.userDetail);
@@ -100,6 +101,7 @@ export const OneOnOneVc = ({
               playing
               width="100%"
               height="100%"
+              muted
               url={remoteStream}
             />
             <span className="absolute bottom-3 left-3 text-white"></span>
@@ -113,7 +115,7 @@ export const OneOnOneVc = ({
         <ReactIcon size="30px">
           <IoVideocam />
         </ReactIcon>
-        <Button variant="destructive" onClick={handleEndCall}>
+        <Button variant="destructive" onClick={handleEndVideoCall}>
           End Call
         </Button>
       </div>

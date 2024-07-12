@@ -56,6 +56,7 @@ export const ChatApp = () => {
   loggedinUserRef.current = loggedinUser;
   const unreadMessagesRef = useRef(null);
   unreadMessagesRef.current = unreadMessages;
+  console.log("peer:", peer);
 
   const [messages, setMessages] = useState([]);
   const [selfTyping, setSelfTyping] = useState(false);
@@ -276,6 +277,7 @@ export const ChatApp = () => {
     socket.emit("sending-answer", { from: loggedinUser._id, to: from, ans });
   };
   const sendStreams = useCallback(() => {
+    console.log("peer.peer:", peer.peer);
     const peerConnection = peer.peer;
     // check if a track is already added
     const isTrackAlreadyAdded = (track) => {
@@ -331,6 +333,13 @@ export const ChatApp = () => {
     // console.log();
     setTimeout(() => {
       sendStreams();
+    }, 500);
+  };
+
+  const handleEndVideoCall = () => {
+    setIsOnCall(false);
+    setTimeout(() => {
+      peer.closeRTCPeerConnection();
     }, 500);
   };
 
@@ -461,6 +470,7 @@ export const ChatApp = () => {
           peer={peer}
           remoteSocketId={remoteSocketId}
           callingStatus={callingStatus}
+          handleEndVideoCall={handleEndVideoCall}
         />
       )}
       {!isOnCall && receivingCallDetails && (
