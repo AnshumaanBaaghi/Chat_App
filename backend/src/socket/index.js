@@ -101,6 +101,9 @@ const initializeSocketIO = (io) => {
     socket.on("accept-call", ({ sender, you }) => {
       socket.to(sender._id).emit("call-accepted", { receiver: you });
     });
+    socket.on("decline-call", ({ sender, you }) => {
+      socket.to(sender._id).emit("call-declined", { receiver: you });
+    });
 
     socket.on("sending-offer", ({ from, to, offer }) => {
       io.to(to).emit("receiving-offer", { from, offer });

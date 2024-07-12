@@ -18,26 +18,18 @@ export const OneOnOneVc = ({
   callingStatus,
   handleEndVideoCall,
   onCallWithUser,
+  videocallReceiverId,
 }) => {
   const socket = useSelector((state) => state.socket.socket);
   const loggedinUser = useSelector((state) => state.user.userDetail);
 
   const handleEndCall = () => {
-    onCallWithUser._id &&
-      socket.emit("end-video-call", { to: onCallWithUser._id });
-    handleEndVideoCall();
-  };
+    remoteSocketId
+      ? socket.emit("end-video-call", { to: onCallWithUser._id })
+      : callingStatus === "Ringing" &&
+        socket.emit("end-video-call", { to: videocallReceiverId });
 
-  const initialiseStream = async () => {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: true,
-        audio: true,
-      });
-      setMyStream(stream);
-    } catch (error) {
-      console.log("error:", error);
-    }
+    handleEndVideoCall();
   };
 
   const handleNegotiationNeeded = useCallback(async () => {
@@ -67,10 +59,6 @@ export const OneOnOneVc = ({
       );
     };
   }, [handleNegotiationNeeded]);
-
-  useEffect(() => {
-    initialiseStream();
-  }, []);
 
   return (
     <div className="fixed w-full fullHeight bg-red-300">

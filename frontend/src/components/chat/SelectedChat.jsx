@@ -133,6 +133,7 @@ export const SelectedChat = ({
 
   const handleVC = async () => {
     try {
+      // TODO: check media permission first
       await initialiseVc_api(selectedChat._id);
     } catch (error) {
       console.log("error:", error);

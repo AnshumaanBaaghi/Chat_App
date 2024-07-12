@@ -22,12 +22,15 @@ import {
   updateSentRequests,
   updateUnreadMessages,
 } from "@/redux/actions/userActions";
+import { useToast } from "@/components/ui/use-toast";
 
 const NEWFRIENDREQUEST = "new-friend-request";
 const REQUESTSENT = "request-sent";
 const REQUESTACCEPTED = "request-accepted";
 
 export const ChatApp = () => {
+  const { toast } = useToast();
+
   const dispatch = useDispatch();
   const socket = useSelector((state) => state.socket.socket);
   const newUsers = useSelector((state) => state.user.newUsers);
@@ -68,6 +71,7 @@ export const ChatApp = () => {
   const [myStream, setMyStream] = useState(null);
   const [remoteStream, setRemoteStream] = useState(null);
   const [callingStatus, setCallingStatus] = useState(null); // null || calling || ringing || On another call
+  const [videocallReceiverId, setVideocallReceiverId] = useState(null);
   const typingUsersObjectRef = useRef(null);
   typingUsersObjectRef.current = typingUsersObject;
   const myStreamRef = useRef(null);
@@ -239,13 +243,27 @@ export const ChatApp = () => {
 
   // ----------Video Call-----------
 
-  // setIsOnCall(true);
   const onInitiliseVc = useCallback(
-    ({ receiverId }) => {
+    async ({ receiverId }) => {
       if (isOnCall) return; // TODO: add toast here
-      setIsOnCall(true);
-      setCallingStatus("Calling");
-      socket.emit("calling-someone", { receiverId, you: loggedinUser });
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: true,
+          audio: true,
+        });
+        setMyStream(stream);
+        setIsOnCall(true);
+        setCallingStatus("Calling");
+        setVideocallReceiverId(receiverId);
+        socket.emit("calling-someone", { receiverId, you: loggedinUser });
+      } catch (error) {
+        console.log("error:", error);
+        toast({
+          variant: "destructive",
+          title: "Permission Denied",
+          description: "You need to grant camera and microphone permissions",
+        });
+      }
     },
     [socket]
   );
@@ -345,12 +363,23 @@ export const ChatApp = () => {
     setRemoteStream(null);
     setIsOnCall(false);
     setOnCallWithUser({});
+    setVideocallReceiverId(null);
+    setIsReceivingCall(false);
+    setCallingStatus(null);
+    setRemoteSocketId(null);
     setTimeout(() => {
       peer.closeRTCPeerConnection();
     }, 500);
   };
   const onVideoCallEnded = () => {
     handleEndVideoCall();
+  };
+
+  const onCallDeclined = () => {
+    setCallingStatus("Declined Call");
+    setTimeout(() => {
+      handleEndVideoCall();
+    }, 1000);
   };
 
   useEffect(() => {
@@ -416,6 +445,7 @@ export const ChatApp = () => {
     socket.on("receiving-video-call", onReceivingVideoCall);
     socket.on("received-call-notification", onReceivedCallNotification);
     socket.on("call-accepted", onCallAccepted);
+    socket.on("call-declined", onCallDeclined);
     socket.on("receiving-offer", onReceivingOffer);
     socket.on("receiving-answer", onReceivingAnswer);
     socket.on("receiving-negotiation-offer", onReceivingNegotiationOffer);
@@ -443,6 +473,7 @@ export const ChatApp = () => {
       socket.off("receiving-video-call");
       socket.off("received-call-notification", onReceivedCallNotification);
       socket.off("call-accepted", onCallAccepted);
+      socket.off("call-declined", onCallDeclined);
       socket.off("receiving-offer", onReceivingOffer);
       socket.off("receiving-answer", onReceivingAnswer);
       socket.off("receiving-negotiation-offer", onReceivingNegotiationOffer);
@@ -484,6 +515,7 @@ export const ChatApp = () => {
           callingStatus={callingStatus}
           handleEndVideoCall={handleEndVideoCall}
           onCallWithUser={onCallWithUser}
+          videocallReceiverId={videocallReceiverId}
         />
       )}
       {!isOnCall && isReceivingCall && (
@@ -492,6 +524,8 @@ export const ChatApp = () => {
           onCallWithUser={onCallWithUser}
           setIsReceivingCall={setIsReceivingCall}
           setRemoteSocketId={setRemoteSocketId}
+          handleEndVideoCall={handleEndVideoCall}
+          setMyStream={setMyStream}
         />
       )}
     </div>
