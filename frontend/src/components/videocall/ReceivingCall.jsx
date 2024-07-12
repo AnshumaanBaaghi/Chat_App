@@ -2,6 +2,7 @@ import React from "react";
 import { Button } from "../ui/button";
 import { useSelector } from "react-redux";
 import { useToast } from "@/components/ui/use-toast";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export const ReceivingCall = ({
   onCallWithUser,
@@ -48,11 +49,19 @@ export const ReceivingCall = ({
   };
   if (!onCallWithUser) return;
   return (
-    <div className="fixed w-full fullHeight bg-red-300 flex flex-col justify-center items-center">
-      <div>{`Getting call from ${onCallWithUser?.name}`}</div>
-      <div>
-        <Button onClick={handleAcceptCall}>Accept</Button>
-        <Button onClick={handleDeclineCall}>Decline</Button>
+    <div className="fixed w-full fullHeight bg-[#15171c] flex flex-col gap-5  justify-center items-center">
+      <div className="text-white">{`Getting call from ${onCallWithUser.name}`}</div>
+      <Avatar size="17rem">
+        <AvatarImage src={onCallWithUser.avatar} />
+        <AvatarFallback>No Profile</AvatarFallback>
+      </Avatar>
+      <div className="flex gap-3">
+        <Button onClick={handleAcceptCall} className="bg-green-400">
+          Accept
+        </Button>
+        <Button onClick={handleDeclineCall} className="bg-red-500">
+          Decline
+        </Button>
       </div>
     </div>
   );
