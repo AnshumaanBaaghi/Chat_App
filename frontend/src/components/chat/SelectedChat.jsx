@@ -133,8 +133,7 @@ export const SelectedChat = ({
 
   const handleVC = async () => {
     try {
-      const res = await initialiseVc_api(selectedChat._id);
-      console.log("res:", res);
+      await initialiseVc_api(selectedChat._id);
     } catch (error) {
       console.log("error:", error);
     }

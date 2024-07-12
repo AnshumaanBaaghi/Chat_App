@@ -3,30 +3,28 @@ import { Button } from "../ui/button";
 import { useSelector } from "react-redux";
 
 export const ReceivingCall = ({
-  details,
+  onCallWithUser,
   setIsOnCall,
-  setReceivingCallDetails,
+  setIsReceivingCall,
   setRemoteSocketId,
 }) => {
-  console.log("sender receving call:", details.sender.name);
   const socket = useSelector((state) => state.socket.socket);
   const loggedinUser = useSelector((state) => state.user.userDetail);
 
   const handleAcceptCall = () => {
     socket.emit("accept-call", {
-      sender: details.sender,
-      chatId: details.chatId,
+      sender: onCallWithUser,
       you: loggedinUser,
     });
-    setRemoteSocketId(details.sender._id);
+    setRemoteSocketId(onCallWithUser._id);
     setIsOnCall(true);
-    setReceivingCallDetails(null);
+    setIsReceivingCall(false);
   };
   const handleDeclineCall = () => {};
-  if (!details.sender || !details.chatId) return;
+  if (!onCallWithUser) return;
   return (
     <div className="fixed w-full fullHeight bg-red-300 flex flex-col justify-center items-center">
-      <div>{`Getting call from ${details.sender?.name}`}</div>
+      <div>{`Getting call from ${onCallWithUser?.name}`}</div>
       <div>
         <Button onClick={handleAcceptCall}>Accept</Button>
         <Button onClick={handleDeclineCall}>Decline</Button>

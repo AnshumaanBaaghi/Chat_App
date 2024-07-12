@@ -17,15 +17,15 @@ export const OneOnOneVc = ({
   remoteSocketId,
   callingStatus,
   handleEndVideoCall,
+  onCallWithUser,
 }) => {
   const socket = useSelector((state) => state.socket.socket);
   const loggedinUser = useSelector((state) => state.user.userDetail);
-  console.log("remoteStream:", remoteStream);
 
   const handleEndCall = () => {
-    myStream.getTracks().forEach((track) => track.stop());
-    setMyStream(null);
-    setIsOnCall(false);
+    onCallWithUser._id &&
+      socket.emit("end-video-call", { to: onCallWithUser._id });
+    handleEndVideoCall();
   };
 
   const initialiseStream = async () => {
@@ -41,11 +41,7 @@ export const OneOnOneVc = ({
   };
 
   const handleNegotiationNeeded = useCallback(async () => {
-    console.log(
-      "handleNegotiationNeeded: ye dono me aa rha kya ------------------------>"
-    );
     const offer = await peer.generateOffer();
-    console.log("generating negotiation offer and sending");
     socket.emit("sending-negotiation-offer", {
       from: loggedinUser._id,
       to: remoteSocketId,
@@ -104,7 +100,9 @@ export const OneOnOneVc = ({
               muted
               url={remoteStream}
             />
-            <span className="absolute bottom-3 left-3 text-white"></span>
+            <span className="absolute bottom-3 left-3 text-white">
+              {onCallWithUser.name}
+            </span>
           </div>
         )}
       </div>
@@ -115,7 +113,7 @@ export const OneOnOneVc = ({
         <ReactIcon size="30px">
           <IoVideocam />
         </ReactIcon>
-        <Button variant="destructive" onClick={handleEndVideoCall}>
+        <Button variant="destructive" onClick={handleEndCall}>
           End Call
         </Button>
       </div>

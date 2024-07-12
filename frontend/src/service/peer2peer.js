@@ -1,7 +1,6 @@
 class PeerService {
   constructor() {
     if (!this.peer) {
-      console.log("this.peer:", this.peer);
       this.peer = new RTCPeerConnection({
         iceServers: [
           {

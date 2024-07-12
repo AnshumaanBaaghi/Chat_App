@@ -90,22 +90,16 @@ const initializeSocketIO = (io) => {
 
     // ------------------------ Video Call Start------------------
 
-    socket.on("join-room", async ({ chatId }) => {
-      socket.join(chatId);
-      console.log(`You Entered in chat ${chatId}`);
-    });
-    socket.on("calling-someone", async ({ receiverId, you, chatId }) => {
+    socket.on("calling-someone", async ({ receiverId, you }) => {
       io.to(receiverId).emit("receiving-video-call", {
         sender: you,
-        chatId,
       });
     });
     socket.on("receiving-call-notify-user", ({ sender }) => {
       io.to(sender._id).emit("received-call-notification");
     });
-    socket.on("accept-call", ({ sender, you, chatId }) => {
-      socket.to(chatId).emit("call-accepted", { receiver: you });
-      socket.join(chatId);
+    socket.on("accept-call", ({ sender, you }) => {
+      socket.to(sender._id).emit("call-accepted", { receiver: you });
     });
 
     socket.on("sending-offer", ({ from, to, offer }) => {
@@ -117,15 +111,17 @@ const initializeSocketIO = (io) => {
     });
 
     socket.on("sending-negotiation-offer", ({ from, to, offer }) => {
-      console.log("ye bhi dono me aa rha hoga");
       io.to(to).emit("receiving-negotiation-offer", { from, offer });
     });
     socket.on("sending-negotiation-answer", ({ from, to, ans }) => {
       io.to(to).emit("receiving-negotiation-answer", { from, ans });
     });
     socket.on("accepting-negotiation-answer", ({ from, to }) => {
-      console.log("accepting-negotiation-answer:", from, to);
       io.to(to).emit("accepted-negotiation-answer");
+    });
+
+    socket.on("end-video-call", ({ to }) => {
+      io.to(to).emit("video-call-ended");
     });
     // ------------------------ Video Call End ------------------
 
