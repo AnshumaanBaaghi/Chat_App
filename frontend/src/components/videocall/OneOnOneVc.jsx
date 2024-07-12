@@ -55,13 +55,11 @@ export const OneOnOneVc = ({
 
   return (
     <div className="fixed w-full fullHeight bg-red-300">
-      <div className="h-[90%] bg-blue-500 flex gap-5 p-5 items-center relative">
-        {callingStatus && (
-          <div className="w-full text-center absolute top-2">
-            {callingStatus}
-          </div>
-        )}
-        <div className="w-full h-[80%] relative rounded-3xl overflow-hidden bg-purple-400">
+      <div className="w-full h-[5%] flex justify-center items-center">
+        {callingStatus}
+      </div>
+      <div className="h-[87%] md:h-[85%] bg-blue-500 flex flex-col gap-5 p-5 items-center justify-center md:flex-row">
+        <div className="w-fit h-[80%] relative rounded-3xl overflow-hidden bg-purple-400">
           <ReactPlayer
             playing
             muted
@@ -73,12 +71,12 @@ export const OneOnOneVc = ({
           <span className="absolute bottom-3 left-3 text-white">You</span>
         </div>
         {remoteStream && (
-          <div className="w-full h-full relative rounded-3xl overflow-hidden">
+          <div className="w-fit h-[80%] relative rounded-3xl overflow-hidden bg-purple-400">
             <ReactPlayer
               playing
               width="100%"
               height="100%"
-              muted
+              muted //TODO: remove brfore deployment
               url={remoteStream}
             />
             <span className="absolute bottom-3 left-3 text-white">
@@ -87,7 +85,7 @@ export const OneOnOneVc = ({
           </div>
         )}
       </div>
-      <div className="h-[10%] bg-green-500 flex justify-center items-center gap-2">
+      <div className="h-[8%] md:h-[10%] bg-green-500 flex justify-center items-center gap-2">
         <ReactIcon size="30px">
           <IoMdMic />
         </ReactIcon>
