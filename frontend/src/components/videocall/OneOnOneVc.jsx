@@ -84,7 +84,6 @@ export const OneOnOneVc = ({
               playing
               width="100%"
               height="100%"
-              muted //TODO: remove brfore deployment
               url={remoteStream}
             />
             <span className="absolute bottom-4 left-4 text-white">
