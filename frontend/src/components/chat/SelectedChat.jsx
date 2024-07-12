@@ -41,6 +41,7 @@ export const SelectedChat = ({
   unreadMessages,
   onlineUsers,
   setIsOnCall,
+  isOnCall,
 }) => {
   const selectedChat = useSelector((state) => state.user.selectedChat);
   const loggedinUser = useSelector((state) => state.user.userDetail);
@@ -132,8 +133,8 @@ export const SelectedChat = ({
   };
 
   const handleVC = async () => {
+    if (isOnCall) return;
     try {
-      // TODO: check media permission first
       await initialiseVc_api(selectedChat._id);
     } catch (error) {
       console.log("error:", error);
@@ -255,14 +256,16 @@ export const SelectedChat = ({
                 )}
               </span>
             </div>
-            <div
-              className="mr-2 p-2 rounded-full hover:bg-slate-700"
-              onClick={handleVC}
-            >
-              <ReactIcon color="white" size="28px">
-                <IoVideocam />
-              </ReactIcon>
-            </div>
+            {!selectedChat.isGroup && (
+              <div
+                className="mr-2 p-2 rounded-full hover:bg-slate-700"
+                onClick={handleVC}
+              >
+                <ReactIcon color="white" size="28px">
+                  <IoVideocam />
+                </ReactIcon>
+              </div>
+            )}
           </div>
           {/* Chats */}
           <ScrollArea

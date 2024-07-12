@@ -16,7 +16,6 @@ const initializeSocketIO = (io) => {
     if (!loggedInUser) return; // Have to Add error here
     socket.join(loggedInUser._id.toString());
     console.log("user joined:", loggedInUser._id.toString());
-    // io.emit("userConnected", { _id: loggedInUser._id.toString() });
     connectedUsers[loggedInUser._id.toString()] = true;
     io.emit("userConnected", connectedUsers);
 
@@ -91,18 +90,32 @@ const initializeSocketIO = (io) => {
     // ------------------------ Video Call Start------------------
 
     socket.on("calling-someone", async ({ receiverId, you }) => {
+      if (usersOnVideoCall[you._id]) return; //TODO: You are already on call
+      if (usersOnVideoCall[receiverId]) {
+        io.to(you._id).emit("user-already-on-call");
+        return;
+      }
+
       io.to(receiverId).emit("receiving-video-call", {
         sender: you,
+        receiverId,
       });
     });
-    socket.on("receiving-call-notify-user", ({ sender }) => {
+    socket.on("receiving-call-notify-user", ({ sender, receiverId }) => {
+      usersOnVideoCall[sender._id.toString()] = receiverId.toString();
+      usersOnVideoCall[receiverId.toString()] = sender._id.toString();
       io.to(sender._id).emit("received-call-notification");
     });
     socket.on("accept-call", ({ sender, you }) => {
       socket.to(sender._id).emit("call-accepted", { receiver: you });
     });
     socket.on("decline-call", ({ sender, you }) => {
-      socket.to(sender._id).emit("call-declined", { receiver: you });
+      if (usersOnVideoCall[you._id.toString()]) {
+        const onCallWith = usersOnVideoCall[you._id.toString()];
+        delete usersOnVideoCall[you._id.toString()];
+        delete usersOnVideoCall[onCallWith];
+      }
+      io.to(sender._id).emit("call-declined", { receiver: you });
     });
 
     socket.on("sending-offer", ({ from, to, offer }) => {
@@ -123,8 +136,13 @@ const initializeSocketIO = (io) => {
       io.to(to).emit("accepted-negotiation-answer");
     });
 
-    socket.on("end-video-call", ({ to }) => {
-      io.to(to).emit("video-call-ended");
+    socket.on("end-video-call", ({ you }) => {
+      if (usersOnVideoCall[you._id.toString()]) {
+        const onCallWith = usersOnVideoCall[you._id.toString()];
+        delete usersOnVideoCall[you._id.toString()];
+        delete usersOnVideoCall[onCallWith];
+        io.to(onCallWith).emit("video-call-ended");
+      }
     });
     // ------------------------ Video Call End ------------------
 
@@ -140,6 +158,12 @@ const initializeSocketIO = (io) => {
         connectedUsers,
         _id: loggedInUser._id.toString(),
       });
+      if (usersOnVideoCall[loggedInUser._id.toString()]) {
+        const onCallWith = usersOnVideoCall[loggedInUser._id.toString()];
+        delete usersOnVideoCall[loggedInUser._id.toString()];
+        delete usersOnVideoCall[onCallWith];
+        io.to(onCallWith).emit("video-call-ended");
+      }
     });
   });
 };

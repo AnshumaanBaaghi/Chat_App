@@ -8,9 +8,7 @@ import { useSelector } from "react-redux";
 import { initialiseVc_api } from "@/api";
 
 export const OneOnOneVc = ({
-  setIsOnCall,
   myStream,
-  setMyStream,
   remoteStream,
   setRemoteStream,
   peer,
@@ -18,17 +16,12 @@ export const OneOnOneVc = ({
   callingStatus,
   handleEndVideoCall,
   onCallWithUser,
-  videocallReceiverId,
+  loggedinUser,
 }) => {
   const socket = useSelector((state) => state.socket.socket);
-  const loggedinUser = useSelector((state) => state.user.userDetail);
 
   const handleEndCall = () => {
-    remoteSocketId
-      ? socket.emit("end-video-call", { to: onCallWithUser._id })
-      : callingStatus === "Ringing" &&
-        socket.emit("end-video-call", { to: videocallReceiverId });
-
+    socket.emit("end-video-call", { you: loggedinUser });
     handleEndVideoCall();
   };
 

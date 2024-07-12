@@ -71,7 +71,6 @@ export const ChatApp = () => {
   const [myStream, setMyStream] = useState(null);
   const [remoteStream, setRemoteStream] = useState(null);
   const [callingStatus, setCallingStatus] = useState(null); // null || calling || ringing || On another call
-  const [videocallReceiverId, setVideocallReceiverId] = useState(null);
   const typingUsersObjectRef = useRef(null);
   typingUsersObjectRef.current = typingUsersObject;
   const myStreamRef = useRef(null);
@@ -254,7 +253,6 @@ export const ChatApp = () => {
         setMyStream(stream);
         setIsOnCall(true);
         setCallingStatus("Calling");
-        setVideocallReceiverId(receiverId);
         socket.emit("calling-someone", { receiverId, you: loggedinUser });
       } catch (error) {
         console.log("error:", error);
@@ -269,15 +267,21 @@ export const ChatApp = () => {
   );
 
   const onReceivingVideoCall = useCallback(
-    ({ sender }) => {
+    ({ sender, receiverId }) => {
       setOnCallWithUser(sender);
       setIsReceivingCall(true);
-      socket.emit("receiving-call-notify-user", { sender });
+      socket.emit("receiving-call-notify-user", { sender, receiverId });
     },
     [socket]
   );
   const onReceivedCallNotification = () => {
     setCallingStatus("Ringing");
+  };
+  const onUserAlreadyOnCall = () => {
+    setCallingStatus("On Another Call");
+    setTimeout(() => {
+      handleEndVideoCall();
+    }, 10 * 1000);
   };
 
   const onCallAccepted = async ({ receiver }) => {
@@ -363,7 +367,6 @@ export const ChatApp = () => {
     setRemoteStream(null);
     setIsOnCall(false);
     setOnCallWithUser({});
-    setVideocallReceiverId(null);
     setIsReceivingCall(false);
     setCallingStatus(null);
     setRemoteSocketId(null);
@@ -444,6 +447,7 @@ export const ChatApp = () => {
     socket.on("initialise-vc", onInitiliseVc);
     socket.on("receiving-video-call", onReceivingVideoCall);
     socket.on("received-call-notification", onReceivedCallNotification);
+    socket.on("user-already-on-call", onUserAlreadyOnCall);
     socket.on("call-accepted", onCallAccepted);
     socket.on("call-declined", onCallDeclined);
     socket.on("receiving-offer", onReceivingOffer);
@@ -472,6 +476,7 @@ export const ChatApp = () => {
       socket.off("initialise-vc");
       socket.off("receiving-video-call");
       socket.off("received-call-notification", onReceivedCallNotification);
+      socket.off("user-already-on-call", onUserAlreadyOnCall);
       socket.off("call-accepted", onCallAccepted);
       socket.off("call-declined", onCallDeclined);
       socket.off("receiving-offer", onReceivingOffer);
@@ -500,6 +505,7 @@ export const ChatApp = () => {
         unreadMessages={unreadMessages}
         onlineUsers={onlineUsers}
         setIsOnCall={setIsOnCall}
+        isOnCall={isOnCall}
       />
       <ChatOrGroupDetails selectedChat={selectedChat} />
       {isOnCall && (
@@ -515,7 +521,7 @@ export const ChatApp = () => {
           callingStatus={callingStatus}
           handleEndVideoCall={handleEndVideoCall}
           onCallWithUser={onCallWithUser}
-          videocallReceiverId={videocallReceiverId}
+          loggedinUser={loggedinUser}
         />
       )}
       {!isOnCall && isReceivingCall && (
